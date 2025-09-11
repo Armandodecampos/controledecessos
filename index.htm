@@ -1200,6 +1200,44 @@
             fetchLiberacoes(currentSession, 'date', today);
         }
 
+        // Nova função para mover liberações antigas para o histórico
+        async function purgeOldLiberacoes() {
+            const threeDaysAgo = new Date();
+            threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+            const threeDaysAgoISO = threeDaysAgo.toISOString().split('T')[0];
+
+            // Busca as liberações não permanentes que terminaram 3 ou mais dias atrás
+            const { data, error } = await supabase
+                .from('liberacoes')
+                .select('id')
+                .eq('excluida', false)
+                .neq('permanente', true)
+                .lte('periodo_fim', threeDaysAgoISO);
+
+            if (error) {
+                console.error('Erro ao verificar liberações antigas:', error);
+                return;
+            }
+
+            if (data && data.length > 0) {
+                const idsToPurge = data.map(item => item.id);
+                const { error: updateError } = await supabase
+                    .from('liberacoes')
+                    .update({
+                        excluida: true,
+                        excluido_por: 'Automaticamente pelo sistema',
+                        data_exclusao: new Date().toISOString()
+                    })
+                    .in('id', idsToPurge);
+
+                if (updateError) {
+                    console.error('Erro ao mover liberações para o histórico:', updateError);
+                } else {
+                    console.log(`Foram movidas ${data.length} liberações antigas para o histórico.`);
+                }
+            }
+        }
+
         // Lógica para verificar a URL imediatamente e definir a sessão
         const handleAuthCallback = async () => {
             const hash = window.location.hash;
@@ -1264,7 +1302,9 @@
 
                 accessControlTitle.style.opacity = '0'; // Esconde o título
                 accessControlTitle.style.pointerEvents = 'none'; // Impede interação
-
+                
+                // Limpa as liberações antigas antes de buscar
+                await purgeOldLiberacoes();
                 setInitialDateAndFetch(); // Busca os dados de liberação automaticamente
                 
             } else {
