@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Cadastros</title>
+    <!-- Inclui a biblioteca Tailwind CSS para estilização -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Estilos para o modal de confirmação */
+        .modal {
+            display: none; /* Escondido por padrão */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #1f2937;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #4b5563;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        /* Estilos da barra de rolagem para navegadores baseados em WebKit */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #374151;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #4b5563;
+            border-radius: 10px;
+            border: 2px solid #374151;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: #5d6776;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300 min-h-screen flex items-center justify-center p-4">
+
+    <!-- Container do Título "Controle de Acessos" -->
+    <div id="access-control-title" class="fixed top-0 left-0 w-full p-4 text-center bg-gray-900 z-50 transition-opacity duration-300">
+        <h1 class="text-3xl font-bold text-gray-100">Controle de Acessos</h1>
+    </div>
+
+    <!-- Container principal que alterna entre o formulário de login e a página de conteúdo -->
+    <div id="auth-container" class="w-full max-w-sm bg-gray-800 p-8 rounded-xl shadow-lg transition-all duration-300">
+        <!-- Título do formulário -->
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-100" id="form-title">Faça Login</h1>
+        </div>
+
+        <!-- Formulário de Autenticação -->
+        <form id="auth-form" class="space-y-4">
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-300">Email</label>
+                <input type="email" id="email" name="email" required autocomplete="email" class="mt-1 block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-300">Senha</label>
+                <div class="relative mt-1">
+                    <input type="password" id="password" name="password" required autocomplete="current-password" class="block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10">
+                    <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-gray-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div id="confirm-password-container" class="hidden">
+                <label for="confirm-password" class="block text-sm font-medium text-gray-300">Confirmar Senha</label>
+                <div class="relative mt-1">
+                    <input type="password" id="confirm-password-signup" name="confirm-password" class="block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10">
+                    <button type="button" id="toggle-confirm-password" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-gray-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div>
+                <button type="submit" id="submit-btn" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">Entrar</button>
+            </div>
+        </form>
+
+        <!-- Mensagens de Erro ou Sucesso -->
+        <div id="message" class="mt-4 text-center text-sm font-medium" style="display: none;"></div>
+        
+        <!-- Alternador entre login e cadastro, e botão de recuperação de senha -->
+        <div class="mt-6 text-center text-sm space-y-2">
+            <button id="toggle-auth" class="text-blue-400 hover:text-blue-300 transition duration-200 focus:outline-none">Ainda não tem uma conta? Cadastre-se</button>
+            <div id="forgot-password-container">
+                <button id="forgot-password-btn" class="text-blue-400 hover:text-blue-300 transition duration-200 focus:outline-none block w-full">Esqueci minha senha</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Página de Recuperação de Senha -->
+    <div id="password-recovery-container" class="hidden w-full max-w-sm bg-gray-800 p-8 rounded-xl shadow-lg transition-all duration-300">
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-100">Atualizar Senha</h1>
+        </div>
+        <form id="password-recovery-form" class="space-y-4">
+            <div>
+                <label for="new-password" class="block text-sm font-medium text-gray-300">Nova Senha</label>
+                <div class="relative mt-1">
+                    <input type="password" id="new-password" name="new-password" required class="block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10">
+                    <button type="button" id="toggle-new-password" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-gray-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div>
+                <label for="confirm-password" class="block text-sm font-medium text-gray-300">Confirmar Nova Senha</label>
+                <div class="relative mt-1">
+                    <input type="password" id="confirm-password-recovery" name="confirm-password" required class="block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10">
+                    <button type="button" id="toggle-confirm-recovery" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-gray-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div>
+                <button type="submit" id="update-password-btn" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">Atualizar Senha</button>
+            </div>
+        </form>
+        <div id="password-recovery-message" class="mt-4 text-center text-sm font-medium" style="display: none;"></div>
+    </div>
+
+    <!-- Páginas de conteúdo, visível apenas quando o usuário está autenticado -->
+    <div id="welcome-page" class="hidden w-full max-w-3xl bg-gray-800 p-8 rounded-xl shadow-lg mt-6">
+        <div class="text-center">
+            <h1 class="text-3xl font-bold text-gray-100 mb-4">Bem-vindo(a)!</h1>
+            <p id="user-email" class="text-md text-gray-400 mt-2"></p>
+            <div class="mt-6 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <button id="btn-liberacao" class="py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">Liberação</button>
+                <button id="sign-out" class="py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200">Sair</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Página de Histórico -->
+    <div id="historico-page" class="hidden w-full h-screen">
+        <div class="flex justify-between items-center mb-6">
+            <div class="fixed top-0 left-0 w-full bg-gray-800 p-4 shadow-lg z-50 flex flex-wrap justify-start items-center space-x-4 space-y-2 sm:space-y-0">
+                <button id="back-to-welcome-from-historico" class="py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" />
+                    </svg>
+                </button>
+                <!-- Campo de data visível para o calendário -->
+                <input type="date" id="historico-filter-date" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 transition duration-200">
+
+                <button id="historico-btn-filter-all" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 transition duration-200">Todas</button>
+                
+                <!-- Barra de pesquisa movida para a barra superior -->
+                <div class="mt-2 sm:mt-0 w-full sm:w-auto flex-grow flex items-center relative">
+                    <input type="text" id="historico-search-input" placeholder="Pesquisar..." class="w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                    <button id="historico-clear-search" class="absolute right-2 text-gray-400 hover:text-gray-200">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                       </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="fixed top-[7rem] left-12 right-12 bottom-12 bg-gray-800 rounded-xl shadow-lg p-8 overflow-y-auto">
+            <div id="historico-list" class="space-y-4">
+                <!-- Lista de liberações excluídas será renderizada aqui -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Página de Liberação -->
+    <div id="liberacao-page" class="hidden w-full h-screen">
+        <!-- Barra de navegação fixa no topo -->
+        <div class="fixed top-0 left-0 w-full bg-gray-800 p-4 shadow-lg z-50 flex flex-wrap justify-start items-center space-x-4 space-y-2 sm:space-y-0">
+            <button id="back-to-welcome" class="py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-200 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" />
+                </svg>
+            </button>
+            <button id="btn-historico" class="py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-200 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.03 21H7.97a2 2 0 01-1.99-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+            </button>
+
+            <!-- Campo de data visível para o calendário -->
+            <input type="date" id="filter-date" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 transition duration-200">
+
+            <button id="btn-filter-all" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 transition duration-200">Todas</button>
+            
+            <!-- Barra de pesquisa movida para a barra superior -->
+            <div class="mt-2 sm:mt-0 w-full sm:w-auto flex-grow flex items-center relative">
+                <input type="text" id="search-input" placeholder="Pesquisar..." class="w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                <button id="clear-search" class="absolute right-2 text-gray-400 hover:text-gray-200">
+                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                   </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Formulário de Adicionar/Editar Liberação -->
+        <form id="add-liberacao-form" class="fixed inset-0 hidden items-center justify-center z-[50] bg-black bg-opacity-50">
+            <div class="w-full max-w-lg bg-gray-700 p-6 rounded-lg shadow-md mt-16 space-y-4">
+                <h3 id="form-subtitle" class="text-lg font-bold text-gray-100">Adicionar Liberação</h3>
+                <div id="nomes-container">
+                    <div>
+                        <label for="nome" class="block text-sm font-medium text-gray-300">Nome</label>
+                        <div class="flex items-center space-x-2">
+                           <input type="text" name="nome" required class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                           <button type="button" id="add-nome-btn" class="p-2 rounded-full text-white bg-blue-600 hover:bg-blue-700">
+                               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                   <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                               </svg>
+                           </button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label for="periodo_inicio" class="block text-sm font-medium text-gray-300">Período de Início</label>
+                    <input type="date" id="periodo_inicio" name="periodo_inicio" class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                </div>
+                <div>
+                    <label for="periodo_fim" class="block text-sm font-medium text-gray-300">Período de Fim</label>
+                    <input type="date" id="periodo_fim" name="periodo_fim" class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="permanente" name="permanente" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                    <label for="permanente" class="ml-2 block text-sm text-gray-300">Liberação Permanente</label>
+                </div>
+                 <div class="flex items-center">
+                    <input type="checkbox" id="importante" name="importante" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                    <label for="importante" class="ml-2 block text-sm text-gray-300">Marcar como Importante</label>
+                </div>
+                <div>
+                    <label for="observacao" class="block text-sm font-medium text-gray-300">Observação</label>
+                    <textarea id="observacao" name="observacao" rows="3" class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200"></textarea>
+                </div>
+                <div>
+                     <label for="arquivo" class="block text-sm font-medium text-gray-300">Anexar Arquivo</label>
+                     <input type="file" id="arquivo" name="arquivo" class="mt-1 block w-full text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                </div>
+                <div class="flex space-x-4">
+                    <button type="submit" id="form-submit-btn" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">Salvar Liberação</button>
+                    <button type="button" id="form-cancel-btn" class="w-full flex justify-center py-2 px-4 border border-gray-500 rounded-lg shadow-sm text-sm font-medium text-gray-200 bg-gray-600 hover:bg-gray-500 transition duration-200">Cancelar</button>
+                </div>
+            </div>
+        </form>
+        
+        <div class="fixed top-[7rem] left-12 right-12 bottom-12 bg-gray-800 rounded-xl shadow-lg p-8 overflow-y-auto">
+            <div id="liberacoes-list" class="space-y-4">
+                <!-- Lista de liberações será renderizada aqui -->
+            </div>
+        </div>
+
+        <!-- Botão de adicionar liberação na parte inferior fixa -->
+        <div class="fixed bottom-4 right-4 z-40">
+            <button id="btn-add-liberacao" class="p-4 rounded-full shadow-lg text-white bg-emerald-500 hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div id="confirmation-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-lg font-bold text-gray-100 mb-4">Confirmar Exclusão</h3>
+            <p class="text-gray-300">Tem certeza de que deseja excluir esta liberação?</p>
+            <div class="modal-buttons">
+                <button id="confirm-delete-btn" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200">Sim, Excluir</button>
+                <button id="cancel-delete-btn" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-gray-200 bg-gray-600 hover:bg-gray-500 transition duration-200">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Mensagem de Erro -->
+    <div id="message-modal" class="modal">
+        <div class="modal-content relative">
+            <button id="close-message-modal" class="absolute top-2 right-2 text-gray-400 hover:text-gray-100 transition duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <h3 class="text-lg font-bold text-gray-100 mb-4">Atenção!</h3>
+            <p id="modal-message" class="text-gray-300"></p>
+        </div>
+    </div>
+
+
+    <!-- Script do Supabase (substitua a versão se necessário) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- JavaScript para a lógica do aplicativo -->
+    <script type="module">
+        // **IMPORTANTE**: Substitua 'VOTSUF_URL' e 'VOTSUF_ANON_KEY' pelas suas credenciais do projeto Supabase.
+        const supabaseUrl = 'https://otiueonsldxjnyfiaxwi.supabase.co'
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90aXVlb25zbGR4am55ZmlheHdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0MjY0OTIsImV4cCI6MjA3MzAwMjQ5Mn0.NV0KoizFYOzu8Pe47vYq1LR6Uy18iKobm06DVr5bt_k'
+        
+        // Inicializa o cliente Supabase
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+        // Seleção de elementos do DOM
+        const accessControlTitle = document.getElementById('access-control-title');
+        const authContainer = document.getElementById('auth-container');
+        const passwordRecoveryContainer = document.getElementById('password-recovery-container');
+        const passwordRecoveryForm = document.getElementById('password-recovery-form');
+        const passwordRecoveryMessage = document.getElementById('password-recovery-message');
+        const newPasswordInput = document.getElementById('new-password');
+        const confirmPasswordInput = document.getElementById('confirm-password-recovery');
+        const welcomePage = document.getElementById('welcome-page');
+        const liberacaoPage = document.getElementById('liberacao-page');
+        const historicoPage = document.getElementById('historico-page');
+        const historicoList = document.getElementById('historico-list');
+        const authForm = document.getElementById('auth-form');
+        const formTitle = document.getElementById('form-title');
+        const submitBtn = document.getElementById('submit-btn');
+        const toggleAuthBtn = document.getElementById('toggle-auth');
+        const userEmailElem = document.getElementById('user-email');
+        const signOutBtn = document.getElementById('sign-out');
+        const messageElem = document.getElementById('message');
+        const forgotPasswordBtn = document.getElementById('forgot-password-btn');
+        const forgotPasswordContainer = document.getElementById('forgot-password-container');
+        const btnLiberacao = document.getElementById('btn-liberacao');
+        const backToWelcomeBtn = document.getElementById('back-to-welcome');
+        const backToWelcomeFromHistoricoBtn = document.getElementById('back-to-welcome-from-historico');
+        const btnHistorico = document.getElementById('btn-historico');
+        const btnAddLiberacao = document.getElementById('btn-add-liberacao');
+        const addLiberacaoForm = document.getElementById('add-liberacao-form');
+        const liberacoesList = document.getElementById('liberacoes-list');
+        const permanenteCheckbox = document.getElementById('permanente');
+        const importanteCheckbox = document.getElementById('importante');
+        const periodoInicioInput = document.getElementById('periodo_inicio');
+        const periodoFimInput = document.getElementById('periodo_fim');
+        const validationMessage = document.getElementById('validation-message');
+        const formSubtitle = document.getElementById('form-subtitle');
+        const formSubmitBtn = document.getElementById('form-submit-btn');
+        const formCancelBtn = document.getElementById('form-cancel-btn');
+        const nomesContainer = document.getElementById('nomes-container');
+        const addNomeBtn = document.getElementById('add-nome-btn');
+        
+        // Novos elementos para os ícones de olho
+        const togglePasswordBtn = document.getElementById('toggle-password');
+        const toggleConfirmPasswordBtn = document.getElementById('toggle-confirm-password');
+        const toggleNewPasswordBtn = document.getElementById('toggle-new-password');
+        const toggleConfirmRecoveryBtn = document.getElementById('toggle-confirm-recovery');
+        
+        // Campos de senha
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordSignupInput = document.getElementById('confirm-password-signup');
+
+        // Modal elements
+        const confirmationModal = document.getElementById('confirmation-modal');
+        const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+        const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+        const messageModal = document.getElementById('message-modal');
+        const modalMessage = document.getElementById('modal-message');
+        const closeMessageModalBtn = document.getElementById('close-message-modal');
+
+        // Novos elementos de filtro
+        const btnFilterAll = document.getElementById('btn-filter-all');
+        const filterDateInput = document.getElementById('filter-date');
+        const searchInput = document.getElementById('search-input');
+        const clearSearchBtn = document.getElementById('clear-search');
+        
+        // Novos elementos de filtro para histórico
+        const historicoBtnFilterAll = document.getElementById('historico-btn-filter-all');
+        const historicoFilterDateInput = document.getElementById('historico-filter-date');
+        const historicoSearchInput = document.getElementById('historico-search-input');
+        const historicoClearSearchBtn = document.getElementById('historico-clear-search');
+
+        // Novo elemento para o anexo
+        const arquivoInput = document.getElementById('arquivo');
+
+
+        let isSigningUp = false;
+        let currentSession = null;
+        let liberacaoToDeleteId = null;
+        let liberacaoToEdit = null;
+        let currentFilterType = 'date';
+        let currentFilterDate = null;
+        const HISTORY_LIMIT = 50;
+        let searchTimeout;
+        let historicoSearchTimeout;
+
+        // Função para normalizar strings, removendo acentos e convertendo para minúsculas
+        function normalizeText(text) {
+            return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        }
+        
+        // Função para adicionar um novo campo de nome
+        function addNameInput() {
+            const newNameDiv = document.createElement('div');
+            newNameDiv.className = 'flex items-center space-x-2';
+            newNameDiv.innerHTML = `
+                <input type="text" name="nome" required class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                <button type="button" class="p-2 rounded-full text-red-400 hover:text-red-500 remove-name-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 11-2 0v6a1 1 0 112 0V8z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            `;
+            nomesContainer.appendChild(newNameDiv);
+        }
+        
+        // Função para alternar entre o formulário de login e cadastro
+        toggleAuthBtn.addEventListener('click', () => {
+            isSigningUp = !isSigningUp;
+            if (isSigningUp) {
+                formTitle.textContent = 'Crie uma Conta';
+                submitBtn.textContent = 'Cadastrar';
+                toggleAuthBtn.textContent = 'Já tem uma conta? Faça login';
+                forgotPasswordContainer.style.display = 'none';
+                document.getElementById('confirm-password-container').classList.remove('hidden');
+            } else {
+                formTitle.textContent = 'Faça Login';
+                submitBtn.textContent = 'Entrar';
+                toggleAuthBtn.textContent = 'Ainda não tem uma conta? Cadastre-se';
+                forgotPasswordContainer.style.display = 'block';
+                document.getElementById('confirm-password-container').classList.add('hidden');
+            }
+            showMessage(''); // Limpa a mensagem ao alternar
+        });
+
+        // Função para exibir mensagens na tela
+        function showMessage(text, isError = false) {
+            messageElem.textContent = text;
+            messageElem.style.display = text ? 'block' : 'none';
+            messageElem.className = `mt-4 text-center text-sm font-medium ${isError ? 'text-red-500' : 'text-green-500'}`;
+        }
+        
+        // Função para exibir mensagens de validação
+        function showValidationMessage(text) {
+            modalMessage.textContent = text || 'Por favor, preencha todos os campos obrigatórios.';
+            messageModal.style.display = 'flex';
+        }
+
+        closeMessageModalBtn.addEventListener('click', () => {
+            messageModal.style.display = 'none';
+        });
+
+        // Lógica para lidar com o envio do formulário de autenticação
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = passwordInput.value;
+            
+            if (isSigningUp) {
+                const confirmPassword = confirmPasswordSignupInput.value;
+                if (password !== confirmPassword) {
+                    showMessage('As senhas não coincidem. Tente novamente.', true);
+                    return;
+                }
+                
+                // Lógica de cadastro
+                const { data, error } = await supabase.auth.signUp({ email, password });
+                if (error) {
+                    showMessage(error.message, true);
+                } else {
+                    showMessage('Confirme seu email. Verifique sua caixa de entrada.');
+                    console.log('Dados do usuário:', data);
+                }
+            } else {
+                // Lógica de login
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) {
+                    showMessage(error.message, true);
+                } else {
+                    showMessage('Login bem-sucedido!');
+                    console.log('Dados do usuário:', data);
+                }
+            }
+        });
+        
+        // Lógica de redefinição de senha
+        forgotPasswordBtn.addEventListener('click', async () => {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                showMessage('Por favor, insira seu email para recuperar a senha.', true);
+                return;
+            }
+
+            const { data, error } = await supabase.auth.resetPasswordForEmail(email);
+            if (error) {
+                    showMessage(error.message, true);
+            } else {
+                showMessage('Verifique seu e-mail para o link de redefinição de senha.');
+            }
+        });
+        
+        // Lógica para lidar com o formulário de recuperação de senha
+        passwordRecoveryForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newPassword = newPasswordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+
+            if (newPassword !== confirmPassword) {
+                passwordRecoveryMessage.textContent = 'As senhas não coincidem. Tente novamente.';
+                passwordRecoveryMessage.style.display = 'block';
+                passwordRecoveryMessage.className = 'mt-4 text-center text-sm font-medium text-red-500';
+                return;
+            }
+
+            const { data, error } = await supabase.auth.updateUser({
+                password: newPassword
+            });
+
+            if (error) {
+                passwordRecoveryMessage.textContent = error.message;
+                passwordRecoveryMessage.style.display = 'block';
+                passwordRecoveryMessage.className = 'mt-4 text-center text-sm font-medium text-red-500';
+            } else {
+                passwordRecoveryMessage.textContent = 'Senha atualizada com sucesso! Você já pode entrar.';
+                passwordRecoveryMessage.style.display = 'block';
+                passwordRecoveryMessage.className = 'mt-4 text-center text-sm font-medium text-green-500';
+                setTimeout(() => {
+                    window.location.hash = ''; // Limpa o hash da URL
+                    window.location.reload(); // Recarrega a página para o estado inicial
+                }, 2000);
+            }
+        });
+
+        // Lógica para alternar a visibilidade da senha
+        function setupPasswordToggle(inputElem, buttonElem) {
+            buttonElem.addEventListener('click', () => {
+                const type = inputElem.type === 'password' ? 'text' : 'password';
+                inputElem.type = type;
+                
+                // Altera o ícone do olho
+                if (type === 'password') {
+                    buttonElem.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                        </svg>`;
+                } else {
+                    buttonElem.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-14-14z" clip-rule="evenodd" />
+                        <path d="M10 4.5C6.703 4.5 3.868 6.643 2.54 9.516l-.078.184.078.184C3.868 13.357 6.703 15.5 10 15.5c3.297 0 6.132-2.143 7.46-4.984l.078-.184-.078-.184C16.132 6.643 13.297 4.5 10 4.5zM10 8a2 2 0 100 4 2 2 0 000-4z" />
+                    </svg>`;
+                }
+            });
+        }
+        setupPasswordToggle(passwordInput, togglePasswordBtn);
+        setupPasswordToggle(confirmPasswordSignupInput, toggleConfirmPasswordBtn);
+        setupPasswordToggle(newPasswordInput, toggleNewPasswordBtn);
+        setupPasswordToggle(confirmPasswordInput, toggleConfirmRecoveryBtn);
+
+
+        // Lógica de logout
+        signOutBtn.addEventListener('click', async () => {
+            const { error } = await supabase.auth.signOut();
+            if (error) {
+                showMessage(error.message, true);
+            }
+        });
+
+        // Lógica para alternar para a página de Liberação
+        btnLiberacao.addEventListener('click', () => {
+            welcomePage.style.display = 'none';
+            liberacaoPage.style.display = 'flex';
+            historicoPage.style.display = 'none';
+            setInitialDateAndFetch();
+        });
+        
+        // Lógica para alternar para a página de Histórico
+        btnHistorico.addEventListener('click', () => {
+            welcomePage.style.display = 'none';
+            liberacaoPage.style.display = 'none';
+            historicoPage.style.display = 'flex';
+            fetchHistorico(currentSession, 'all');
+        });
+
+
+        // Lógica para voltar para a página de Bem-vindo
+        backToWelcomeBtn.addEventListener('click', () => {
+            welcomePage.style.display = 'block';
+            liberacaoPage.style.display = 'none';
+            historicoPage.style.display = 'none';
+        });
+
+        // Lógica para voltar da página de histórico para a página de liberação
+        backToWelcomeFromHistoricoBtn.addEventListener('click', () => {
+            historicoPage.style.display = 'none';
+            liberacaoPage.style.display = 'block';
+        });
+
+        // Lógica para mostrar/esconder o formulário de adicionar liberação
+        btnAddLiberacao.addEventListener('click', () => {
+            addLiberacaoForm.style.display = 'flex';
+            formSubtitle.textContent = 'Adicionar Liberação';
+            formSubmitBtn.textContent = 'Salvar Liberação';
+            addLiberacaoForm.reset();
+            nomesContainer.innerHTML = `
+                <div>
+                    <label for="nome" class="block text-sm font-medium text-gray-300">Nome</label>
+                    <div class="flex items-center space-x-2">
+                       <input type="text" name="nome" required class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                       <button type="button" id="add-nome-btn" class="p-2 rounded-full text-white bg-blue-600 hover:bg-blue-700">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                               <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                           </svg>
+                       </button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('add-nome-btn').addEventListener('click', addNameInput);
+            liberacaoToEdit = null;
+        });
+
+        // Lógica para cancelar a edição
+        formCancelBtn.addEventListener('click', () => {
+            addLiberacaoForm.style.display = 'none';
+            addLiberacaoForm.reset();
+            liberacaoToEdit = null;
+        });
+
+        // Lógica para habilitar/desabilitar campos de data
+        permanenteCheckbox.addEventListener('change', (event) => {
+            const isChecked = event.target.checked;
+            periodoInicioInput.disabled = isChecked;
+            periodoFimInput.disabled = isChecked;
+            if (isChecked) {
+                periodoInicioInput.value = '';
+                periodoFimInput.value = '';
+            }
+        });
+
+        // Lógica para lidar com o envio do formulário de liberação
+        addLiberacaoForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Coleta todos os nomes do formulário
+            const nomesInputs = nomesContainer.querySelectorAll('input[name="nome"]');
+            const nomes = Array.from(nomesInputs).map(input => input.value).filter(nome => nome.trim() !== '');
+            
+            if (nomes.length === 0) {
+                 showValidationMessage('Por favor, insira pelo menos um nome.');
+                 return;
+            }
+
+            const permanente = document.getElementById('permanente').checked;
+            const importante = document.getElementById('importante').checked;
+            const observacao = document.getElementById('observacao').value;
+            const file = arquivoInput.files[0];
+            
+            let periodo_inicio = null;
+            let periodo_fim = null;
+
+            if (!permanente) {
+                const inicioValue = periodoInicioInput.value;
+                const fimValue = periodoFimInput.value;
+
+                if (!inicioValue || !fimValue) {
+                    showValidationMessage('Por favor, preencha o período de início e fim ou marque a opção "Liberação Permanente".');
+                    return;
+                }
+                
+                const today = new Date().toISOString().split('T')[0];
+                if (inicioValue < today) {
+                    showValidationMessage('Não é possível criar uma liberação para uma data anterior à data atual.');
+                    return;
+                }
+                
+                if (fimValue < inicioValue) {
+                    showValidationMessage('O "Período de Fim" não pode ser anterior ao "Período de Início".');
+                    return;
+                }
+                
+                periodo_inicio = inicioValue;
+                periodo_fim = fimValue;
+            }
+            
+            let filePath = null;
+
+            if (file) {
+                 const fileName = `${Date.now()}-${file.name}`;
+                 filePath = `${currentSession.user.id}/${fileName}`;
+
+                 const { error: uploadError } = await supabase
+                     .storage
+                     .from('liberacoes_anexos')
+                     .upload(filePath, file);
+
+                 if (uploadError) {
+                     console.error('Erro ao fazer upload do arquivo:', uploadError);
+                     showValidationMessage('Erro ao fazer upload do arquivo.');
+                     return;
+                 }
+            }
+
+            const payload = { 
+                nome: nomes, 
+                permanente, 
+                importante, 
+                periodo_inicio, 
+                periodo_fim, 
+                observacao, 
+                criador_nome: currentSession.user.email,
+                anexo_url: filePath ? supabase.storage.from('liberacoes_anexos').getPublicUrl(filePath).data.publicUrl : null
+            };
+
+            if (liberacaoToEdit) {
+                // Se a liberação está sendo reativada, atualiza o status de excluída
+                if (formSubmitBtn.textContent === 'Reativar Liberação') {
+                    payload.excluida = false;
+                    payload.data_exclusao = null;
+                    payload.excluido_por = null;
+                }
+
+                const { data, error } = await supabase
+                    .from('liberacoes')
+                    .update(payload)
+                    .eq('id', liberacaoToEdit.id);
+
+                if (error) {
+                    console.error('Erro ao editar a liberação:', error);
+                    showValidationMessage('Erro ao editar a liberação. Por favor, verifique a base de dados.');
+                } else {
+                    showMessage('Liberação editada com sucesso!');
+                    liberacaoToEdit = null; // Limpa o estado de edição
+                    addLiberacaoForm.style.display = 'none';
+                    addLiberacaoForm.reset();
+                    if (historicoPage.style.display !== 'none') {
+                        fetchHistorico(currentSession);
+                    } else {
+                        fetchLiberacoes(currentSession, currentFilterType, currentFilterDate);
+                    }
+                }
+
+            } else {
+                payload.user_id = currentSession.user.id;
+                const { data, error } = await supabase
+                    .from('liberacoes')
+                    .insert([payload]);
+
+                if (error) {
+                    console.error('Erro ao salvar a liberação:', error);
+                    showValidationMessage('Erro ao salvar a liberação. Por favor, verifique a tabela na base de dados.');
+                } else {
+                    showMessage('Liberação adicionada com sucesso!');
+                    addLiberacaoForm.reset();
+                    addLiberacaoForm.style.display = 'none';
+                    fetchLiberacoes(currentSession, currentFilterType, currentFilterDate); // Atualiza a lista
+                }
+            }
+        });
+        
+        // Lógica para editar uma liberação
+        async function editLiberacao(id) {
+            const { data, error } = await supabase
+                .from('liberacoes')
+                .select('*')
+                .eq('id', id)
+                .single();
+
+            if (error) {
+                console.error('Erro ao buscar a liberação para edição:', error);
+                return;
+            }
+
+            liberacaoToEdit = data;
+            
+            // Preenche o formulário com os dados da liberação
+            nomesContainer.innerHTML = '';
+            liberacaoToEdit.nome.forEach(nome => {
+                const newNameDiv = document.createElement('div');
+                newNameDiv.className = 'flex items-center space-x-2';
+                newNameDiv.innerHTML = `
+                    <input type="text" name="nome" required value="${nome}" class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                    <button type="button" class="p-2 rounded-full text-red-400 hover:text-red-500 remove-name-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 11-2 0v6a1 1 0 112 0V8z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            `;
+            nomesContainer.appendChild(newNameDiv);
+        });
+        document.getElementById('add-nome-btn').addEventListener('click', addNameInput);
+        
+        document.getElementById('permanente').checked = liberacaoToEdit.permanente;
+        document.getElementById('importante').checked = liberacaoToEdit.importante;
+        document.getElementById('observacao').value = liberacaoToEdit.observacao;
+
+        // Habilita/desabilita os campos de data
+        permanenteCheckbox.dispatchEvent(new Event('change'));
+        if (!liberacaoToEdit.permanente) {
+            document.getElementById('periodo_inicio').value = liberacaoToEdit.periodo_inicio;
+            document.getElementById('periodo_fim').value = liberacaoToEdit.periodo_fim;
+        }
+
+        formSubtitle.textContent = 'Editar Liberação';
+        formSubmitBtn.textContent = 'Salvar Edição';
+        addLiberacaoForm.style.display = 'flex';
+        }
+
+
+        // Lógica para excluir uma liberação (soft delete)
+        function deleteLiberacao(id) {
+            liberacaoToDeleteId = id;
+            confirmationModal.style.display = 'flex';
+        }
+
+        // Lógica para o botão de confirmação do modal
+        confirmDeleteBtn.addEventListener('click', async () => {
+            confirmationModal.style.display = 'none';
+            if (!liberacaoToDeleteId) return;
+
+            const { data, error } = await supabase
+                .from('liberacoes')
+                .update({ 
+                    excluida: true, 
+                    excluido_por: currentSession.user.email,
+                    data_exclusao: new Date().toISOString()
+                })
+                .eq('id', liberacaoToDeleteId);
+            
+            if (error) {
+                console.error('Erro ao excluir a liberação:', error);
+                showMessage('Erro ao excluir a liberação.', true);
+            } else {
+                showMessage('Liberação excluída com sucesso!');
+                fetchLiberacoes(currentSession, currentFilterType, currentFilterDate); // Atualiza a lista principal
+                // Verifica e remove a liberação mais antiga se o limite for excedido
+                checkAndPurgeHistory();
+            }
+
+            liberacaoToDeleteId = null;
+        });
+
+        // Lógica para o botão de cancelar do modal
+        cancelDeleteBtn.addEventListener('click', () => {
+            confirmationModal.style.display = 'none';
+            liberacaoToDeleteId = null;
+        });
+
+        // Função para reativar uma liberação (leva para a tela de edição)
+        async function reativarLiberacao(id) {
+            await editLiberacao(id); // Usa a mesma função de edição para carregar os dados
+            formSubtitle.textContent = 'Reativar Liberação';
+            formSubmitBtn.textContent = 'Reativar Liberação';
+            // Garante que o campo de data de início esteja vazio para ser preenchido
+            periodoInicioInput.value = '';
+            // Desabilita o campo de permanente
+            permanenteCheckbox.checked = false;
+            permanenteCheckbox.disabled = true;
+            periodoInicioInput.disabled = false;
+            periodoFimInput.disabled = false;
+        }
+        
+        // Função para verificar e remover o histórico mais antigo se o limite for excedido
+        async function checkAndPurgeHistory() {
+            const { data, error } = await supabase
+                .from('liberacoes')
+                .select('id, data_exclusao')
+                .eq('excluida', true)
+                .order('data_exclusao', { ascending: true });
+
+            if (error) {
+                console.error('Erro ao verificar o histórico:', error);
+                return;
+            }
+
+            if (data && data.length > HISTORY_LIMIT) {
+                const liberacaoParaExcluir = data[0];
+                const { error: deleteError } = await supabase
+                    .from('liberacoes')
+                    .delete()
+                    .eq('id', liberacaoParaExcluir.id);
+
+                if (deleteError) {
+                    console.error('Erro ao excluir permanentemente a liberação:', deleteError);
+                } else {
+                    console.log('Liberação mais antiga excluída permanentemente.');
+                }
+            }
+        }
+        
+        // Função para buscar e exibir as liberações excluídas (histórico)
+        async function fetchHistorico(session, filterType = 'all', date = null, searchTerm = null) {
+            
+            historicoBtnFilterAll.classList.remove('bg-indigo-600');
+            historicoFilterDateInput.classList.remove('bg-indigo-600');
+            
+            let query = supabase
+                .from('liberacoes')
+                .select('*')
+                .eq('excluida', true)
+                .order('data_exclusao', { ascending: false });
+
+            switch (filterType) {
+                case 'all':
+                    historicoBtnFilterAll.classList.add('bg-indigo-600');
+                    break;
+                case 'date':
+                    historicoFilterDateInput.classList.add('bg-indigo-600');
+                    // Filtra pela data de exclusão
+                    if (date) {
+                         const startOfDay = new Date(date + 'T00:00:00Z').toISOString();
+                         const endOfDay = new Date(date + 'T23:59:59Z').toISOString();
+                         query = query.gte('data_exclusao', startOfDay).lte('data_exclusao', endOfDay);
+                    }
+                    break;
+            }
+
+            const { data, error } = await query;
+
+            if (error) {
+                console.error('Erro ao buscar histórico:', error);
+                historicoList.innerHTML = `<p class="text-center text-red-500">Erro ao carregar o histórico.</p>`;
+                return;
+            }
+            
+            let filteredData = data;
+            if (searchTerm && searchTerm.trim() !== '') {
+                const normalizedSearchTerm = normalizeText(searchTerm);
+                filteredData = data.filter(liberacao => {
+                    let nomeToSearch = liberacao.nome;
+                    if (typeof nomeToSearch === 'string' && nomeToSearch.startsWith('[') && nomeToSearch.endsWith(']')) {
+                        try {
+                            const parsed = JSON.parse(nomeToSearch);
+                            if (Array.isArray(parsed)) {
+                                nomeToSearch = parsed.join(' ');
+                            }
+                        } catch (e) {
+                            // Ignorar erro de parse
+                        }
+                    } else if (Array.isArray(nomeToSearch)) {
+                        nomeToSearch = nomeToSearch.join(' ');
+                    }
+                    return normalizeText(nomeToSearch).includes(normalizedSearchTerm);
+                });
+            }
+
+
+            historicoList.innerHTML = '';
+            if (filteredData && filteredData.length > 0) {
+                filteredData.forEach(liberacao => {
+                    const cardClasses = 'bg-gray-700 p-4 rounded-lg shadow-lg transition-all duration-300 hover:bg-gray-600';
+                    const liberacaoCard = document.createElement('div');
+                    liberacaoCard.className = cardClasses;
+
+                    let nomesParaExibir = liberacao.nome;
+                    if (typeof nomesParaExibir === 'string' && nomesParaExibir.startsWith('[') && nomesParaExibir.endsWith(']')) {
+                        try {
+                            nomesParaExibir = JSON.parse(nomesParaExibir);
+                        } catch (e) {
+                            // Ignorar erro de parse
+                        }
+                    }
+                    const nomeParaExibirFinal = Array.isArray(nomesParaExibir) ? nomesParaExibir.join(', ') : nomesParaExibir;
+
+                    // Formata as datas para dd/mm/aaaa
+                    const dataExclusaoFormatada = new Date(liberacao.data_exclusao).toLocaleDateString('pt-br');
+                    const periodoInicioFormatado = liberacao.periodo_inicio ? new Date(liberacao.periodo_inicio + 'T00:00:00').toLocaleDateString('pt-br') : '';
+                    const periodoFimFormatado = liberacao.periodo_fim ? new Date(liberacao.periodo_fim + 'T00:00:00').toLocaleDateString('pt-br') : '';
+
+                    const observacaoParaExibir = liberacao.observacao || '';
+
+                    liberacaoCard.innerHTML = `
+                        <h3 class="font-bold text-gray-100">${nomeParaExibirFinal}</h3>
+                        <p class="text-sm text-gray-400">Criado por: ${liberacao.criador_nome}</p>
+                        <p class="text-sm text-gray-400">Período: ${liberacao.permanente ? 'Permanente' : `${periodoInicioFormatado} a ${periodoFimFormatado}`}</p>
+                        <p class="text-sm text-gray-500 mt-2">Observação: ${observacaoParaExibir}</p>
+                        <p class="text-sm text-red-400 mt-2">Excluída por: ${liberacao.excluido_por} em ${dataExclusaoFormatada}</p>
+                    `;
+                    historicoList.appendChild(liberacaoCard);
+                });
+            } else {
+                historicoList.innerHTML = `<p class="text-center text-gray-500">Nenhum item no histórico.</p>`;
+            }
+        }
+        
+        function updateFilterButtons(selectedFilter) {
+            btnFilterAll.classList.remove('bg-indigo-600');
+            filterDateInput.classList.remove('bg-indigo-600');
+            
+            switch (selectedFilter) {
+                case 'all':
+                    btnFilterAll.classList.add('bg-indigo-600');
+                    break;
+                case 'date':
+                    filterDateInput.classList.add('bg-indigo-600');
+                    break;
+            }
+        }
+
+
+        // Função para buscar e exibir as liberações com filtros
+        async function fetchLiberacoes(session, filterType = 'date', date = null, searchTerm = null) {
+            updateFilterButtons(currentFilterType);
+            currentFilterType = filterType;
+            currentFilterDate = date;
+
+            let query = supabase
+                .from('liberacoes')
+                .select('*')
+                .eq('excluida', false);
+
+            if (filterType === 'date' && date) {
+                query = query.or(`permanente.eq.true,periodo_inicio.eq.${date}`);
+            }
+            
+            query = query.order('periodo_inicio', { ascending: true })
+                         .order('nome', { ascending: true });
+
+
+            const { data, error } = await query;
+
+            if (error) {
+                console.error('Erro ao buscar liberações:', error);
+                return;
+            }
+
+            let filteredData = data;
+            if (searchTerm && searchTerm.trim() !== '') {
+                const normalizedSearchTerm = normalizeText(searchTerm);
+                filteredData = data.filter(liberacao => {
+                    let nomeToSearch = liberacao.nome;
+                    if (typeof nomeToSearch === 'string' && nomeToSearch.startsWith('[') && nomeToSearch.endsWith(']')) {
+                        try {
+                            const parsed = JSON.parse(nomeToSearch);
+                            if (Array.isArray(parsed)) {
+                                nomeToSearch = parsed.join(' ');
+                            }
+                        } catch (e) {
+                            // Ignorar erro de parse
+                        }
+                    } else if (Array.isArray(nomeToSearch)) {
+                        nomeToSearch = nomeToSearch.join(' ');
+                    }
+                    return normalizeText(nomeToSearch).includes(normalizedSearchTerm);
+                });
+            }
+
+            liberacoesList.innerHTML = ''; // Limpa a lista antes de renderizar
+            if (filteredData && filteredData.length > 0) {
+                filteredData.forEach(liberacao => {
+                    const cardClasses = 'bg-gray-700 p-4 rounded-lg shadow-lg transition-all duration-300 hover:bg-gray-600';
+                    const importantIcon = liberacao.importante
+                        ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-400 mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.487 0l5.58 9.92c.754 1.346-.245 3.06-1.745 3.06H4.42c-1.5 0-2.498-1.714-1.746-3.06l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                           </svg>`
+                        : '';
+                    
+                    const liberacaoCard = document.createElement('div');
+                    liberacaoCard.className = cardClasses;
+                    
+                    const actionsContainer = document.createElement('div');
+                    actionsContainer.className = 'flex items-center space-x-2';
+                    
+                    const editButton = document.createElement('button');
+                    editButton.className = 'text-blue-400 hover:text-blue-500 transition duration-200';
+                    editButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zm-4.646 2.586l2.828 2.828-5.756 5.757a4 4 0 01-1.328 1.03l-1.35 1.35-.793-.793 1.35-1.35c.376-.376.694-.852 1.03-1.328l5.756-5.757z" />
+                              </svg>`;
+                    editButton.onclick = () => editLiberacao(liberacao.id);
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.className = 'text-red-400 hover:text-red-500 transition duration-200';
+                    deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.03 21H7.97a2 2 0 01-1.99-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>`;
+                    deleteButton.onclick = () => deleteLiberacao(liberacao.id);
+
+                    actionsContainer.appendChild(editButton);
+                    actionsContainer.appendChild(deleteButton);
+                    
+                    // Formata as datas para dd/mm/aaaa
+                    const periodoInicioFormatado = liberacao.periodo_inicio ? new Date(liberacao.periodo_inicio + 'T00:00:00').toLocaleDateString('pt-br') : '';
+                    const periodoFimFormatado = liberacao.periodo_fim ? new Date(liberacao.periodo_fim + 'T00:00:00').toLocaleDateString('pt-br') : '';
+
+                    let nomesParaExibir = liberacao.nome;
+                    if (typeof nomesParaExibir === 'string' && nomesParaExibir.startsWith('[') && nomesParaExibir.endsWith(']')) {
+                        try {
+                            nomesParaExibir = JSON.parse(nomesParaExibir);
+                        } catch (e) {
+                            // Ignorar erro de parse
+                        }
+                    }
+                    const nomeParaExibirFinal = Array.isArray(nomesParaExibir) ? nomesParaExibir.join(', ') : nomesParaExibir;
+
+                    const observacaoParaExibir = liberacao.observacao || '';
+
+                    const detailsContainer = document.createElement('div');
+                    detailsContainer.innerHTML = `
+                        <p class="text-sm text-gray-400">
+                            Período: ${liberacao.permanente ? 'Permanente' : `${periodoInicioFormatado} a ${periodoFimFormatado}`}
+                        </p>
+                        <p class="text-sm text-gray-500 mt-2">Observação: ${observacaoParaExibir}</p>
+                        <p class="text-sm text-gray-400 mt-2">Criado por: ${liberacao.criador_nome}</p>
+                        ${liberacao.anexo_url ? `<a href="${liberacao.anexo_url}" target="_blank" class="text-sm text-blue-400 hover:underline">Ver Anexo</a>` : ''}
+                    `;
+                    
+                    const headerContainer = document.createElement('div');
+                    headerContainer.className = 'flex items-center justify-between';
+                    headerContainer.innerHTML = `
+                        <div class="flex items-center">
+                            ${importantIcon}
+                            <h3 class="font-bold text-gray-100">${nomeParaExibirFinal}</h3>
+                        </div>
+                    `;
+                    headerContainer.appendChild(actionsContainer);
+
+                    liberacaoCard.appendChild(headerContainer);
+                    liberacaoCard.appendChild(detailsContainer);
+                    liberacoesList.appendChild(liberacaoCard);
+                });
+            } else {
+                liberacoesList.innerHTML = `<p class="text-center text-gray-500">Nenhuma liberação encontrada.</p>`;
+            }
+        }
+
+        // Adiciona listeners para os botões e input de filtro
+        btnFilterAll.addEventListener('click', () => {
+            if (currentSession) {
+                fetchLiberacoes(currentSession, 'all', null, searchInput.value);
+            }
+        });
+
+        filterDateInput.addEventListener('change', (event) => {
+            if (currentSession) {
+                fetchLiberacoes(currentSession, 'date', event.target.value, searchInput.value);
+            }
+        });
+
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            if (currentSession) {
+                fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, '');
+            }
+        });
+        
+        searchInput.addEventListener('input', (event) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                if (currentSession) {
+                    fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, event.target.value);
+                }
+            }, 500); // 500ms de atraso
+        });
+        
+        // Adiciona listeners para os botões e input de filtro do histórico
+        historicoBtnFilterAll.addEventListener('click', () => {
+            if (currentSession) {
+                fetchHistorico(currentSession, 'all', null, historicoSearchInput.value);
+            }
+        });
+
+        historicoFilterDateInput.addEventListener('change', (event) => {
+            if (currentSession) {
+                fetchHistorico(currentSession, 'date', event.target.value, historicoSearchInput.value);
+            }
+        });
+
+        historicoClearSearchBtn.addEventListener('click', () => {
+            historicoSearchInput.value = '';
+            if (currentSession) {
+                fetchHistorico(currentSession, 'all', historicoFilterDateInput.value, '');
+            }
+        });
+
+        historicoSearchInput.addEventListener('input', (event) => {
+            clearTimeout(historicoSearchTimeout);
+            historicoSearchTimeout = setTimeout(() => {
+                if (currentSession) {
+                    fetchHistorico(currentSession, 'all', historicoFilterDateInput.value, event.target.value);
+                }
+            }, 500); // 500ms de atraso
+        });
+
+        // Função para definir a data inicial e buscar as liberações
+        function setInitialDateAndFetch() {
+            const today = new Date().toISOString().split('T')[0];
+            filterDateInput.value = today;
+            updateFilterButtons('date');
+            fetchLiberacoes(currentSession, 'date', today);
+        }
+
+        // NOVO: Adiciona um listener para o hash da URL
+        const handleAuthCallback = async () => {
+          const hash = window.location.hash;
+          if (hash.includes('access_token')) {
+            const params = new URLSearchParams(hash.substring(1));
+            const accessToken = params.get('access_token');
+            const refreshToken = params.get('refresh_token');
+
+            if (accessToken && refreshToken) {
+              try {
+                // Tenta definir a sessão com os tokens do URL
+                const { data, error } = await supabase.auth.setSession({
+                  access_token: accessToken,
+                  refresh_token: refreshToken,
+                });
+
+                if (error) {
+                  console.error('Erro ao definir a sessão:', error);
+                  showMessage('Erro ao fazer login. Tente novamente.', true);
+                } else {
+                  console.log('Sessão definida com sucesso:', data);
+                }
+              } catch (err) {
+                console.error('Erro ao processar tokens da URL:', err);
+                showMessage('Ocorreu um erro inesperado. Tente novamente.', true);
+              } finally {
+                // Limpa os tokens do URL para maior segurança
+                window.history.replaceState({}, document.title, window.location.pathname);
+              }
+            }
+          }
+        };
+
+        // Chama a função de tratamento de URL ao carregar a página
+        handleAuthCallback();
+
+
+        // Listener de estado de autenticação do Supabase
+        supabase.auth.onAuthStateChange((event, session) => {
+            console.log('Evento de autenticação:', event);
+            currentSession = session;
+
+            if (event === 'PASSWORD_RECOVERY') {
+                authContainer.style.display = 'none';
+                welcomePage.style.display = 'none';
+                liberacaoPage.style.display = 'none';
+                historicoPage.style.display = 'none';
+                passwordRecoveryContainer.style.display = 'flex';
+                accessControlTitle.style.opacity = '0';
+                accessControlTitle.style.pointerEvents = 'none';
+                return;
+            }
+            
+            // Lógica para quando o usuário está logado
+            if (session) {
+                authContainer.style.display = 'none';
+                passwordRecoveryContainer.style.display = 'none';
+                userEmailElem.textContent = `Usuário: ${session.user.email}`;
+                accessControlTitle.style.opacity = '0'; // Esconde o título
+                accessControlTitle.style.pointerEvents = 'none'; // Impede interação
+
+                const hasActivePage = liberacaoPage.style.display === 'flex' || historicoPage.style.display === 'flex';
+                if (hasActivePage) {
+                    return;
+                }
+                
+                welcomePage.style.display = 'block';
+                liberacaoPage.style.display = 'none';
+                historicoPage.style.display = 'none';
+
+                setInitialDateAndFetch();
+            } else {
+                // Usuário deslogado
+                authContainer.style.display = 'block';
+                passwordRecoveryContainer.style.display = 'none';
+                welcomePage.style.display = 'none';
+                liberacaoPage.style.display = 'none';
+                historicoPage.style.display = 'none';
+                accessControlTitle.style.opacity = '1'; // Mostra o título
+                accessControlTitle.style.pointerEvents = 'auto'; // Habilita interação
+            }
+            showMessage(''); // Limpa a mensagem ao mudar de estado
+        });
+    </script>
+</body>
+</html>
