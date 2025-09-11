@@ -239,20 +239,17 @@
         
         <!-- Formulário de Adicionar/Editar Liberação -->
         <form id="add-liberacao-form" class="fixed inset-0 hidden items-center justify-center z-[50] bg-black bg-opacity-50">
-            <div class="w-full max-w-lg bg-gray-700 p-6 rounded-lg shadow-md mt-16 space-y-4">
+            <div class="w-full max-w-lg bg-gray-700 p-6 rounded-lg shadow-md mt-16 space-y-4 max-h-[80vh] overflow-y-auto">
                 <h3 id="form-subtitle" class="text-lg font-bold text-gray-100">Adicionar Liberação</h3>
-                <div id="nomes-container">
-                    <div>
-                        <label for="nome" class="block text-sm font-medium text-gray-300">Nome</label>
-                        <div class="flex items-center space-x-2">
-                           <input type="text" name="nome" required class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-                           <button type="button" id="add-nome-btn" class="p-2 rounded-full text-white bg-blue-600 hover:bg-blue-700">
-                               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                   <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                               </svg>
-                           </button>
-                        </div>
-                    </div>
+                <div id="nomes-container" class="space-y-2">
+                    <!-- Campos de nome serão adicionados dinamicamente aqui -->
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" id="add-nome-btn" class="p-2 rounded-full text-white bg-blue-600 hover:bg-blue-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
                 </div>
                 <div>
                     <label for="periodo_inicio" class="block text-sm font-medium text-gray-300">Período de Início</label>
@@ -429,11 +426,11 @@
         }
         
         // Função para adicionar um novo campo de nome
-        function addNameInput() {
+        function addNameInput(value = '') {
             const newNameDiv = document.createElement('div');
             newNameDiv.className = 'flex items-center space-x-2';
             newNameDiv.innerHTML = `
-                <input type="text" name="nome" required class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                <input type="text" name="nome" required value="${value}" class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
                 <button type="button" class="p-2 rounded-full text-red-400 hover:text-red-500 remove-name-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 11-2 0v6a1 1 0 112 0V8z" clip-rule="evenodd" />
@@ -443,6 +440,23 @@
             nomesContainer.appendChild(newNameDiv);
         }
         
+        // Evento de delegação para os botões de remover nome
+        nomesContainer.addEventListener('click', (e) => {
+            if (e.target.closest('.remove-name-btn')) {
+                e.preventDefault();
+                const parentDiv = e.target.closest('.flex');
+                if (parentDiv) {
+                    parentDiv.remove();
+                }
+            }
+        });
+        
+        // Listener para o botão de adicionar nome
+        addNomeBtn.addEventListener('click', () => {
+            addNameInput();
+        });
+
+
         // Função para alternar entre o formulário de login e cadastro
         toggleAuthBtn.addEventListener('click', () => {
             isSigningUp = !isSigningUp;
@@ -630,20 +644,8 @@
             formSubtitle.textContent = 'Adicionar Liberação';
             formSubmitBtn.textContent = 'Salvar Liberação';
             addLiberacaoForm.reset();
-            nomesContainer.innerHTML = `
-                <div>
-                    <label for="nome" class="block text-sm font-medium text-gray-300">Nome</label>
-                    <div class="flex items-center space-x-2">
-                       <input type="text" name="nome" required class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-                       <button type="button" id="add-nome-btn" class="p-2 rounded-full text-white bg-blue-600 hover:bg-blue-700">
-                           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                               <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                           </svg>
-                       </button>
-                    </div>
-                </div>
-            `;
-            document.getElementById('add-nome-btn').addEventListener('click', addNameInput);
+            nomesContainer.innerHTML = ''; // Limpa os campos de nome existentes
+            addNameInput(); // Adiciona o primeiro campo de nome
             liberacaoToEdit = null;
         });
 
@@ -801,36 +803,37 @@
             liberacaoToEdit = data;
             
             // Preenche o formulário com os dados da liberação
-            nomesContainer.innerHTML = '';
-            liberacaoToEdit.nome.forEach(nome => {
-                const newNameDiv = document.createElement('div');
-                newNameDiv.className = 'flex items-center space-x-2';
-                newNameDiv.innerHTML = `
-                    <input type="text" name="nome" required value="${nome}" class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-                    <button type="button" class="p-2 rounded-full text-red-400 hover:text-red-500 remove-name-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 11-2 0v6a1 1 0 112 0V8z" clip-rule="evenodd" />
-                    </svg>
-                </button>
-            `;
-            nomesContainer.appendChild(newNameDiv);
-        });
-        document.getElementById('add-nome-btn').addEventListener('click', addNameInput);
-        
-        document.getElementById('permanente').checked = liberacaoToEdit.permanente;
-        document.getElementById('importante').checked = liberacaoToEdit.importante;
-        document.getElementById('observacao').value = liberacaoToEdit.observacao;
+            nomesContainer.innerHTML = ''; // Limpa os campos de nome existentes
+            
+            // Corrige o tipo de dado para garantir que seja um array
+            let nomesDoBanco = liberacaoToEdit.nome;
+            if (typeof nomesDoBanco === 'string') {
+                try {
+                    nomesDoBanco = JSON.parse(nomesDoBanco);
+                } catch (e) {
+                    console.error('Erro ao converter nome para array:', e);
+                    nomesDoBanco = [nomesDoBanco]; // Fallback para um array de um único item
+                }
+            }
+            
+            nomesDoBanco.forEach(nome => {
+                addNameInput(nome); // Adiciona um campo para cada nome
+            });
+            
+            document.getElementById('permanente').checked = liberacaoToEdit.permanente;
+            document.getElementById('importante').checked = liberacaoToEdit.importante;
+            document.getElementById('observacao').value = liberacaoToEdit.observacao;
 
-        // Habilita/desabilita os campos de data
-        permanenteCheckbox.dispatchEvent(new Event('change'));
-        if (!liberacaoToEdit.permanente) {
-            document.getElementById('periodo_inicio').value = liberacaoToEdit.periodo_inicio;
-            document.getElementById('periodo_fim').value = liberacaoToEdit.periodo_fim;
-        }
+            // Habilita/desabilita os campos de data
+            permanenteCheckbox.dispatchEvent(new Event('change'));
+            if (!liberacaoToEdit.permanente) {
+                document.getElementById('periodo_inicio').value = liberacaoToEdit.periodo_inicio;
+                document.getElementById('periodo_fim').value = liberacaoToEdit.periodo_fim;
+            }
 
-        formSubtitle.textContent = 'Editar Liberação';
-        formSubmitBtn.textContent = 'Salvar Edição';
-        addLiberacaoForm.style.display = 'flex';
+            formSubtitle.textContent = 'Editar Liberação';
+            formSubmitBtn.textContent = 'Salvar Edição';
+            addLiberacaoForm.style.display = 'flex';
         }
 
 
