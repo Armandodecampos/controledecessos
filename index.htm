@@ -608,6 +608,16 @@
             const { error } = await supabase.auth.signOut();
             if (error) {
                 showMessage('Erro ao sair.', true);
+            } else {
+                 // ** Correção de segurança e UX **
+                // Esconde a tela de liberação e mostra a de login imediatamente
+                liberacaoPage.style.display = 'none';
+                historicoPage.style.display = 'none';
+                authContainer.style.display = 'block';
+                accessControlTitle.style.opacity = '1';
+                accessControlTitle.style.pointerEvents = 'auto';
+                showMessage('Você foi desconectado com sucesso.');
+                console.log('Logout bem-sucedido. Redirecionando a UI.');
             }
         });
 
@@ -1287,6 +1297,16 @@
             const { error } = await supabase.auth.signOut();
             if (error) {
                 showMessage('Erro ao sair.', true);
+            } else {
+                 // ** Correção de segurança e UX **
+                // Esconde a tela de liberação e mostra a de login imediatamente
+                liberacaoPage.style.display = 'none';
+                historicoPage.style.display = 'none';
+                authContainer.style.display = 'block';
+                accessControlTitle.style.opacity = '1';
+                accessControlTitle.style.pointerEvents = 'auto';
+                showMessage('Você foi desconectado com sucesso.');
+                console.log('Logout bem-sucedido. Redirecionando a UI.');
             }
         });
     </script>
