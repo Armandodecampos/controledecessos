@@ -65,6 +65,11 @@
 </head>
 <body class="bg-gray-900 text-gray-300 min-h-screen flex items-center justify-center p-4">
 
+    <!-- Container do Título "Controle de Acessos" -->
+    <div id="access-control-title" class="fixed top-0 left-0 w-full p-4 text-center bg-gray-900 z-50 transition-opacity duration-300">
+        <h1 class="text-3xl font-bold text-gray-100">Controle de Acessos</h1>
+    </div>
+
     <!-- Container principal que alterna entre o formulário de login e a página de conteúdo -->
     <div id="auth-container" class="w-full max-w-sm bg-gray-800 p-8 rounded-xl shadow-lg transition-all duration-300">
         <!-- Título do formulário -->
@@ -335,6 +340,7 @@
         const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
         // Seleção de elementos do DOM
+        const accessControlTitle = document.getElementById('access-control-title');
         const authContainer = document.getElementById('auth-container');
         const passwordRecoveryContainer = document.getElementById('password-recovery-container');
         const passwordRecoveryForm = document.getElementById('password-recovery-form');
@@ -1220,6 +1226,8 @@
                 liberacaoPage.style.display = 'none';
                 historicoPage.style.display = 'none';
                 passwordRecoveryContainer.style.display = 'flex';
+                accessControlTitle.style.opacity = '0';
+                accessControlTitle.style.pointerEvents = 'none';
                 // O hash da URL do Supabase já contém o token de recuperação, não é necessário fazer mais nada.
                 return;
             }
@@ -1229,6 +1237,8 @@
                 authContainer.style.display = 'none';
                 passwordRecoveryContainer.style.display = 'none';
                 userEmailElem.textContent = `Usuário: ${session.user.email}`;
+                accessControlTitle.style.opacity = '0'; // Esconde o título
+                accessControlTitle.style.pointerEvents = 'none'; // Impede interação
 
                 const hasActivePage = liberacaoPage.style.display === 'flex' || historicoPage.style.display === 'flex';
                 if (hasActivePage) {
@@ -1247,6 +1257,8 @@
                 welcomePage.style.display = 'none';
                 liberacaoPage.style.display = 'none';
                 historicoPage.style.display = 'none';
+                accessControlTitle.style.opacity = '1'; // Mostra o título
+                accessControlTitle.style.pointerEvents = 'auto'; // Habilita interação
             }
             showMessage(''); // Limpa a mensagem ao mudar de estado
         });
