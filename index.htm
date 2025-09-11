@@ -327,6 +327,9 @@
         // Inicializa o cliente Supabase
         const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
+        // ** NOVO: Força o logout do usuário em cada recarregamento de página para maior segurança. **
+        supabase.auth.signOut();
+
         // Seleção de elementos do DOM
         const accessControlTitle = document.getElementById('access-control-title');
         const authContainer = document.getElementById('auth-container');
@@ -1299,6 +1302,10 @@
                 showMessage('Erro ao sair.', true);
             } else {
                  // ** Correção de segurança e UX **
+                // Limpa os campos de email e senha ao deslogar
+                document.getElementById('email').value = '';
+                document.getElementById('password').value = '';
+
                 // Esconde a tela de liberação e mostra a de login imediatamente
                 liberacaoPage.style.display = 'none';
                 historicoPage.style.display = 'none';
