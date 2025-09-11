@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirecionando...</title>
     <script>
-        // Redireciona o usuário para a página principal, mantendo o hash na URL
-        const redirectUrl = window.location.origin + window.location.pathname.replace('404.html', '') + window.location.hash;
+        const projectPath = '/controledecessos/';
+        const redirectUrl = window.location.origin + projectPath + window.location.hash;
         window.location.replace(redirectUrl);
     </script>
 </head>
