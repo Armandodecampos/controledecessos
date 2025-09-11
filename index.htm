@@ -98,7 +98,7 @@
             <div id="confirm-password-container" class="hidden">
                 <label for="confirm-password" class="block text-sm font-medium text-gray-300">Confirmar Senha</label>
                 <div class="relative mt-1">
-                    <input type="password" id="confirm-password-signup" name="confirm-password" class="block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10">
+                    <input type="password" id="confirm-password-signup" name="confirm-password" class="block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10" autocomplete="new-password">
                     <button type="button" id="toggle-confirm-password" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-gray-100">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
@@ -133,7 +133,7 @@
             <div>
                 <label for="new-password" class="block text-sm font-medium text-gray-300">Nova Senha</label>
                 <div class="relative mt-1">
-                    <input type="password" id="new-password" name="new-password" required class="block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10">
+                    <input type="password" id="new-password" name="new-password" required class="block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10" autocomplete="new-password">
                     <button type="button" id="toggle-new-password" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-gray-100">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
@@ -145,7 +145,7 @@
             <div>
                 <label for="confirm-password" class="block text-sm font-medium text-gray-300">Confirmar Nova Senha</label>
                 <div class="relative mt-1">
-                    <input type="password" id="confirm-password-recovery" name="confirm-password" required class="block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10">
+                    <input type="password" id="confirm-password-recovery" name="confirm-password" required class="block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10" autocomplete="new-password">
                     <button type="button" id="toggle-confirm-recovery" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-gray-100">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
@@ -609,6 +609,7 @@
             if (error) {
                 showMessage('Erro ao sair.', true);
             }
+            window.location.reload();
         });
 
         // Lógica para mostrar/esconder o formulário de adicionar liberação
@@ -1250,6 +1251,7 @@
                 historicoPage.style.display = 'none';
                 accessControlTitle.style.opacity = '1';
                 accessControlTitle.style.pointerEvents = 'auto';
+                window.location.reload(); // Recarrega a página após o logout
             } else if (session) {
                 // Se a página de recuperação de senha estiver visível, não muda o display
                 if (passwordRecoveryContainer.style.display === 'flex') {
