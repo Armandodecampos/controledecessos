@@ -539,7 +539,7 @@
                 return;
             }
 
-            const { data, error } = await supabase.auth.resetPasswordForEmail(email);
+            const { data, error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });
             if (error) {
                     showMessage(error.message, true);
             } else {
@@ -1235,45 +1235,71 @@
             fetchLiberacoes(currentSession, 'date', today);
         }
 
+        // Lógica para verificar a URL imediatamente e definir a sessão
+        const handleAuthCallback = async () => {
+            const hash = window.location.hash;
+            if (hash.includes('access_token')) {
+                const params = new URLSearchParams(hash.substring(1));
+                const accessToken = params.get('access_token');
+                const refreshToken = params.get('refresh_token');
+                const type = params.get('type');
+
+                // Se for um link de redefinição de senha, exibe o formulário de atualização de senha
+                if (type === 'recovery') {
+                    authContainer.style.display = 'none';
+                    passwordRecoveryContainer.style.display = 'flex';
+                    accessControlTitle.style.opacity = '0';
+                    accessControlTitle.style.pointerEvents = 'none';
+                }
+
+                if (accessToken && refreshToken) {
+                    try {
+                        const { data, error } = await supabase.auth.setSession({
+                            access_token: accessToken,
+                            refresh_token: refreshToken,
+                        });
+                        if (error) {
+                            console.error('Erro ao definir a sessão:', error);
+                        } else {
+                            console.log('Sessão definida com sucesso:', data);
+                        }
+                    } catch (err) {
+                        console.error('Erro ao processar tokens da URL:', err);
+                    } finally {
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
+                }
+            }
+        };
+
+        // Chama a função de tratamento de URL ao carregar o script
+        handleAuthCallback();
+
         // Listener de estado de autenticação do Supabase
         supabase.auth.onAuthStateChange(async (event, session) => {
             console.log('Evento de autenticação:', event);
             currentSession = session;
 
+            // Se a página de recuperação de senha estiver visível, não muda o display
+            if (passwordRecoveryContainer.style.display === 'flex') {
+                return;
+            }
+
             // Lógica para quando o usuário está logado
             if (session) {
-                // Se o evento é de recuperação de senha, mostra a tela de atualização de senha
-                if (event === 'PASSWORD_RECOVERY') {
-                    authContainer.style.display = 'none';
-                    welcomePage.style.display = 'none';
-                    liberacaoPage.style.display = 'none';
-                    historicoPage.style.display = 'none';
-                    passwordRecoveryContainer.style.display = 'flex';
-                    accessControlTitle.style.opacity = '0';
-                    accessControlTitle.style.pointerEvents = 'none';
-                    return;
-                }
-
                 authContainer.style.display = 'none';
-                passwordRecoveryContainer.style.display = 'none';
+                welcomePage.style.display = 'block';
                 userEmailElem.textContent = `Usuário: ${session.user.email}`;
                 accessControlTitle.style.opacity = '0'; // Esconde o título
                 accessControlTitle.style.pointerEvents = 'none'; // Impede interação
 
                 const hasActivePage = liberacaoPage.style.display === 'flex' || historicoPage.style.display === 'flex';
-                if (hasActivePage) {
-                    return;
+                if (!hasActivePage) {
+                    setInitialDateAndFetch();
                 }
-                
-                welcomePage.style.display = 'block';
-                liberacaoPage.style.display = 'none';
-                historicoPage.style.display = 'none';
-
-                setInitialDateAndFetch();
             } else {
                 // Usuário deslogado
                 authContainer.style.display = 'block';
-                passwordRecoveryContainer.style.display = 'none';
                 welcomePage.style.display = 'none';
                 liberacaoPage.style.display = 'none';
                 historicoPage.style.display = 'none';
