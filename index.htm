@@ -418,7 +418,6 @@
         const HISTORY_LIMIT = 50;
         let searchTimeout;
         let historicoSearchTimeout;
-        let isPasswordRecovery = false;
 
         // Função para normalizar strings, removendo acentos e convertendo para minúsculas
         function normalizeText(text) {
@@ -1218,75 +1217,25 @@
             fetchLiberacoes(currentSession, 'date', today);
         }
 
-        // NOVO: Adiciona um listener para o hash da URL
-        const handleAuthCallback = async () => {
-          const hash = window.location.hash;
-          if (hash.includes('access_token')) {
-            const params = new URLSearchParams(hash.substring(1));
-            const accessToken = params.get('access_token');
-            const refreshToken = params.get('refresh_token');
-            const type = params.get('type');
-            
-            // Verifica se a URL é de recuperação de senha
-            if (type === 'recovery') {
-                isPasswordRecovery = true;
-                authContainer.style.display = 'none';
-                welcomePage.style.display = 'none';
-                liberacaoPage.style.display = 'none';
-                historicoPage.style.display = 'none';
-                passwordRecoveryContainer.style.display = 'flex';
-                accessControlTitle.style.opacity = '0';
-                accessControlTitle.style.pointerEvents = 'none';
-            }
-
-            if (accessToken && refreshToken) {
-              try {
-                // Tenta definir a sessão com os tokens do URL
-                const { data, error } = await supabase.auth.setSession({
-                  access_token: accessToken,
-                  refresh_token: refreshToken,
-                });
-
-                if (error) {
-                  console.error('Erro ao definir a sessão:', error);
-                  showMessage('Erro ao fazer login. Tente novamente.', true);
-                } else {
-                  console.log('Sessão definida com sucesso:', data);
-                }
-              } catch (err) {
-                console.error('Erro ao processar tokens da URL:', err);
-                showMessage('Ocorreu um erro inesperado. Tente novamente.', true);
-              } finally {
-                // Limpa os tokens do URL para maior segurança
-                window.history.replaceState({}, document.title, window.location.pathname);
-              }
-            }
-          }
-        };
-
-        // Chama a função de tratamento de URL ao carregar a página
-        handleAuthCallback();
-
-
         // Listener de estado de autenticação do Supabase
-        supabase.auth.onAuthStateChange((event, session) => {
+        supabase.auth.onAuthStateChange(async (event, session) => {
             console.log('Evento de autenticação:', event);
             currentSession = session;
 
-            // Se o evento é de recuperação de senha, não esconde o container
-            if (event === 'PASSWORD_RECOVERY' || isPasswordRecovery) {
-                authContainer.style.display = 'none';
-                welcomePage.style.display = 'none';
-                liberacaoPage.style.display = 'none';
-                historicoPage.style.display = 'none';
-                passwordRecoveryContainer.style.display = 'flex';
-                accessControlTitle.style.opacity = '0';
-                accessControlTitle.style.pointerEvents = 'none';
-                return;
-            }
-            
             // Lógica para quando o usuário está logado
             if (session) {
+                // Se o evento é de recuperação de senha, mostra a tela de atualização de senha
+                if (event === 'PASSWORD_RECOVERY') {
+                    authContainer.style.display = 'none';
+                    welcomePage.style.display = 'none';
+                    liberacaoPage.style.display = 'none';
+                    historicoPage.style.display = 'none';
+                    passwordRecoveryContainer.style.display = 'flex';
+                    accessControlTitle.style.opacity = '0';
+                    accessControlTitle.style.pointerEvents = 'none';
+                    return;
+                }
+
                 authContainer.style.display = 'none';
                 passwordRecoveryContainer.style.display = 'none';
                 userEmailElem.textContent = `Usuário: ${session.user.email}`;
