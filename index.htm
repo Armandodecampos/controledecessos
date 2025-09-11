@@ -421,6 +421,7 @@
         const HISTORY_LIMIT = 50;
         let searchTimeout;
         let historicoSearchTimeout;
+        let isPasswordRecovery = false;
 
         // Função para normalizar strings, removendo acentos e convertendo para minúsculas
         function normalizeText(text) {
@@ -999,7 +1000,6 @@
                         <h3 class="font-bold text-gray-100">${nomeParaExibirFinal}</h3>
                         <p class="text-sm text-gray-400">Criado por: ${liberacao.criador_nome}</p>
                         <p class="text-sm text-gray-400">Período: ${liberacao.permanente ? 'Permanente' : `${periodoInicioFormatado} a ${periodoFimFormatado}`}</p>
-                        <p class="text-sm text-gray-500 mt-2">Observação: ${observacaoParaExibir}</p>
                         <p class="text-sm text-red-400 mt-2">Excluída por: ${liberacao.excluido_por} em ${dataExclusaoFormatada}</p>
                     `;
                     historicoList.appendChild(liberacaoCard);
@@ -1222,6 +1222,19 @@
             const params = new URLSearchParams(hash.substring(1));
             const accessToken = params.get('access_token');
             const refreshToken = params.get('refresh_token');
+            const type = params.get('type');
+            
+            // Verifica se a URL é de recuperação de senha
+            if (type === 'recovery') {
+                isPasswordRecovery = true;
+                authContainer.style.display = 'none';
+                welcomePage.style.display = 'none';
+                liberacaoPage.style.display = 'none';
+                historicoPage.style.display = 'none';
+                passwordRecoveryContainer.style.display = 'flex';
+                accessControlTitle.style.opacity = '0';
+                accessControlTitle.style.pointerEvents = 'none';
+            }
 
             if (accessToken && refreshToken) {
               try {
@@ -1257,7 +1270,8 @@
             console.log('Evento de autenticação:', event);
             currentSession = session;
 
-            if (event === 'PASSWORD_RECOVERY') {
+            // Se o evento é de recuperação de senha, não esconde o container
+            if (event === 'PASSWORD_RECOVERY' || isPasswordRecovery) {
                 authContainer.style.display = 'none';
                 welcomePage.style.display = 'none';
                 liberacaoPage.style.display = 'none';
