@@ -243,8 +243,8 @@
                 <h3 id="form-subtitle" class="text-lg font-bold text-gray-100">Adicionar Liberação</h3>
                 <div id="nomes-container" class="space-y-2">
                     <!-- Primeiro campo de nome estático (sem botão de remoção) -->
-                    <div class="flex items-center space-x-2">
-                        <label for="nome" class="block text-sm font-medium text-gray-300 sr-only">Nome</label>
+                    <div class="flex flex-col space-y-2">
+                        <label for="primeiro-nome" class="block text-sm font-medium text-gray-300">Nome</label>
                         <input type="text" id="primeiro-nome" name="nome" required class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
                     </div>
                 </div>
@@ -431,16 +431,19 @@
         // Função para adicionar um novo campo de nome
         function addNameInput(value = '', isRemovable = true) {
             const newNameDiv = document.createElement('div');
-            newNameDiv.className = 'flex items-center space-x-2';
+            newNameDiv.className = 'flex flex-col space-y-2';
             newNameDiv.innerHTML = `
-                <input type="text" name="nome" required value="${value}" class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-                ${isRemovable ? `
-                <button type="button" class="p-2 rounded-full text-red-400 hover:text-red-500 remove-name-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 11-2 0v6a1 1 0 112 0V8z" clip-rule="evenodd" />
-                    </svg>
-                </button>
-                ` : ''}
+                <label for="nome" class="block text-sm font-medium text-gray-300">Nome</label>
+                <div class="flex items-center space-x-2">
+                    <input type="text" name="nome" required value="${value}" class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                    ${isRemovable ? `
+                    <button type="button" class="p-2 rounded-full text-red-400 hover:text-red-500 remove-name-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 11-2 0v6a1 1 0 112 0V8z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    ` : ''}
+                </div>
             `;
             nomesContainer.appendChild(newNameDiv);
         }
@@ -649,12 +652,8 @@
             formSubtitle.textContent = 'Adicionar Liberação';
             formSubmitBtn.textContent = 'Salvar Liberação';
             addLiberacaoForm.reset();
-            nomesContainer.innerHTML = `
-                <div class="flex items-center space-x-2">
-                    <label for="nome" class="block text-sm font-medium text-gray-300 sr-only">Nome</label>
-                    <input type="text" id="primeiro-nome" name="nome" required class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-                </div>
-            `;
+            nomesContainer.innerHTML = '';
+            addNameInput('', false); // Adiciona o primeiro campo de nome
             liberacaoToEdit = null;
         });
 
