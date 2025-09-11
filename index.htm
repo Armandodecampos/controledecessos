@@ -80,7 +80,27 @@
             </div>
             <div>
                 <label for="password" class="block text-sm font-medium text-gray-300">Senha</label>
-                <input type="password" id="password" name="password" required autocomplete="current-password" class="mt-1 block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                <div class="relative mt-1">
+                    <input type="password" id="password" name="password" required autocomplete="current-password" class="block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10">
+                    <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-gray-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div id="confirm-password-container" class="hidden">
+                <label for="confirm-password" class="block text-sm font-medium text-gray-300">Confirmar Senha</label>
+                <div class="relative mt-1">
+                    <input type="password" id="confirm-password-signup" name="confirm-password" class="block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10">
+                    <button type="button" id="toggle-confirm-password" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-gray-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
             </div>
             <div>
                 <button type="submit" id="submit-btn" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">Entrar</button>
@@ -107,11 +127,27 @@
         <form id="password-recovery-form" class="space-y-4">
             <div>
                 <label for="new-password" class="block text-sm font-medium text-gray-300">Nova Senha</label>
-                <input type="password" id="new-password" name="new-password" required class="mt-1 block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                <div class="relative mt-1">
+                    <input type="password" id="new-password" name="new-password" required class="block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10">
+                    <button type="button" id="toggle-new-password" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-gray-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
             </div>
             <div>
                 <label for="confirm-password" class="block text-sm font-medium text-gray-300">Confirmar Nova Senha</label>
-                <input type="password" id="confirm-password" name="confirm-password" required class="mt-1 block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                <div class="relative mt-1">
+                    <input type="password" id="confirm-password-recovery" name="confirm-password" required class="block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10">
+                    <button type="button" id="toggle-confirm-recovery" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-gray-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
             </div>
             <div>
                 <button type="submit" id="update-password-btn" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">Atualizar Senha</button>
@@ -304,7 +340,7 @@
         const passwordRecoveryForm = document.getElementById('password-recovery-form');
         const passwordRecoveryMessage = document.getElementById('password-recovery-message');
         const newPasswordInput = document.getElementById('new-password');
-        const confirmPasswordInput = document.getElementById('confirm-password');
+        const confirmPasswordInput = document.getElementById('confirm-password-recovery');
         const welcomePage = document.getElementById('welcome-page');
         const liberacaoPage = document.getElementById('liberacao-page');
         const historicoPage = document.getElementById('historico-page');
@@ -336,6 +372,16 @@
         const nomesContainer = document.getElementById('nomes-container');
         const addNomeBtn = document.getElementById('add-nome-btn');
         
+        // Novos elementos para os ícones de olho
+        const togglePasswordBtn = document.getElementById('toggle-password');
+        const toggleConfirmPasswordBtn = document.getElementById('toggle-confirm-password');
+        const toggleNewPasswordBtn = document.getElementById('toggle-new-password');
+        const toggleConfirmRecoveryBtn = document.getElementById('toggle-confirm-recovery');
+        
+        // Campos de senha
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordSignupInput = document.getElementById('confirm-password-signup');
+
         // Modal elements
         const confirmationModal = document.getElementById('confirmation-modal');
         const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
@@ -398,11 +444,13 @@
                 submitBtn.textContent = 'Cadastrar';
                 toggleAuthBtn.textContent = 'Já tem uma conta? Faça login';
                 forgotPasswordContainer.style.display = 'none';
+                document.getElementById('confirm-password-container').classList.remove('hidden');
             } else {
                 formTitle.textContent = 'Faça Login';
                 submitBtn.textContent = 'Entrar';
                 toggleAuthBtn.textContent = 'Ainda não tem uma conta? Cadastre-se';
                 forgotPasswordContainer.style.display = 'block';
+                document.getElementById('confirm-password-container').classList.add('hidden');
             }
             showMessage(''); // Limpa a mensagem ao alternar
         });
@@ -428,9 +476,15 @@
         authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
+            const password = passwordInput.value;
+            
             if (isSigningUp) {
+                const confirmPassword = confirmPasswordSignupInput.value;
+                if (password !== confirmPassword) {
+                    showMessage('As senhas não coincidem. Tente novamente.', true);
+                    return;
+                }
+                
                 // Lógica de cadastro
                 const { data, error } = await supabase.auth.signUp({ email, password });
                 if (error) {
@@ -498,6 +552,32 @@
                 }, 2000);
             }
         });
+
+        // Lógica para alternar a visibilidade da senha
+        function setupPasswordToggle(inputElem, buttonElem) {
+            buttonElem.addEventListener('click', () => {
+                const type = inputElem.type === 'password' ? 'text' : 'password';
+                inputElem.type = type;
+                
+                // Altera o ícone do olho
+                if (type === 'password') {
+                    buttonElem.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                    </svg>`;
+                } else {
+                    buttonElem.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-14-14z" clip-rule="evenodd" />
+                        <path d="M10 4.5C6.703 4.5 3.868 6.643 2.54 9.516l-.078.184.078.184C3.868 13.357 6.703 15.5 10 15.5c3.297 0 6.132-2.143 7.46-4.984l.078-.184-.078-.184C16.132 6.643 13.297 4.5 10 4.5zM10 8a2 2 0 100 4 2 2 0 000-4z" />
+                    </svg>`;
+                }
+            });
+        }
+        setupPasswordToggle(passwordInput, togglePasswordBtn);
+        setupPasswordToggle(confirmPasswordSignupInput, toggleConfirmPasswordBtn);
+        setupPasswordToggle(newPasswordInput, toggleNewPasswordBtn);
+        setupPasswordToggle(confirmPasswordInput, toggleConfirmRecoveryBtn);
+
 
         // Lógica de logout
         signOutBtn.addEventListener('click', async () => {
