@@ -191,6 +191,7 @@
             <div id="historico-list" class="space-y-4">
                 <!-- Lista de liberações excluídas será renderizada aqui -->
             </div>
+            <p class="text-xs text-gray-400 mt-4 text-center">Número máximo de registros: 50. Registros mais antigos são excluídos permanentemente.</p>
         </div>
     </div>
 
@@ -211,6 +212,9 @@
 
             <button id="btn-filter-all" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 transition duration-200">Todas</button>
             
+            <!-- Botão "Nova liberação" adicionado aqui -->
+            <button id="btn-add-liberacao" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200">Nova liberação</button>
+            
             <!-- Barra de pesquisa movida para a barra superior -->
             <div class="mt-2 sm:mt-0 w-full sm:w-auto flex-grow flex items-center relative">
                 <input type="text" id="search-input" placeholder="Pesquisar..." class="w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
@@ -229,7 +233,7 @@
                 
                 <!-- Título para todos os campos de nome -->
                 <div>
-                    <label for="nomes-container" class="block text-sm font-medium text-gray-300">Nomes</label>
+                    <label for="nomes-container" class="block text-sm font-medium text-gray-300">Nome</label>
                     <div id="nomes-container" class="space-y-2">
                         <!-- O primeiro campo de nome será adicionado aqui pelo JS -->
                     </div>
@@ -277,15 +281,6 @@
             <div id="liberacoes-list" class="space-y-4">
                 <!-- Lista de liberações será renderizada aqui -->
             </div>
-        </div>
-
-        <!-- Botão de adicionar liberação na parte inferior fixa -->
-        <div class="fixed bottom-4 right-4 z-40">
-            <button id="btn-add-liberacao" class="p-4 rounded-full shadow-lg text-white bg-emerald-500 hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                </svg>
-            </button>
         </div>
     </div>
 
@@ -413,22 +408,6 @@
         // Função para normalizar strings, removendo acentos e convertendo para minúsculas
         function normalizeText(text) {
             return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-        }
-
-        // Função para formatar a data e hora
-        function formatDateTime(isoString) {
-            const date = new Date(isoString);
-            const formattedDate = date.toLocaleDateString('pt-br', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            });
-            const formattedTime = date.toLocaleTimeString('pt-br', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-            return `${formattedDate} às ${formattedTime}`;
         }
         
         // Função para adicionar um novo campo de nome
@@ -613,7 +592,7 @@
         });
 
 
-        // Lógica para voltar da página de histórico para a de liberação
+        // Lógica para voltar da página de histórico para a página de liberação
         backToLiberacaoBtn.addEventListener('click', () => {
              historicoPage.style.display = 'none';
              liberacaoPage.style.display = 'flex';
@@ -728,6 +707,7 @@
                 periodo_fim, 
                 observacao, 
                 criador_nome: currentSession.user.email,
+                user_id: currentSession.user.id, // Adicionado user_id aqui para referência futura
                 anexo_url: filePath ? supabase.storage.from('liberacoes_anexos').getPublicUrl(filePath).data.publicUrl : null
             };
 
@@ -746,23 +726,8 @@
 
                 if (error) {
                     console.error('Erro ao editar a liberação:', error);
-                    showValidationMessage('Erro ao editar a liberação. Por favor, verifique a base de dados.');
+                    showValidationMessage('Erro ao editar a liberação.');
                 } else {
-                    // Adiciona um novo registro na tabela de histórico de edições
-                    const { error: historyError } = await supabase
-                        .from('historico_edicoes')
-                        .insert([
-                            {
-                                liberacao_id: liberacaoToEdit.id,
-                                usuario: currentSession.user.email,
-                                acao: 'editado'
-                            }
-                        ]);
-
-                    if (historyError) {
-                        console.error('Erro ao registrar histórico de edição:', historyError);
-                    }
-
                     showMessage('Liberação editada com sucesso!');
                     liberacaoToEdit = null; // Limpa o estado de edição
                     addLiberacaoForm.style.display = 'none';
@@ -775,34 +740,14 @@
                 }
 
             } else {
-                payload.user_id = currentSession.user.id;
                 const { data, error } = await supabase
                     .from('liberacoes')
-                    .insert([payload])
-                    .select();
+                    .insert([payload]);
 
                 if (error) {
                     console.error('Erro ao salvar a liberação:', error);
-                    showValidationMessage('Erro ao salvar a liberação. Por favor, verifique a tabela na base de dados.');
+                    showValidationMessage('Erro ao salvar a liberação.');
                 } else {
-                    // Adiciona um registro inicial na tabela de histórico de edições
-                    if (data && data.length > 0) {
-                        const newLiberacaoId = data[0].id;
-                        const { error: historyError } = await supabase
-                            .from('historico_edicoes')
-                            .insert([
-                                {
-                                    liberacao_id: newLiberacaoId,
-                                    usuario: currentSession.user.email,
-                                    acao: 'criado'
-                                }
-                            ]);
-
-                        if (historyError) {
-                            console.error('Erro ao registrar histórico de criação:', historyError);
-                        }
-                    }
-
                     showMessage('Liberação adicionada com sucesso!');
                     addLiberacaoForm.reset();
                     addLiberacaoForm.style.display = 'none';
@@ -950,6 +895,17 @@
             }
         }
         
+        // Função utilitária para formatar texto com quebras de linha e links
+        function formatText(text) {
+          if (!text) return '';
+          let formattedText = text.replace(/\n/g, '<br>');
+          const urlRegex = /(https?:\/\/[^\s]+)/g;
+          formattedText = formattedText.replace(urlRegex, (url) => {
+            return `<a href="${url}" target="_blank" class="text-blue-400 hover:underline">${url}</a>`;
+          });
+          return formattedText;
+        }
+
         // Função para buscar e exibir as liberações excluídas (histórico)
         async function fetchHistorico(session, filterType = 'all', date = null, searchTerm = null) {
             
@@ -962,19 +918,12 @@
                 .eq('excluida', true)
                 .order('data_exclusao', { ascending: false });
 
-            switch (filterType) {
-                case 'all':
-                    historicoBtnFilterAll.classList.add('bg-indigo-600');
-                    break;
-                case 'date':
-                    historicoFilterDateInput.classList.add('bg-indigo-600');
-                    // Filtra pela data de exclusão
-                    if (date) {
-                         const startOfDay = new Date(date + 'T00:00:00Z').toISOString();
-                         const endOfDay = new Date(date + 'T23:59:59Z').toISOString();
-                         query = query.gte('data_exclusao', startOfDay).lte('data_exclusao', endOfDay);
-                    }
-                    break;
+            // Lógica de filtro de data corrigida para o histórico
+            if (filterType === 'date' && date) {
+                 query = query.or(`permanente.eq.true,and(periodo_inicio.lte.${date},periodo_fim.gte.${date})`);
+                 historicoFilterDateInput.classList.add('bg-indigo-600');
+            } else {
+                 historicoBtnFilterAll.classList.add('bg-indigo-600');
             }
 
             const { data, error } = await query;
@@ -1002,7 +951,8 @@
                     } else if (Array.isArray(nomeToSearch)) {
                         nomeToSearch = nomeToSearch.join(' ');
                     }
-                    return normalizeText(nomeToSearch).includes(normalizedSearchTerm);
+                    // Adiciona a observação ao filtro de pesquisa
+                    return normalizeText(nomeToSearch).includes(normalizedSearchTerm) || normalizeText(liberacao.observacao || '').includes(normalizedSearchTerm);
                 });
             }
 
@@ -1012,7 +962,7 @@
                 filteredData.forEach(liberacao => {
                     const cardClasses = 'bg-gray-700 p-4 rounded-lg shadow-lg transition-all duration-300 hover:bg-gray-600';
                     const liberacaoCard = document.createElement('div');
-                    liberacaoCard.className = cardClasses;
+                liberacaoCard.className = cardClasses;
 
                     let nomesParaExibir = liberacao.nome;
                     if (typeof nomesParaExibir === 'string' && nomesParaExibir.startsWith('[') && nomesParaExibir.endsWith(']')) {
@@ -1025,17 +975,30 @@
                     const nomeParaExibirFinal = Array.isArray(nomesParaExibir) ? nomesParaExibir.join(', ') : nomesParaExibir;
 
                     // Formata as datas para dd/mm/aaaa
-                    const dataExclusaoFormatada = new Date(liberacao.data_exclusao).toLocaleDateString('pt-br');
+                    const dataExclusao = new Date(liberacao.data_exclusao);
                     const periodoInicioFormatado = liberacao.periodo_inicio ? new Date(liberacao.periodo_inicio + 'T00:00:00').toLocaleDateString('pt-br') : '';
                     const periodoFimFormatado = liberacao.periodo_fim ? new Date(liberacao.periodo_fim + 'T00:00:00').toLocaleDateString('pt-br') : '';
-
+                    
                     const observacaoParaExibir = liberacao.observacao || '';
-
+                    
+                    // Lógica para determinar a mensagem de exclusão
+                    let excluidoPorMensagem = '';
+                    if (liberacao.excluido_por) {
+                      if (liberacao.excluido_por === liberacao.criador_nome) {
+                          excluidoPorMensagem = `Excluído em ${dataExclusao.toLocaleString('pt-br')} pelo próprio criador`;
+                      } else {
+                          excluidoPorMensagem = `Excluído em ${dataExclusao.toLocaleString('pt-br')} por ${liberacao.excluido_por}`;
+                      }
+                    } else {
+                        excluidoPorMensagem = `Excluído em ${dataExclusao.toLocaleString('pt-br')} automaticamente`;
+                    }
+                     
                     liberacaoCard.innerHTML = `
                         <h3 class="font-bold text-gray-100">${nomeParaExibirFinal}</h3>
-                        <p class="text-sm text-gray-400">Criado por: ${liberacao.criador_nome}</p>
                         <p class="text-sm text-gray-400">Período: ${liberacao.permanente ? 'Permanente' : `${periodoInicioFormatado} a ${periodoFimFormatado}`}</p>
-                        <p class="text-sm text-red-400 mt-2">Excluída por: ${liberacao.excluido_por} em ${dataExclusaoFormatada}</p>
+                        ${observacaoParaExibir ? `<p class="text-sm text-gray-400 mt-2">Observação: <span class="text-white">${formatText(observacaoParaExibir)}</span></p>` : ''}
+                        <p class="text-sm text-gray-400 mt-2">Criado por: ${liberacao.criador_nome} em ${new Date(liberacao.created_at).toLocaleString('pt-br')}</p>
+                        <p class="text-sm text-red-400 mt-2">${excluidoPorMensagem}</p>
                     `;
                     historicoList.appendChild(liberacaoCard);
                 });
@@ -1058,6 +1021,38 @@
             }
         }
 
+        async function moveExpiredLiberacoesToHistory(session) {
+            const today = new Date().toISOString().split('T')[0];
+            const { data, error } = await supabase
+                .from('liberacoes')
+                .select('id, periodo_fim')
+                .eq('excluida', false)
+                .neq('permanente', true)
+                .lt('periodo_fim', today);
+            
+            if (error) {
+                console.error('Erro ao buscar liberações expiradas:', error);
+                return;
+            }
+
+            if (data && data.length > 0) {
+                const expiredIds = data.map(liberacao => liberacao.id);
+                const { error: updateError } = await supabase
+                    .from('liberacoes')
+                    .update({
+                        excluida: true,
+                        excluido_por: null, // "automaticamente"
+                        data_exclusao: new Date().toISOString()
+                    })
+                    .in('id', expiredIds);
+
+                if (updateError) {
+                    console.error('Erro ao mover liberações para o histórico:', updateError);
+                } else {
+                    console.log(`${expiredIds.length} liberações movidas automaticamente para o histórico.`);
+                }
+            }
+        }
 
         // Função para buscar e exibir as liberações com filtros
         async function fetchLiberacoes(session, filterType = 'date', date = null, searchTerm = null) {
@@ -1065,17 +1060,20 @@
             currentFilterType = filterType;
             currentFilterDate = date;
 
+            // Move liberações expiradas antes de buscar
+            await moveExpiredLiberacoesToHistory(session);
+
             let query = supabase
                 .from('liberacoes')
                 .select('*')
                 .eq('excluida', false);
 
             if (filterType === 'date' && date) {
-                query = query.or(`permanente.eq.true,periodo_inicio.eq.${date}`);
+                // Lógica de filtro corrigida: verifica se a data selecionada está entre o início e o fim
+                query = query.or(`permanente.eq.true,and(periodo_inicio.lte.${date},periodo_fim.gte.${date})`);
             }
             
-            query = query.order('periodo_inicio', { ascending: true })
-                         .order('nome', { ascending: true });
+            query = query.order('created_at', { ascending: false });
 
 
             const { data, error } = await query;
@@ -1083,17 +1081,6 @@
             if (error) {
                 console.error('Erro ao buscar liberações:', error);
                 return;
-            }
-
-            // Buscar histórico de edições
-            const { data: historicoData, error: historicoError } = await supabase
-                .from('historico_edicoes')
-                .select('*')
-                .order('criado_em', { ascending: true });
-
-            if (historicoError) {
-                console.error('Erro ao buscar histórico de edições:', historicoError);
-                // Continua a renderização mesmo com erro no histórico
             }
 
             let filteredData = data;
@@ -1113,7 +1100,8 @@
                     } else if (Array.isArray(nomeToSearch)) {
                         nomeToSearch = nomeToSearch.join(' ');
                     }
-                    return normalizeText(nomeToSearch).includes(normalizedSearchTerm);
+                    // Adiciona a observação ao filtro de pesquisa
+                    return normalizeText(nomeToSearch).includes(normalizedSearchTerm) || normalizeText(liberacao.observacao || '').includes(normalizedSearchTerm);
                 });
             }
 
@@ -1133,22 +1121,25 @@
                     const actionsContainer = document.createElement('div');
                     actionsContainer.className = 'flex items-center space-x-2';
                     
-                    const editButton = document.createElement('button');
-                    editButton.className = 'text-blue-400 hover:text-blue-500 transition duration-200';
-                    editButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zm-4.646 2.586l2.828 2.828-5.756 5.757a4 4 0 01-1.328 1.03l-1.35 1.35-.793-.793 1.35-1.35c.376-.376.694-.852 1.03-1.328l5.756-5.757z" />
-                              </svg>`;
-                    editButton.onclick = () => editLiberacao(liberacao.id);
+                    // Mostra os botões de edição e exclusão apenas se o criador for o usuário logado
+                    if (liberacao.user_id === currentSession.user.id) {
+                        const editButton = document.createElement('button');
+                        editButton.className = 'text-blue-400 hover:text-blue-500 transition duration-200';
+                        editButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zm-4.646 2.586l2.828 2.828-5.756 5.757a4 4 0 01-1.328 1.03l-1.35 1.35-.793-.793 1.35-1.35c.376-.376.694-.852 1.03-1.328l5.756-5.757z" />
+                                </svg>`;
+                        editButton.onclick = () => editLiberacao(liberacao.id);
 
-                    const deleteButton = document.createElement('button');
-                    deleteButton.className = 'text-red-400 hover:text-red-500 transition duration-200';
-                    deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.03 21H7.97a2 2 0 01-1.99-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>`;
-                    deleteButton.onclick = () => deleteLiberacao(liberacao.id);
-
-                    actionsContainer.appendChild(editButton);
-                    actionsContainer.appendChild(deleteButton);
+                        const deleteButton = document.createElement('button');
+                        deleteButton.className = 'text-red-400 hover:text-red-500 transition duration-200';
+                        deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.03 21H7.97a2 2 0 01-1.99-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>`;
+                        deleteButton.onclick = () => deleteLiberacao(liberacao.id);
+                        
+                        actionsContainer.appendChild(editButton);
+                        actionsContainer.appendChild(deleteButton);
+                    }
                     
                     // Formata as datas para dd/mm/aaaa
                     const periodoInicioFormatado = liberacao.periodo_inicio ? new Date(liberacao.periodo_inicio + 'T00:00:00').toLocaleDateString('pt-br') : '';
@@ -1166,26 +1157,13 @@
 
                     const observacaoParaExibir = liberacao.observacao || '';
 
-                    // Constrói o histórico de edições
-                    let historicoString = '';
-                    if (historicoData) {
-                        const liberacaoHistorico = historicoData.filter(hist => hist.liberacao_id === liberacao.id);
-                        if (liberacaoHistorico.length > 0) {
-                            liberacaoHistorico.forEach((hist, index) => {
-                                const formattedTime = formatDateTime(hist.criado_em);
-                                const separator = index === 0 ? '' : ' - ';
-                                historicoString += `${separator}${hist.acao} por: ${hist.usuario} em ${formattedTime}`;
-                            });
-                        }
-                    }
-
                     const detailsContainer = document.createElement('div');
                     detailsContainer.innerHTML = `
                         <p class="text-sm text-gray-400">
                             Período: ${liberacao.permanente ? 'Permanente' : `${periodoInicioFormatado} a ${periodoFimFormatado}`}
                         </p>
-                        <p class="text-sm text-gray-500 mt-2">Observação: ${observacaoParaExibir}</p>
-                        <p class="text-sm text-gray-400 mt-2">Histórico: ${historicoString || 'Não há histórico'}</p>
+                        ${observacaoParaExibir ? `<p class="text-sm text-gray-400 mt-2">Observação: <span class="text-white">${formatText(observacaoParaExibir)}</span></p>` : ''}
+                        <p class="text-sm text-gray-400 mt-2">Criado por: ${liberacao.criador_nome} em ${new Date(liberacao.created_at).toLocaleString('pt-br')}</p>
                         ${liberacao.anexo_url ? `<a href="${liberacao.anexo_url}" target="_blank" class="text-sm text-blue-400 hover:underline">Ver Anexo</a>` : ''}
                     `;
                     
@@ -1305,7 +1283,8 @@
                     } catch (err) {
                         console.error('Erro ao processar tokens da URL:', err);
                     } finally {
-                        window.history.replaceState({}, document.title, window.location.pathname);
+                         // Adiciona o redirecionamento para a página de login
+                         window.location.href = window.location.origin;
                     }
                 }
             }
