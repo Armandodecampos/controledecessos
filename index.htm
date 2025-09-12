@@ -1433,7 +1433,7 @@
                     return;
                 }
                 
-                if (backgroundBlurContainer) backgroundBlurContainer.classList.add('blur-background');
+                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'none';
                 if (authContainer) authContainer.style.display = 'none';
                 if (liberacaoPage) liberacaoPage.style.display = 'flex'; // Exibe a página de liberações
                 if (historicoPage) historicoPage.style.display = 'none';
@@ -1447,7 +1447,7 @@
                 
             } else {
                 // Usuário deslogado, mas não pelo evento SIGNED_OUT
-                if (backgroundBlurContainer) backgroundBlurContainer.classList.remove('blur-background');
+                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'block';
                 if (authContainer) authContainer.style.display = 'block';
                 if (liberacaoPage) liberacaoPage.style.display = 'none';
                 if (historicoPage) historicoPage.style.display = 'none';
