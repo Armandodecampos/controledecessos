@@ -327,9 +327,6 @@
         // Inicializa o cliente Supabase
         const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
-        // ** NOVO: Força o logout do usuário em cada recarregamento de página para maior segurança. **
-        supabase.auth.signOut();
-
         // Seleção de elementos do DOM
         const accessControlTitle = document.getElementById('access-control-title');
         const authContainer = document.getElementById('auth-container');
@@ -416,6 +413,22 @@
         // Função para normalizar strings, removendo acentos e convertendo para minúsculas
         function normalizeText(text) {
             return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        }
+
+        // Função para formatar a data e hora
+        function formatDateTime(isoString) {
+            const date = new Date(isoString);
+            const formattedDate = date.toLocaleDateString('pt-br', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+            const formattedTime = date.toLocaleTimeString('pt-br', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            return `${formattedDate} às ${formattedTime}`;
         }
         
         // Função para adicionar um novo campo de nome
@@ -600,7 +613,7 @@
         });
 
 
-        // Lógica para voltar da página de histórico para a página de liberação
+        // Lógica para voltar da página de histórico para a de liberação
         backToLiberacaoBtn.addEventListener('click', () => {
              historicoPage.style.display = 'none';
              liberacaoPage.style.display = 'flex';
@@ -611,17 +624,8 @@
             const { error } = await supabase.auth.signOut();
             if (error) {
                 showMessage('Erro ao sair.', true);
-            } else {
-                 // ** Correção de segurança e UX **
-                // Esconde a tela de liberação e mostra a de login imediatamente
-                liberacaoPage.style.display = 'none';
-                historicoPage.style.display = 'none';
-                authContainer.style.display = 'block';
-                accessControlTitle.style.opacity = '1';
-                accessControlTitle.style.pointerEvents = 'auto';
-                showMessage('Você foi desconectado com sucesso.');
-                console.log('Logout bem-sucedido. Redirecionando a UI.');
             }
+            window.location.reload();
         });
 
         // Lógica para mostrar/esconder o formulário de adicionar liberação
@@ -744,6 +748,21 @@
                     console.error('Erro ao editar a liberação:', error);
                     showValidationMessage('Erro ao editar a liberação. Por favor, verifique a base de dados.');
                 } else {
+                    // Adiciona um novo registro na tabela de histórico de edições
+                    const { error: historyError } = await supabase
+                        .from('historico_edicoes')
+                        .insert([
+                            {
+                                liberacao_id: liberacaoToEdit.id,
+                                usuario: currentSession.user.email,
+                                acao: 'editado'
+                            }
+                        ]);
+
+                    if (historyError) {
+                        console.error('Erro ao registrar histórico de edição:', historyError);
+                    }
+
                     showMessage('Liberação editada com sucesso!');
                     liberacaoToEdit = null; // Limpa o estado de edição
                     addLiberacaoForm.style.display = 'none';
@@ -759,12 +778,31 @@
                 payload.user_id = currentSession.user.id;
                 const { data, error } = await supabase
                     .from('liberacoes')
-                    .insert([payload]);
+                    .insert([payload])
+                    .select();
 
                 if (error) {
                     console.error('Erro ao salvar a liberação:', error);
                     showValidationMessage('Erro ao salvar a liberação. Por favor, verifique a tabela na base de dados.');
                 } else {
+                    // Adiciona um registro inicial na tabela de histórico de edições
+                    if (data && data.length > 0) {
+                        const newLiberacaoId = data[0].id;
+                        const { error: historyError } = await supabase
+                            .from('historico_edicoes')
+                            .insert([
+                                {
+                                    liberacao_id: newLiberacaoId,
+                                    usuario: currentSession.user.email,
+                                    acao: 'criado'
+                                }
+                            ]);
+
+                        if (historyError) {
+                            console.error('Erro ao registrar histórico de criação:', historyError);
+                        }
+                    }
+
                     showMessage('Liberação adicionada com sucesso!');
                     addLiberacaoForm.reset();
                     addLiberacaoForm.style.display = 'none';
@@ -1047,6 +1085,17 @@
                 return;
             }
 
+            // Buscar histórico de edições
+            const { data: historicoData, error: historicoError } = await supabase
+                .from('historico_edicoes')
+                .select('*')
+                .order('criado_em', { ascending: true });
+
+            if (historicoError) {
+                console.error('Erro ao buscar histórico de edições:', historicoError);
+                // Continua a renderização mesmo com erro no histórico
+            }
+
             let filteredData = data;
             if (searchTerm && searchTerm.trim() !== '') {
                 const normalizedSearchTerm = normalizeText(searchTerm);
@@ -1117,13 +1166,26 @@
 
                     const observacaoParaExibir = liberacao.observacao || '';
 
+                    // Constrói o histórico de edições
+                    let historicoString = '';
+                    if (historicoData) {
+                        const liberacaoHistorico = historicoData.filter(hist => hist.liberacao_id === liberacao.id);
+                        if (liberacaoHistorico.length > 0) {
+                            liberacaoHistorico.forEach((hist, index) => {
+                                const formattedTime = formatDateTime(hist.criado_em);
+                                const separator = index === 0 ? '' : ' - ';
+                                historicoString += `${separator}${hist.acao} por: ${hist.usuario} em ${formattedTime}`;
+                            });
+                        }
+                    }
+
                     const detailsContainer = document.createElement('div');
                     detailsContainer.innerHTML = `
                         <p class="text-sm text-gray-400">
                             Período: ${liberacao.permanente ? 'Permanente' : `${periodoInicioFormatado} a ${periodoFimFormatado}`}
                         </p>
                         <p class="text-sm text-gray-500 mt-2">Observação: ${observacaoParaExibir}</p>
-                        <p class="text-sm text-gray-400 mt-2">Criado por: ${liberacao.criador_nome}</p>
+                        <p class="text-sm text-gray-400 mt-2">Histórico: ${historicoString || 'Não há histórico'}</p>
                         ${liberacao.anexo_url ? `<a href="${liberacao.anexo_url}" target="_blank" class="text-sm text-blue-400 hover:underline">Ver Anexo</a>` : ''}
                     `;
                     
@@ -1263,6 +1325,7 @@
                 historicoPage.style.display = 'none';
                 accessControlTitle.style.opacity = '1';
                 accessControlTitle.style.pointerEvents = 'auto';
+                window.location.reload(); // Recarrega a página após o logout
             } else if (session) {
                 // Se a página de recuperação de senha estiver visível, não muda o display
                 if (passwordRecoveryContainer.style.display === 'flex') {
@@ -1300,20 +1363,6 @@
             const { error } = await supabase.auth.signOut();
             if (error) {
                 showMessage('Erro ao sair.', true);
-            } else {
-                 // ** Correção de segurança e UX **
-                // Limpa os campos de email e senha ao deslogar
-                document.getElementById('email').value = '';
-                document.getElementById('password').value = '';
-
-                // Esconde a tela de liberação e mostra a de login imediatamente
-                liberacaoPage.style.display = 'none';
-                historicoPage.style.display = 'none';
-                authContainer.style.display = 'block';
-                accessControlTitle.style.opacity = '1';
-                accessControlTitle.style.pointerEvents = 'auto';
-                showMessage('Você foi desconectado com sucesso.');
-                console.log('Logout bem-sucedido. Redirecionando a UI.');
             }
         });
     </script>
