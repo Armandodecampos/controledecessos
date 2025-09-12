@@ -816,7 +816,7 @@
             liberacaoToEdit = data;
             
             // Preenche o formulário com os dados da liberação
-            if(nomesContainer) nomesContainer.innerHTML = ''; // Limpa os campos de nome existentes
+            nomesContainer.innerHTML = ''; // Limpa os campos de nome existentes
             
             // Corrige o tipo de dado para garantir que seja um array
             let nomesDoBanco = liberacaoToEdit.nome;
@@ -841,9 +841,9 @@
                 addNameInput('', false);
             }
 
-            if(permanenteCheckbox) permanenteCheckbox.checked = liberacaoToEdit.permanente;
-            if(importanteCheckbox) importanteCheckbox.checked = liberacaoToEdit.importante;
-            if(observacao) observacao.value = liberacaoToEdit.observacao;
+            document.getElementById('permanente').checked = liberacaoToEdit.permanente;
+            document.getElementById('importante').checked = liberacaoToEdit.importante;
+            document.getElementById('observacao').value = liberacaoToEdit.observacao;
 
             // Habilita/desabilita os campos de data
             if (permanenteCheckbox) {
@@ -1188,7 +1188,7 @@
                         const actionsContainer = document.createElement('div');
                         actionsContainer.className = 'flex items-center space-x-2';
                         
-                        // Botão de editar só aparece para o criador
+                        // Mostra os botões de edição e exclusão apenas se o criador for o usuário logado
                         if (currentSession && liberacao.user_id === currentSession.user.id) {
                             const editButton = document.createElement('button');
                             editButton.className = 'text-blue-400 hover:text-blue-500 transition duration-200';
@@ -1196,18 +1196,17 @@
                                         <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zm-4.646 2.586l2.828 2.828-5.756 5.757a4 4 0 01-1.328 1.03l-1.35 1.35-.793-.793 1.35-1.35c.376-.376.694-.852 1.03-1.328l5.756-5.757z" />
                                     </svg>`;
                             editButton.onclick = () => editLiberacao(liberacao.id);
-                            actionsContainer.appendChild(editButton);
-                        }
 
-                        // Botão de excluir é público para todos os usuários logados
-                        const deleteButton = document.createElement('button');
-                        deleteButton.className = 'text-red-400 hover:text-red-500 transition duration-200';
-                        deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.03 21H7.97a2 2 0 01-1.99-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>`;
-                        deleteButton.onclick = () => deleteLiberacao(liberacao.id);
-                        actionsContainer.appendChild(deleteButton);
-                        
+                            const deleteButton = document.createElement('button');
+                            deleteButton.className = 'text-red-400 hover:text-red-500 transition duration-200';
+                            deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.03 21H7.97a2 2 0 01-1.99-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>`;
+                            deleteButton.onclick = () => deleteLiberacao(liberacao.id);
+                            
+                            actionsContainer.appendChild(editButton);
+                            actionsContainer.appendChild(deleteButton);
+                        }
                         
                         // Formata as datas para dd/mm/aaaa
                         const periodoInicioFormatado = liberacao.periodo_inicio ? new Date(liberacao.periodo_inicio + 'T00:00:00').toLocaleDateString('pt-br') : '';
@@ -1433,7 +1432,7 @@
                     return;
                 }
                 
-                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'none';
+                if (backgroundBlurContainer) backgroundBlurContainer.classList.add('blur-background');
                 if (authContainer) authContainer.style.display = 'none';
                 if (liberacaoPage) liberacaoPage.style.display = 'flex'; // Exibe a página de liberações
                 if (historicoPage) historicoPage.style.display = 'none';
@@ -1447,7 +1446,7 @@
                 
             } else {
                 // Usuário deslogado, mas não pelo evento SIGNED_OUT
-                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'block';
+                if (backgroundBlurContainer) backgroundBlurContainer.classList.remove('blur-background');
                 if (authContainer) authContainer.style.display = 'block';
                 if (liberacaoPage) liberacaoPage.style.display = 'none';
                 if (historicoPage) historicoPage.style.display = 'none';
