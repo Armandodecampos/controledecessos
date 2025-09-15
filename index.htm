@@ -79,6 +79,15 @@
         .blur-background {
             filter: blur(5px);
         }
+        
+        .liberacao-card-concluida {
+            background-color: #1a2e24; /* Um verde escuro para indicar concluído */
+        }
+        
+        .line-through-text {
+            text-decoration: line-through;
+        }
+        
     </style>
 </head>
 <body class="bg-gray-900 text-gray-300 min-h-screen flex items-center justify-center p-4">
@@ -147,32 +156,29 @@
 
     <!-- Página de Histórico -->
     <div id="historico-page" class="hidden w-full h-screen">
-        <div class="flex justify-between items-center mb-6">
-            <div class="fixed top-0 left-0 w-full bg-gray-800 p-4 shadow-lg z-50 flex flex-wrap justify-start items-center space-x-4 space-y-2 sm:space-y-0">
-                <button id="back-to-liberacao" class="py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" />
-                    </svg>
+        <!-- Barra de navegação fixa no topo -->
+        <div class="fixed top-0 left-0 w-full bg-gray-800 p-4 shadow-lg z-50 flex flex-wrap justify-start items-center space-x-4 space-y-2 sm:space-y-0">
+            <button id="back-to-liberacao" class="py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" />
+                </svg>
+            </button>
+            <button id="historico-open-calendar-btn" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 transition duration-200">Selecionar data</button>
+            <input type="date" id="historico-filter-date" class="hidden">
+            <div id="historico-header-fixed" class="text-white text-lg font-bold flex-grow text-center"></div>
+            
+            <!-- Barra de pesquisa movida para a barra superior -->
+            <div class="mt-2 sm:mt-0 w-full sm:w-auto flex items-center relative">
+                <input type="text" id="historico-search-input" placeholder="Pesquisar..." class="w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                <button id="historico-clear-search" class="absolute right-2 text-gray-400 hover:text-gray-200">
+                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                   </svg>
                 </button>
-                <!-- Campo de data visível para o calendário -->
-                <button id="historico-open-calendar-btn" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 transition duration-200">Selecionar data</button>
-                <input type="date" id="historico-filter-date" class="hidden">
-
-                <button id="historico-btn-filter-all" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 transition duration-200">Todas</button>
-                
-                <!-- Barra de pesquisa movida para a barra superior -->
-                <div class="mt-2 sm:mt-0 w-full sm:w-auto flex-grow flex items-center relative">
-                    <input type="text" id="historico-search-input" placeholder="Pesquisar..." class="w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-                    <button id="historico-clear-search" class="absolute right-2 text-gray-400 hover:text-gray-200">
-                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                       </svg>
-                    </button>
-                </div>
             </div>
         </div>
         
-        <div class="fixed top-[7rem] left-12 right-12 bottom-12 bg-gray-800 rounded-xl shadow-lg p-8 overflow-y-auto">
+        <div class="fixed top-[8rem] left-12 right-12 bottom-12 bg-gray-800 rounded-xl shadow-lg p-8 overflow-y-auto">
             <div id="historico-list" class="space-y-4">
                 <!-- Lista de liberações excluídas será renderizada aqui -->
             </div>
@@ -187,22 +193,20 @@
             
              <button id="sign-out-liberacao" class="py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200">Sair</button>
             
-            <button id="btn-historico" class="py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-200 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.03 21H7.97a2 2 0 01-1.99-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-            </button>
+            <button id="btn-historico" class="py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-200">Histórico</button>
+            
             <!-- Campo de data visível para o calendário -->
             <button id="open-calendar-btn" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 transition duration-200">Selecionar data</button>
             <input type="date" id="filter-date" class="hidden">
 
-            <button id="btn-filter-all" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 transition duration-200">Todas</button>
+            <!-- Cabeçalho de data/filtro fixo -->
+            <div id="liberacao-header-fixed" class="text-white text-lg font-bold flex-grow text-center"></div>
             
             <!-- Botão "Nova liberação" adicionado aqui -->
             <button id="btn-add-liberacao" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200">Nova liberação</button>
             
             <!-- Barra de pesquisa movida para a barra superior -->
-            <div class="mt-2 sm:mt-0 w-full sm:w-auto flex-grow flex items-center relative">
+            <div class="mt-2 sm:mt-0 w-full sm:w-auto flex items-center relative">
                 <input type="text" id="search-input" placeholder="Pesquisar..." class="w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
                 <button id="clear-search" class="absolute right-2 text-gray-400 hover:text-gray-200">
                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -248,6 +252,10 @@
                     <input type="checkbox" id="importante" name="importante" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
                     <label for="importante" class="ml-2 block text-sm text-gray-300">Marcar como Importante</label>
                 </div>
+                <div id="concluida-container" class="hidden flex items-center">
+                    <input type="checkbox" id="concluida-edit" name="concluida-edit" class="h-4 w-4 text-emerald-600 border-gray-300 rounded">
+                    <label for="concluida-edit" class="ml-2 block text-sm text-gray-300">Marcar como Concluída</label>
+                </div>
                 <div>
                     <label for="observacao" class="block text-sm font-medium text-gray-300">Observação</label>
                     <textarea id="observacao" name="observacao" rows="3" class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200"></textarea>
@@ -263,8 +271,7 @@
             </div>
         </form>
         
-        <div class="fixed top-[7rem] left-12 right-12 bottom-12 bg-gray-800 rounded-xl shadow-lg p-8 overflow-y-auto">
-            <div id="liberacao-header" class="text-white text-lg font-bold mb-4"></div>
+        <div class="fixed top-[8rem] left-12 right-12 bottom-12 bg-gray-800 rounded-xl shadow-lg p-8 overflow-y-auto">
             <div id="liberacoes-list" class="space-y-4">
                 <!-- Lista de liberações será renderizada aqui -->
             </div>
@@ -302,8 +309,8 @@
             <h3 class="text-lg font-bold text-gray-100 mb-4">Selecionar Data</h3>
             <input type="date" id="custom-date-input" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 transition duration-200 w-full mb-4">
             <div class="modal-buttons">
-                <button id="confirm-date-btn" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition duration-200">Selecionar</button>
-                <button id="cancel-date-btn" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-gray-200 bg-gray-600 hover:bg-gray-500 transition duration-200">Cancelar</button>
+                <button id="select-today-btn" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition duration-200">Hoje</button>
+                <button id="select-all-dates-btn" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition duration-200">Todas as Datas</button>
             </div>
         </div>
     </div>
@@ -344,9 +351,12 @@
         const btnAddLiberacao = document.getElementById('btn-add-liberacao');
         const addLiberacaoForm = document.getElementById('add-liberacao-form');
         const liberacoesList = document.getElementById('liberacoes-list');
-        const liberacaoHeader = document.getElementById('liberacao-header');
+        const liberacaoHeaderFixed = document.getElementById('liberacao-header-fixed');
+        const historicoHeaderFixed = document.getElementById('historico-header-fixed');
         const permanenteCheckbox = document.getElementById('permanente');
         const importanteCheckbox = document.getElementById('importante');
+        const concluidaEditCheckbox = document.getElementById('concluida-edit');
+        const concluidaContainer = document.getElementById('concluida-container');
         const periodoInicioInput = document.getElementById('periodo_inicio');
         const periodoFimInput = document.getElementById('periodo_fim');
         const formSubtitle = document.getElementById('form-subtitle');
@@ -376,9 +386,9 @@
 
         const customCalendarModal = document.getElementById('custom-calendar-modal');
         const customDateInput = document.getElementById('custom-date-input');
-        const confirmDateBtn = document.getElementById('confirm-date-btn');
-        const cancelDateBtn = document.getElementById('cancel-date-btn');
-
+        const selectTodayBtn = document.getElementById('select-today-btn');
+        const selectAllDatesBtn = document.getElementById('select-all-dates-btn');
+        
         // Novos elementos de filtro
         const btnFilterAll = document.getElementById('btn-filter-all');
         const filterDateInput = document.getElementById('filter-date');
@@ -387,9 +397,8 @@
         const clearSearchBtn = document.getElementById('clear-search');
         
         // Novos elementos de filtro para histórico
-        const historicoBtnFilterAll = document.getElementById('historico-btn-filter-all');
-        const historicoFilterDateInput = document.getElementById('historico-filter-date');
         const historicoOpenCalendarBtn = document.getElementById('historico-open-calendar-btn');
+        const historicoFilterDateInput = document.getElementById('historico-filter-date');
         const historicoSearchInput = document.getElementById('historico-search-input');
         const historicoClearSearchBtn = document.getElementById('historico-clear-search');
         
@@ -409,9 +418,24 @@
         let liberacaoToEdit = null;
         let currentFilterType = 'date';
         let currentFilterDate = null;
+        let historicoCurrentFilterType = 'all'; // Nova variável para o histórico
+        let historicoCurrentFilterDate = null;  // Nova variável para o histórico
         const HISTORY_LIMIT = 50;
         let searchTimeout;
         let historicoSearchTimeout;
+        const POLLING_INTERVAL = 1000; // 1 segundo de sondagem
+
+        // Sondagem para atualização de dados
+        setInterval(() => {
+            if (currentSession) {
+                if (liberacaoPage.style.display !== 'none') {
+                    fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
+                } else if (historicoPage.style.display !== 'none') {
+                    fetchHistorico(currentSession, historicoCurrentFilterType, historicoCurrentFilterDate, historicoSearchInput.value);
+                }
+            }
+        }, POLLING_INTERVAL);
+
 
         // Função para normalizar strings, removendo acentos e convertendo para minúsculas
         function normalizeText(text) {
@@ -598,7 +622,7 @@
                         buttonElem.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                             <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
-                            </svg>`;
+                        </svg>`;
                     } else {
                         buttonElem.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-14-14z" clip-rule="evenodd" />
@@ -619,7 +643,11 @@
             btnHistorico.addEventListener('click', () => {
                 if(liberacaoPage) liberacaoPage.style.display = 'none';
                 if(historicoPage) historicoPage.style.display = 'flex';
-                fetchHistorico(currentSession, 'all');
+                // Reseta o filtro para "Todas" por padrão ao entrar no histórico
+                historicoFilterDateInput.value = '';
+                historicoCurrentFilterType = 'all';
+                historicoCurrentFilterDate = null;
+                fetchHistorico(currentSession, 'all', null, historicoSearchInput.value);
             });
         }
 
@@ -628,7 +656,9 @@
         if (backToLiberacaoBtn) {
             backToLiberacaoBtn.addEventListener('click', () => {
                  if(historicoPage) historicoPage.style.display = 'none';
-                 if(liberacaoPage) liberacaoPage.style.display = 'flex';
+                 if (liberacaoPage) {
+                    liberacaoPage.style.display = 'flex';
+                 }
             });
         }
 
@@ -649,6 +679,7 @@
                 addLiberacaoForm.style.display = 'flex';
                 formSubtitle.textContent = 'Adicionar Liberação';
                 formSubmitBtn.textContent = 'Salvar Liberação';
+                concluidaContainer.style.display = 'none';
                 addLiberacaoForm.reset();
                 nomesContainer.innerHTML = '';
                 addNameInput('', false); // Adiciona o primeiro campo de nome
@@ -741,6 +772,17 @@
                          return;
                      }
                 }
+                
+                let concluida = concluidaEditCheckbox.checked;
+                let concluidaPor = concluidaEditCheckbox.checked ? currentSession.user.email : null;
+                let concluidaEm = concluidaEditCheckbox.checked ? new Date().toISOString() : null;
+
+                if (liberacaoToEdit && liberacaoToEdit.concluida && !concluidaEditCheckbox.checked) {
+                    // Desmarcar concluída na edição
+                    concluida = false;
+                    concluidaPor = null;
+                    concluidaEm = null;
+                }
 
                 const payload = { 
                     nome: nomes, 
@@ -750,11 +792,15 @@
                     periodo_fim, 
                     observacao, 
                     criador_nome: currentSession.user.email,
-                    user_id: currentSession.user.id, // Adicionado user_id aqui para referência futura
+                    user_id: currentSession.user.id,
+                    concluida: concluida,
+                    concluida_por: concluidaPor,
+                    concluida_em: concluidaEm,
                     anexo_url: filePath ? supabase.storage.from('liberacoes_anexos').getPublicUrl(filePath).data.publicUrl : null
                 };
 
                 if (liberacaoToEdit) {
+                    
                     // Se a liberação está sendo reativada, atualiza o status de excluída
                     if (formSubmitBtn.textContent === 'Reativar Liberação') {
                         payload.excluida = false;
@@ -776,9 +822,9 @@
                         addLiberacaoForm.style.display = 'none';
                         addLiberacaoForm.reset();
                         if (historicoPage.style.display !== 'none') {
-                            fetchHistorico(currentSession);
+                            fetchHistorico(currentSession, historicoCurrentFilterType, historicoCurrentFilterDate, historicoSearchInput.value);
                         } else {
-                            fetchLiberacoes(currentSession, currentFilterType, currentFilterDate);
+                            fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
                         }
                     }
 
@@ -794,13 +840,13 @@
                         showMessage('Liberação adicionada com sucesso!');
                         addLiberacaoForm.reset();
                         addLiberacaoForm.style.display = 'none';
-                        fetchLiberacoes(currentSession, currentFilterType, currentFilterDate); // Atualiza a lista
+                        fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value); // Atualiza a lista
                     }
                 }
             });
         }
         
-        // Lógica para editar uma liberação
+        // Função para editar uma liberação
         async function editLiberacao(id) {
             const { data, error } = await supabase
                 .from('liberacoes')
@@ -843,7 +889,9 @@
 
             document.getElementById('permanente').checked = liberacaoToEdit.permanente;
             document.getElementById('importante').checked = liberacaoToEdit.importante;
+            concluidaEditCheckbox.checked = liberacaoToEdit.concluida;
             document.getElementById('observacao').value = liberacaoToEdit.observacao;
+            concluidaContainer.style.display = 'flex';
 
             // Habilita/desabilita os campos de data
             if (permanenteCheckbox) {
@@ -888,7 +936,7 @@
                     showMessage('Erro ao excluir a liberação.', true);
                 } else {
                     showMessage('Liberação excluída com sucesso!');
-                    fetchLiberacoes(currentSession, currentFilterType, currentFilterDate); // Atualiza a lista principal
+                    fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value); // Atualiza a lista principal
                     // Verifica e remove a liberação mais antiga se o limite for excedido
                     checkAndPurgeHistory();
                 }
@@ -903,6 +951,46 @@
                 if (confirmationModal) confirmationModal.style.display = 'none';
                 liberacaoToDeleteId = null;
             });
+        }
+        
+        // Função para marcar uma liberação como concluída
+        async function marcarComoConcluida(id) {
+            const { data, error } = await supabase
+                .from('liberacoes')
+                .update({ 
+                    concluida: true,
+                    concluida_por: currentSession.user.email,
+                    concluida_em: new Date().toISOString()
+                })
+                .eq('id', id);
+
+            if (error) {
+                console.error('Erro ao marcar como concluída:', error);
+                showValidationMessage('Erro ao marcar como concluída.');
+            } else {
+                showMessage('Liberação marcada como concluída!');
+                fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
+            }
+        }
+        
+        // Função para desmarcar uma liberação como concluída
+        async function desmarcarComoConcluida(id) {
+            const { data, error } = await supabase
+                .from('liberacoes')
+                .update({
+                    concluida: false,
+                    concluida_por: null,
+                    concluida_em: null
+                })
+                .eq('id', id);
+
+            if (error) {
+                console.error('Erro ao desmarcar como concluída:', error);
+                showValidationMessage('Erro ao desmarcar como concluída.');
+            } else {
+                showMessage('Liberação desmarcada como concluída!');
+                fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
+            }
         }
 
         // Função para reativar uma liberação (leva para a tela de edição)
@@ -962,22 +1050,17 @@
 
         // Função para buscar e exibir as liberações excluídas (histórico)
         async function fetchHistorico(session, filterType = 'all', date = null, searchTerm = null) {
-            
-            if (historicoBtnFilterAll) historicoBtnFilterAll.classList.remove('bg-indigo-600');
-            if (historicoFilterDateInput) historicoFilterDateInput.classList.remove('bg-indigo-600');
-            
+            historicoCurrentFilterType = filterType;
+            historicoCurrentFilterDate = date;
+
             let query = supabase
                 .from('liberacoes')
                 .select('*')
                 .eq('excluida', true)
                 .order('data_exclusao', { ascending: false });
 
-            // Lógica de filtro de data corrigida para o histórico
             if (filterType === 'date' && date) {
                  query = query.or(`permanente.eq.true,and(periodo_inicio.lte.${date},periodo_fim.gte.${date})`);
-                 if (historicoFilterDateInput) historicoFilterDateInput.classList.add('bg-indigo-600');
-            } else {
-                 if (historicoBtnFilterAll) historicoBtnFilterAll.classList.add('bg-indigo-600');
             }
 
             const { data, error } = await query;
@@ -1010,14 +1093,23 @@
                 });
             }
 
+            // Adiciona o título do filtro para o histórico
+            if (historicoHeaderFixed) {
+                if (filterType === 'date' && date) {
+                    historicoHeaderFixed.textContent = new Date(date + 'T00:00:00').toLocaleDateString('pt-br');
+                } else {
+                    historicoHeaderFixed.textContent = 'Todas liberações';
+                }
+            }
+
 
             if (historicoList) {
                 historicoList.innerHTML = '';
                 if (filteredData && filteredData.length > 0) {
                     filteredData.forEach(liberacao => {
-                        const cardClasses = 'bg-gray-700 p-4 rounded-lg shadow-lg transition-all duration-300 hover:bg-gray-600';
+                        const cardClasses = 'bg-gray-700 p-4 rounded-lg shadow-lg transition-all duration-300';
                         const liberacaoCard = document.createElement('div');
-                    liberacaoCard.className = cardClasses;
+                        liberacaoCard.className = cardClasses;
 
                         let nomesParaExibir = liberacao.nome;
                         if (typeof nomesParaExibir === 'string' && nomesParaExibir.startsWith('[') && nomesParaExibir.endsWith(']')) {
@@ -1064,18 +1156,28 @@
         }
         
         function updateFilterButtons(selectedFilter) {
-            if(btnFilterAll) btnFilterAll.classList.remove('bg-indigo-600');
-            if(filterDateInput) filterDateInput.classList.remove('bg-indigo-600');
+            const openCalendarBtn = document.getElementById('open-calendar-btn');
+            const historicoOpenCalendarBtn = document.getElementById('historico-open-calendar-btn');
             
-            switch (selectedFilter) {
-                case 'all':
-                    if(btnFilterAll) btnFilterAll.classList.add('bg-indigo-600');
-                    break;
-                case 'date':
-                    if(filterDateInput) filterDateInput.classList.add('bg-indigo-600');
-                    break;
+            if (selectedFilter === 'date') {
+                if (liberacaoPage.style.display !== 'none') {
+                    if (openCalendarBtn) openCalendarBtn.classList.remove('bg-gray-700');
+                    if (openCalendarBtn) openCalendarBtn.classList.add('bg-blue-600');
+                } else {
+                    if (historicoOpenCalendarBtn) historicoOpenCalendarBtn.classList.remove('bg-gray-700');
+                    if (historicoOpenCalendarBtn) historicoOpenCalendarBtn.classList.add('bg-blue-600');
+                }
+            } else if (selectedFilter === 'all') {
+                if (liberacaoPage.style.display !== 'none') {
+                    if (openCalendarBtn) openCalendarBtn.classList.remove('bg-blue-600');
+                    if (openCalendarBtn) openCalendarBtn.classList.add('bg-gray-700');
+                } else {
+                    if (historicoOpenCalendarBtn) historicoOpenCalendarBtn.classList.remove('bg-blue-600');
+                    if (historicoOpenCalendarBtn) historicoOpenCalendarBtn.classList.add('bg-gray-700');
+                }
             }
         }
+
 
         async function moveExpiredLiberacoesToHistory(session) {
             const today = new Date().toISOString().split('T')[0];
@@ -1083,6 +1185,7 @@
                 .from('liberacoes')
                 .select('id, periodo_fim')
                 .eq('excluida', false)
+                .eq('concluida', false)
                 .neq('permanente', true)
                 .lt('periodo_fim', today);
             
@@ -1112,7 +1215,7 @@
 
         // Função para buscar e exibir as liberações com filtros
         async function fetchLiberacoes(session, filterType = 'date', date = null, searchTerm = null) {
-            updateFilterButtons(currentFilterType);
+            updateFilterButtons(filterType);
             currentFilterType = filterType;
             currentFilterDate = date;
 
@@ -1165,49 +1268,67 @@
                 liberacoesList.innerHTML = ''; // Limpa a lista antes de renderizar
                 
                 // Adiciona o título do filtro
-                if (liberacaoHeader) {
+                if (liberacaoHeaderFixed) {
                     if (filterType === 'date' && date) {
-                        liberacaoHeader.textContent = new Date(date + 'T00:00:00').toLocaleDateString('pt-br');
+                        liberacaoHeaderFixed.textContent = new Date(date + 'T00:00:00').toLocaleDateString('pt-br');
                     } else {
-                        liberacaoHeader.textContent = 'Todas liberações';
+                        liberacaoHeaderFixed.textContent = 'Todas liberações';
                     }
                 }
     
                 if (filteredData && filteredData.length > 0) {
                     filteredData.forEach(liberacao => {
-                        const cardClasses = 'bg-gray-700 p-4 rounded-lg shadow-lg transition-all duration-300 hover:bg-gray-600';
+                        const cardClasses = `p-4 rounded-lg shadow-lg transition-all duration-300 ${liberacao.concluida ? 'bg-emerald-800' : 'bg-gray-700'}`;
                         const importantIcon = liberacao.importante
                             ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-400 mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
                                   <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.487 0l5.58 9.92c.754 1.346-.245 3.06-1.745 3.06H4.42c-1.5 0-2.498-1.714-1.746-3.06l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
                                </svg>`
                             : '';
-                        
+                            
                         const liberacaoCard = document.createElement('div');
                         liberacaoCard.className = cardClasses;
                         
                         const actionsContainer = document.createElement('div');
                         actionsContainer.className = 'flex items-center space-x-2';
                         
-                        // Mostra os botões de edição e exclusão apenas se o criador for o usuário logado
-                        if (currentSession && liberacao.user_id === currentSession.user.id) {
+                        // Checa se o usuário atual é o criador da liberação para mostrar o botão de editar
+                        if (session.user.id === liberacao.user_id) {
                             const editButton = document.createElement('button');
                             editButton.className = 'text-blue-400 hover:text-blue-500 transition duration-200';
                             editButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                         <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zm-4.646 2.586l2.828 2.828-5.756 5.757a4 4 0 01-1.328 1.03l-1.35 1.35-.793-.793 1.35-1.35c.376-.376.694-.852 1.03-1.328l5.756-5.757z" />
                                     </svg>`;
                             editButton.onclick = () => editLiberacao(liberacao.id);
-
-                            const deleteButton = document.createElement('button');
-                            deleteButton.className = 'text-red-400 hover:text-red-500 transition duration-200';
-                            deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.03 21H7.97a2 2 0 01-1.99-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>`;
-                            deleteButton.onclick = () => deleteLiberacao(liberacao.id);
-                            
                             actionsContainer.appendChild(editButton);
-                            actionsContainer.appendChild(deleteButton);
                         }
+
+                        const deleteButton = document.createElement('button');
+                        deleteButton.className = 'text-red-400 hover:text-red-500 transition duration-200';
+                        deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.03 21H7.97a2 2 0 01-1.99-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>`;
+                        deleteButton.onclick = () => deleteLiberacao(liberacao.id);
                         
+                        actionsContainer.appendChild(deleteButton);
+
+                        if (liberacao.concluida) {
+                            const desconcluirButton = document.createElement('button');
+                            desconcluirButton.className = 'text-red-400 hover:text-red-500 transition duration-200';
+                            desconcluirButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>`;
+                            desconcluirButton.onclick = () => desmarcarComoConcluida(liberacao.id);
+                            actionsContainer.appendChild(desconcluirButton);
+                        } else {
+                            const concluirButton = document.createElement('button');
+                            concluirButton.className = 'text-emerald-400 hover:text-emerald-500 transition duration-200';
+                            concluirButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>`;
+                            concluirButton.onclick = () => marcarComoConcluida(liberacao.id);
+                            actionsContainer.appendChild(concluirButton);
+                        }
+
                         // Formata as datas para dd/mm/aaaa
                         const periodoInicioFormatado = liberacao.periodo_inicio ? new Date(liberacao.periodo_inicio + 'T00:00:00').toLocaleDateString('pt-br') : '';
                         const periodoFimFormatado = liberacao.periodo_fim ? new Date(liberacao.periodo_fim + 'T00:00:00').toLocaleDateString('pt-br') : '';
@@ -1231,6 +1352,7 @@
                             </p>
                             ${observacaoParaExibir ? `<p class="text-sm text-gray-400 mt-2">Observação: <span class="text-white">${formatText(observacaoParaExibir)}</span></p>` : ''}
                             <p class="text-sm text-gray-400 mt-2">Criado por: ${liberacao.criador_nome} em ${new Date(liberacao.created_at).toLocaleString('pt-br')}</p>
+                            ${liberacao.concluida ? `<p class="text-sm text-gray-400 mt-2">Concluído por: ${liberacao.concluida_por} em ${new Date(liberacao.concluida_em).toLocaleString('pt-br')}</p>` : ''}
                             ${liberacao.anexo_url ? `<a href="${liberacao.anexo_url}" target="_blank" class="text-sm text-blue-400 hover:underline">Ver Anexo</a>` : ''}
                         `;
                         
@@ -1258,43 +1380,61 @@
         if (openCalendarBtn) {
             openCalendarBtn.addEventListener('click', () => {
                  if (customCalendarModal) customCalendarModal.style.display = 'flex';
+                 // Sincroniza a data do filtro atual com o input do modal
+                 customDateInput.value = currentFilterDate;
             });
         }
 
-        if (confirmDateBtn) {
-            confirmDateBtn.addEventListener('click', () => {
-                 const selectedDate = customDateInput.value;
+        if (customDateInput) {
+            customDateInput.addEventListener('change', (event) => {
+                 const selectedDate = event.target.value;
                  if (selectedDate) {
-                     if (filterDateInput) filterDateInput.value = selectedDate;
-                     fetchLiberacoes(currentSession, 'date', selectedDate, searchInput.value);
+                     if (liberacaoPage.style.display !== 'none') {
+                         fetchLiberacoes(currentSession, 'date', selectedDate, searchInput.value);
+                     } else {
+                         fetchHistorico(currentSession, 'date', selectedDate, historicoSearchInput.value);
+                     }
                  }
                  if (customCalendarModal) customCalendarModal.style.display = 'none';
             });
         }
-
-        if (cancelDateBtn) {
-            cancelDateBtn.addEventListener('click', () => {
+        
+        if (selectTodayBtn) {
+            selectTodayBtn.addEventListener('click', () => {
+                 const today = new Date().toISOString().split('T')[0];
+                 
+                 if (liberacaoPage.style.display !== 'none') {
+                     fetchLiberacoes(currentSession, 'date', today, searchInput.value);
+                     currentFilterDate = today;
+                     customDateInput.value = today;
+                 } else {
+                     fetchHistorico(currentSession, 'date', today, historicoSearchInput.value);
+                     historicoCurrentFilterDate = today;
+                     customDateInput.value = today;
+                 }
+                 
                  if (customCalendarModal) customCalendarModal.style.display = 'none';
-                 if (customDateInput) customDateInput.value = '';
+            });
+        }
+
+        if (selectAllDatesBtn) {
+            selectAllDatesBtn.addEventListener('click', () => {
+                 
+                 if (liberacaoPage.style.display !== 'none') {
+                     fetchLiberacoes(currentSession, 'all', null, searchInput.value);
+                     currentFilterType = 'all';
+                     currentFilterDate = null;
+                 } else {
+                     fetchHistorico(currentSession, 'all', null, historicoSearchInput.value);
+                     historicoCurrentFilterType = 'all';
+                     historicoCurrentFilterDate = null;
+                 }
+                 
+                 customDateInput.value = '';
+                 if (customCalendarModal) customCalendarModal.style.display = 'none';
             });
         }
         
-        if (btnFilterAll) {
-            btnFilterAll.addEventListener('click', () => {
-                if (currentSession) {
-                    fetchLiberacoes(currentSession, 'all', null, searchInput.value);
-                }
-            });
-        }
-
-        if (filterDateInput) {
-            filterDateInput.addEventListener('change', (event) => {
-                if (currentSession) {
-                    fetchLiberacoes(currentSession, 'date', event.target.value, searchInput.value);
-                }
-            });
-        }
-
         if (clearSearchBtn) {
             clearSearchBtn.addEventListener('click', () => {
                 if (searchInput) searchInput.value = '';
@@ -1307,6 +1447,11 @@
         if (searchInput) {
             searchInput.addEventListener('input', (event) => {
                 clearTimeout(searchTimeout);
+                // Define o filtro para "todas" quando o usuário começar a pesquisar
+                currentFilterType = 'all';
+                currentFilterDate = null;
+                updateFilterButtons('all');
+
                 searchTimeout = setTimeout(() => {
                     if (currentSession) {
                         fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, event.target.value);
@@ -1319,30 +1464,26 @@
         if (historicoOpenCalendarBtn) {
             historicoOpenCalendarBtn.addEventListener('click', () => {
                 if(customCalendarModal) customCalendarModal.style.display = 'flex';
+                // Sincroniza a data do filtro atual do histórico com o input do modal
+                customDateInput.value = historicoCurrentFilterDate;
             });
         }
         
-        if (historicoBtnFilterAll) {
-            historicoBtnFilterAll.addEventListener('click', () => {
-                if (currentSession) {
-                    fetchHistorico(currentSession, 'all', null, historicoSearchInput.value);
-                }
-            });
-        }
-
         if (historicoFilterDateInput) {
-            historicoFilterDateInput.addEventListener('change', (event) => {
-                if (currentSession) {
-                    fetchHistorico(currentSession, 'date', event.target.value, historicoSearchInput.value);
-                }
-            });
+             historicoFilterDateInput.addEventListener('change', (event) => {
+                 const selectedDate = event.target.value;
+                 if (selectedDate) {
+                     fetchHistorico(currentSession, 'date', selectedDate, historicoSearchInput.value);
+                     if (customCalendarModal) customCalendarModal.style.display = 'none';
+                 }
+             });
         }
         
         if (historicoClearSearchBtn) {
             historicoClearSearchBtn.addEventListener('click', () => {
                 if (historicoSearchInput) historicoSearchInput.value = '';
                 if (currentSession) {
-                    fetchHistorico(currentSession, 'all', historicoFilterDateInput.value, '');
+                    fetchHistorico(currentSession, historicoCurrentFilterType, historicoCurrentFilterDate, '');
                 }
             });
         }
@@ -1350,9 +1491,15 @@
         if (historicoSearchInput) {
             historicoSearchInput.addEventListener('input', (event) => {
                 clearTimeout(historicoSearchTimeout);
+
+                // Mudar o filtro para 'all' e resetar a data do filtro do histórico
+                historicoCurrentFilterType = 'all';
+                historicoCurrentFilterDate = null;
+                updateFilterButtons('all'); // Atualiza a aparência do botão de filtro
+
                 historicoSearchTimeout = setTimeout(() => {
                     if (currentSession) {
-                        fetchHistorico(currentSession, 'all', historicoFilterDateInput.value, event.target.value);
+                        fetchHistorico(currentSession, historicoCurrentFilterType, historicoCurrentFilterDate, event.target.value);
                     }
                 }, 500); // 500ms de atraso
             });
