@@ -322,8 +322,8 @@
     <!-- JavaScript para a lógica do aplicativo -->
     <script type="module">
         // **IMPORTANTE**: Substitua 'VOTSUF_URL' e 'VOTSUF_ANON_KEY' pelas suas credenciais do projeto Supabase.
-        const supabaseUrl = 'https://otiueonsldxjnyfiaxwi.supabase.co'
-        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90aXVlb25zbGR4am55ZmlheHdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0MjY0OTIsImV4cCI6MjA3MzAwMjQ5Mn0.NV0KoizFYOzu8Pe47vYq1LR6Uy18iKobm06DVr5bt_k'
+        const supabaseUrl = 'https://rztrygjczjqeqqldiqxa.supabase.co'
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6dHJ5Z2pjempxZXFxbGRpcXhhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgwNDgyMzIsImV4cCI6MjA3MzYyNDIzMn0.s7QiJWo6SPZRmN1bW1vPyhEis0xO1voNh0GFWPrTLtU'
         
         // Inicializa o cliente Supabase
         const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
@@ -652,7 +652,7 @@
         }
 
 
-        // Lógica para voltar da página de histórico para a página de liberação
+        // Lógica para voltar da página de histórico para a de liberação
         if (backToLiberacaoBtn) {
             backToLiberacaoBtn.addEventListener('click', () => {
                  if(historicoPage) historicoPage.style.display = 'none';
