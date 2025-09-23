@@ -87,6 +87,14 @@
         .line-through-text {
             text-decoration: line-through;
         }
+
+        /* Classe para o efeito de "marca texto" */
+        .highlight {
+            background-color: #fde047; /* Amarelo claro */
+            color: #111827; /* Texto escuro */
+            padding: 0 2px;
+            border-radius: 2px;
+        }
         
     </style>
 </head>
@@ -440,6 +448,19 @@
         // Função para normalizar strings, removendo acentos e convertendo para minúsculas
         function normalizeText(text) {
             return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        }
+        
+        // Função para destacar o termo de pesquisa no texto
+        function highlightText(text, searchTerm) {
+            if (!searchTerm || !text) {
+                return text;
+            }
+            const normalizedText = normalizeText(text);
+            const normalizedSearchTerm = normalizeText(searchTerm);
+            const regex = new RegExp(`(${normalizedSearchTerm})`, 'gi');
+            
+            // Usamos uma função de substituição para preservar a capitalização do texto original
+            return text.replace(regex, (match) => `<span class="highlight">${match}</span>`);
         }
         
         // Função para adicionar um novo campo de nome
@@ -1110,6 +1131,9 @@
                         const cardClasses = 'bg-gray-700 p-4 rounded-lg shadow-lg transition-all duration-300';
                         const liberacaoCard = document.createElement('div');
                         liberacaoCard.className = cardClasses;
+                        
+                        // Lógica para destacar o texto
+                        const searchTerm = historicoSearchInput.value.trim();
 
                         let nomesParaExibir = liberacao.nome;
                         if (typeof nomesParaExibir === 'string' && nomesParaExibir.startsWith('[') && nomesParaExibir.endsWith(']')) {
@@ -1139,11 +1163,14 @@
                         } else {
                             excluidoPorMensagem = `Excluído em ${dataExclusao.toLocaleString('pt-br')} automaticamente`;
                         }
-                         
+
+                        const highlightedName = highlightText(nomeParaExibirFinal, searchTerm);
+                        const highlightedObservacao = highlightText(observacaoParaExibir, searchTerm);
+
                         liberacaoCard.innerHTML = `
-                            <h3 class="font-bold text-gray-100">${nomeParaExibirFinal}</h3>
+                            <h3 class="font-bold text-gray-100">${highlightedName}</h3>
                             <p class="text-sm text-gray-400">Período: ${liberacao.permanente ? 'Permanente' : `${periodoInicioFormatado} a ${periodoFimFormatado}`}</p>
-                            ${observacaoParaExibir ? `<p class="text-sm text-gray-400 mt-2">Observação: <span class="text-white">${formatText(observacaoParaExibir)}</span></p>` : ''}
+                            ${highlightedObservacao ? `<p class="text-sm text-gray-400 mt-2">Observação: <span class="text-white">${highlightedObservacao}</span></p>` : ''}
                             <p class="text-sm text-gray-400 mt-2">Criado por: ${liberacao.criador_nome} em ${new Date(liberacao.created_at).toLocaleString('pt-br')}</p>
                             <p class="text-sm text-red-400 mt-2">${excluidoPorMensagem}</p>
                         `;
@@ -1329,6 +1356,9 @@
                             actionsContainer.appendChild(concluirButton);
                         }
 
+                        // Lógica para destacar o texto
+                        const searchTerm = searchInput.value.trim();
+                        
                         // Formata as datas para dd/mm/aaaa
                         const periodoInicioFormatado = liberacao.periodo_inicio ? new Date(liberacao.periodo_inicio + 'T00:00:00').toLocaleDateString('pt-br') : '';
                         const periodoFimFormatado = liberacao.periodo_fim ? new Date(liberacao.periodo_fim + 'T00:00:00').toLocaleDateString('pt-br') : '';
@@ -1344,13 +1374,16 @@
                         const nomeParaExibirFinal = Array.isArray(nomesParaExibir) ? nomesParaExibir.join(', ') : nomesParaExibir;
     
                         const observacaoParaExibir = liberacao.observacao || '';
+
+                        const highlightedName = highlightText(nomeParaExibirFinal, searchTerm);
+                        const highlightedObservacao = highlightText(formatText(observacaoParaExibir), searchTerm);
     
                         const detailsContainer = document.createElement('div');
                         detailsContainer.innerHTML = `
                             <p class="text-sm text-gray-400">
                                 Período: ${liberacao.permanente ? 'Permanente' : `${periodoInicioFormatado} a ${periodoFimFormatado}`}
                             </p>
-                            ${observacaoParaExibir ? `<p class="text-sm text-gray-400 mt-2">Observação: <span class="text-white">${formatText(observacaoParaExibir)}</span></p>` : ''}
+                            ${highlightedObservacao ? `<p class="text-sm text-gray-400 mt-2">Observação: <span class="text-white">${highlightedObservacao}</span></p>` : ''}
                             <p class="text-sm text-gray-400 mt-2">Criado por: ${liberacao.criador_nome} em ${new Date(liberacao.created_at).toLocaleString('pt-br')}</p>
                             ${liberacao.concluida ? `<p class="text-sm text-gray-400 mt-2">Concluído por: ${liberacao.concluida_por} em ${new Date(liberacao.concluida_em).toLocaleString('pt-br')}</p>` : ''}
                             ${liberacao.anexo_url ? `<a href="${liberacao.anexo_url}" target="_blank" class="text-sm text-blue-400 hover:underline">Ver Anexo</a>` : ''}
@@ -1361,7 +1394,7 @@
                         headerContainer.innerHTML = `
                             <div class="flex items-center">
                                 ${importantIcon}
-                                <h3 class="font-bold text-gray-100">${nomeParaExibirFinal}</h3>
+                                <h3 class="font-bold text-gray-100">${highlightedName}</h3>
                             </div>
                         `;
                         headerContainer.appendChild(actionsContainer);
