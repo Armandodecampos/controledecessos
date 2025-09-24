@@ -62,6 +62,11 @@
             background-color: #5d6776;
         }
 
+        /* Estilo específico para a barra de rolagem da área de liberações */
+        #liberacao-content-area::-webkit-scrollbar {
+            width: 60px;
+        }
+
         /* Estilos para o contêiner de fundo embaçado */
         #background-blur-container {
             position: fixed;
@@ -76,9 +81,6 @@
             background-attachment: fixed;
             transition: filter 0.5s ease-in-out;
         }
-        .blur-background {
-            filter: blur(5px);
-        }
         
         .liberacao-card-concluida {
             background-color: #1a2e24; /* Um verde escuro para indicar concluído */
@@ -86,14 +88,6 @@
         
         .line-through-text {
             text-decoration: line-through;
-        }
-
-        /* Classe para o efeito de "marca texto" */
-        .highlight {
-            background-color: #fde047; /* Amarelo claro */
-            color: #111827; /* Texto escuro */
-            padding: 0 2px;
-            border-radius: 2px;
         }
         
     </style>
@@ -155,66 +149,115 @@
         
         <!-- Alternador entre login e cadastro, e botão de recuperação de senha -->
         <div class="mt-6 text-center text-sm space-y-2">
-            <button id="toggle-auth" class="text-blue-400 hover:text-blue-300 transition duration-200 focus:outline-none">Ainda não tem uma conta? Cadastre-se</button>
             <div id="forgot-password-container">
                 <button id="forgot-password-btn" class="text-blue-400 hover:text-blue-300 transition duration-200 focus:outline-none block w-full">Esqueci minha senha</button>
+            </div>
+            <div>
+                <button id="change-password-btn" class="text-blue-400 hover:text-blue-300 transition duration-200 focus:outline-none block w-full">Trocar senha</button>
             </div>
         </div>
     </div>
 
-    <!-- Página de Histórico -->
-    <div id="historico-page" class="hidden w-full h-screen">
-        <!-- Barra de navegação fixa no topo -->
-        <div class="fixed top-0 left-0 w-full bg-gray-800 p-4 shadow-lg z-50 flex flex-wrap justify-start items-center space-x-4 space-y-2 sm:space-y-0">
-            <button id="back-to-liberacao" class="py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" />
-                </svg>
-            </button>
-            <button id="historico-open-calendar-btn" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 transition duration-200">Selecionar data</button>
-            <input type="date" id="historico-filter-date" class="hidden">
-            <div id="historico-header-fixed" class="text-white text-lg font-bold flex-grow text-center"></div>
-            
-            <!-- Barra de pesquisa movida para a barra superior -->
-            <div class="mt-2 sm:mt-0 w-full sm:w-auto flex items-center relative">
-                <input type="text" id="historico-search-input" placeholder="Pesquisar..." class="w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-                <button id="historico-clear-search" class="absolute right-2 text-gray-400 hover:text-gray-200">
-                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                   </svg>
-                </button>
-            </div>
+    <!-- Container para Troca de Senha -->
+    <div id="password-change-container" class="hidden w-full max-w-sm bg-gray-800 p-8 rounded-xl shadow-lg transition-all duration-300">
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-100">Trocar Senha</h1>
         </div>
-        
-        <div class="fixed top-[8rem] left-12 right-12 bottom-12 bg-gray-800 rounded-xl shadow-lg p-8 overflow-y-auto">
-            <div id="historico-list" class="space-y-4">
-                <!-- Lista de liberações excluídas será renderizada aqui -->
+        <form id="password-change-form" class="space-y-4">
+            <div>
+                <label for="change-email" class="block text-sm font-medium text-gray-300">Email</label>
+                <input type="email" id="change-email" required autocomplete="email" class="mt-1 block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
             </div>
-            <p class="text-xs text-gray-400 mt-4 text-center">Número máximo de registros: 50. Registros mais antigos são excluídos permanentemente.</p>
+            <div>
+                <label for="old-password" class="block text-sm font-medium text-gray-300">Senha Antiga</label>
+                <input type="password" id="old-password" required class="mt-1 block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+            </div>
+            <div>
+                <label for="new-password" class="block text-sm font-medium text-gray-300">Nova Senha</label>
+                <input type="password" id="new-password" required class="mt-1 block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+            </div>
+            <div>
+                <label for="confirm-new-password" class="block text-sm font-medium text-gray-300">Confirmar Nova Senha</label>
+                <input type="password" id="confirm-new-password" required class="mt-1 block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+            </div>
+            <div>
+                <button type="submit" id="change-submit-btn" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">Trocar Senha</button>
+            </div>
+        </form>
+        <div id="change-message" class="mt-4 text-center text-sm font-medium" style="display: none;"></div>
+        <div class="mt-6 text-center text-sm">
+            <button id="back-to-login-btn" class="text-blue-400 hover:text-blue-300 transition duration-200 focus:outline-none">Voltar para o Login</button>
         </div>
+    </div>
+
+    <!-- Container para Solicitar Recuperação de Senha -->
+    <div id="forgot-password-prompt-container" class="hidden w-full max-w-sm bg-gray-800 p-8 rounded-xl shadow-lg transition-all duration-300">
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-100">Recuperar Senha</h1>
+            <p class="text-sm text-gray-400 mt-2">Digite seu e-mail para receber um link de recuperação.</p>
+        </div>
+        <form id="forgot-password-prompt-form" class="space-y-4">
+            <div>
+                <label for="recovery-email" class="block text-sm font-medium text-gray-300">Email</label>
+                <input type="email" id="recovery-email" required autocomplete="email" class="mt-1 block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+            </div>
+            <div>
+                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">Enviar Link</button>
+            </div>
+        </form>
+        <div id="recovery-message" class="mt-4 text-center text-sm font-medium" style="display: none;"></div>
+        <div class="mt-6 text-center text-sm">
+            <button id="back-to-login-from-recovery-btn" class="text-blue-400 hover:text-blue-300 transition duration-200 focus:outline-none">Voltar para o Login</button>
+        </div>
+    </div>
+
+    <!-- Container para Recuperação de Senha -->
+    <div id="password-recovery-container" class="hidden w-full max-w-sm bg-gray-800 p-8 rounded-xl shadow-lg transition-all duration-300">
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-100">Redefinir Senha</h1>
+        </div>
+        <form id="password-recovery-form" class="space-y-4">
+            <div>
+                <label for="new-password-recovery" class="block text-sm font-medium text-gray-300">Nova Senha</label>
+                <div class="relative mt-1">
+                    <input type="password" id="new-password-recovery" required class="block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10">
+                    <button type="button" id="toggle-new-password" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-gray-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div>
+                <label for="confirm-password-recovery" class="block text-sm font-medium text-gray-300">Confirmar Nova Senha</label>
+                <div class="relative mt-1">
+                    <input type="password" id="confirm-password-recovery" required class="block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-10">
+                    <button type="button" id="toggle-confirm-recovery" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-gray-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div>
+                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">Salvar Nova Senha</button>
+            </div>
+        </form>
     </div>
 
     <!-- Página de Liberação -->
     <div id="liberacao-page" class="hidden w-full h-screen">
         <!-- Barra de navegação fixa no topo -->
-        <div class="fixed top-0 left-0 w-full bg-gray-800 p-4 shadow-lg z-50 flex flex-wrap justify-start items-center space-x-4 space-y-2 sm:space-y-0">
+        <div id="liberacao-top-bar" class="fixed top-0 left-0 w-full bg-gray-800 p-4 shadow-lg z-50 flex flex-wrap justify-start items-center space-x-4 space-y-2 sm:space-y-0">
             
-             <button id="sign-out-liberacao" class="py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200">Sair</button>
+            <!-- Botões de Filtro -->
+            <button id="filter-my-liberacoes" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 transition duration-200">Minhas liberações</button>
+            <button id="filter-all-liberacoes" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 transition duration-200">Todas liberações</button>
             
-            <button id="btn-historico" class="py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-200">Histórico</button>
-            
-            <!-- Campo de data visível para o calendário -->
-            <button id="open-calendar-btn" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 transition duration-200">Selecionar data</button>
-            <input type="date" id="filter-date" class="hidden">
-
-            <!-- Cabeçalho de data/filtro fixo -->
-            <div id="liberacao-header-fixed" class="text-white text-lg font-bold flex-grow text-center"></div>
-            
-            <!-- Botão "Nova liberação" adicionado aqui -->
-            <button id="btn-add-liberacao" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200">Nova liberação</button>
-            
-            <!-- Barra de pesquisa movida para a barra superior -->
-            <div class="mt-2 sm:mt-0 w-full sm:w-auto flex items-center relative">
+             <!-- Barra de pesquisa -->
+            <div class="mt-2 sm:mt-0 flex-grow flex items-center relative">
                 <input type="text" id="search-input" placeholder="Pesquisar..." class="w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
                 <button id="clear-search" class="absolute right-2 text-gray-400 hover:text-gray-200">
                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -222,6 +265,24 @@
                    </svg>
                 </button>
             </div>
+
+            <!-- Campo de data visível para o calendário -->
+            <button id="open-calendar-btn" class="p-2 rounded-lg shadow-sm text-white bg-gray-700 hover:bg-gray-600 transition duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+            </button>
+            <input type="date" id="filter-date" class="hidden">
+
+            <!-- Cabeçalho de data/filtro fixo -->
+            <div id="liberacao-header-fixed" class="text-white text-lg font-bold"></div>
+
+            <!-- Botão "Nova liberação" -->
+            <button id="btn-add-liberacao" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200">Nova liberação</button>
+            
+            <!-- Botão Sair -->
+             <button id="sign-out-liberacao" class="py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200">Sair</button>
+            
         </div>
         
         <!-- Formulário de Adicionar/Editar Liberação -->
@@ -266,7 +327,7 @@
                 </div>
                 <div>
                     <label for="observacao" class="block text-sm font-medium text-gray-300">Observação</label>
-                    <textarea id="observacao" name="observacao" rows="3" class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200"></textarea>
+                    <textarea id="observacao" name="observacao" rows="6" class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200"></textarea>
                 </div>
                 <div>
                      <label for="arquivo" class="block text-sm font-medium text-gray-300">Anexar Arquivo</label>
@@ -279,7 +340,7 @@
             </div>
         </form>
         
-        <div class="fixed top-[8rem] left-12 right-12 bottom-12 bg-gray-800 rounded-xl shadow-lg p-8 overflow-y-auto">
+        <div id="liberacao-content-area" class="fixed left-0 right-0 bottom-0 bg-gray-800 p-8 overflow-y-auto">
             <div id="liberacoes-list" class="space-y-4">
                 <!-- Lista de liberações será renderizada aqui -->
             </div>
@@ -290,7 +351,7 @@
     <div id="confirmation-modal" class="modal">
         <div class="modal-content">
             <h3 class="text-lg font-bold text-gray-100 mb-4">Confirmar Exclusão</h3>
-            <p class="text-gray-300">Tem certeza de que deseja excluir esta liberação?</p>
+            <p class="text-gray-300">Tem certeza de que deseja excluir esta liberação permanentemente?</p>
             <div class="modal-buttons">
                 <button id="confirm-delete-btn" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200">Sim, Excluir</button>
                 <button id="cancel-delete-btn" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-gray-200 bg-gray-600 hover:bg-gray-500 transition duration-200">Cancelar</button>
@@ -341,26 +402,21 @@
         const authContainer = document.getElementById('auth-container');
         const passwordRecoveryContainer = document.getElementById('password-recovery-container');
         const passwordRecoveryForm = document.getElementById('password-recovery-form');
-        const newPasswordInput = document.getElementById('new-password');
+        const newPasswordInput = document.getElementById('new-password-recovery');
         const confirmPasswordInput = document.getElementById('confirm-password-recovery');
-        const historicoPage = document.getElementById('historico-page');
-        const historicoList = document.getElementById('historico-list');
         const authForm = document.getElementById('auth-form');
         const formTitle = document.getElementById('form-title');
         const submitBtn = document.getElementById('submit-btn');
-        const toggleAuthBtn = document.getElementById('toggle-auth');
         const userEmailElem = document.getElementById('user-email');
         const signOutBtn = document.getElementById('sign-out');
         const messageElem = document.getElementById('message');
         const forgotPasswordBtn = document.getElementById('forgot-password-btn');
         const forgotPasswordContainer = document.getElementById('forgot-password-container');
         const liberacaoPage = document.getElementById('liberacao-page');
-        const btnHistorico = document.getElementById('btn-historico');
         const btnAddLiberacao = document.getElementById('btn-add-liberacao');
         const addLiberacaoForm = document.getElementById('add-liberacao-form');
         const liberacoesList = document.getElementById('liberacoes-list');
         const liberacaoHeaderFixed = document.getElementById('liberacao-header-fixed');
-        const historicoHeaderFixed = document.getElementById('historico-header-fixed');
         const permanenteCheckbox = document.getElementById('permanente');
         const importanteCheckbox = document.getElementById('importante');
         const concluidaEditCheckbox = document.getElementById('concluida-edit');
@@ -374,6 +430,17 @@
         const addNomeBtn = document.getElementById('add-nome-btn');
         const backgroundBlurContainer = document.getElementById('background-blur-container');
         
+        // Elementos da troca de senha
+        const changePasswordBtn = document.getElementById('change-password-btn');
+        const passwordChangeContainer = document.getElementById('password-change-container');
+        const passwordChangeForm = document.getElementById('password-change-form');
+        const backToLoginBtn = document.getElementById('back-to-login-btn');
+        const changeMessageElem = document.getElementById('change-message');
+        const forgotPasswordPromptContainer = document.getElementById('forgot-password-prompt-container');
+        const forgotPasswordPromptForm = document.getElementById('forgot-password-prompt-form');
+        const backToLoginFromRecoveryBtn = document.getElementById('back-to-login-from-recovery-btn');
+        const recoveryMessageElem = document.getElementById('recovery-message');
+
         // Novos elementos para os ícones de olho
         const togglePasswordBtn = document.getElementById('toggle-password');
         const toggleConfirmPasswordBtn = document.getElementById('toggle-confirm-password');
@@ -398,69 +465,51 @@
         const selectAllDatesBtn = document.getElementById('select-all-dates-btn');
         
         // Novos elementos de filtro
-        const btnFilterAll = document.getElementById('btn-filter-all');
         const filterDateInput = document.getElementById('filter-date');
         const openCalendarBtn = document.getElementById('open-calendar-btn');
         const searchInput = document.getElementById('search-input');
         const clearSearchBtn = document.getElementById('clear-search');
-        
-        // Novos elementos de filtro para histórico
-        const historicoOpenCalendarBtn = document.getElementById('historico-open-calendar-btn');
-        const historicoFilterDateInput = document.getElementById('historico-filter-date');
-        const historicoSearchInput = document.getElementById('historico-search-input');
-        const historicoClearSearchBtn = document.getElementById('historico-clear-search');
+        const filterMyLiberacoesBtn = document.getElementById('filter-my-liberacoes');
+        const filterAllLiberacoesBtn = document.getElementById('filter-all-liberacoes');
         
         // Botão de sair da barra de navegação
         const signOutLiberacaoBtn = document.getElementById('sign-out-liberacao');
         
-        // Botão para voltar da página de histórico para a de liberação
-        const backToLiberacaoBtn = document.getElementById('back-to-liberacao');
-
+        const liberacaoTopBar = document.getElementById('liberacao-top-bar');
+        const liberacaoContentArea = document.getElementById('liberacao-content-area');
         // Novo elemento para o anexo
         const arquivoInput = document.getElementById('arquivo');
 
-
-        let isSigningUp = false;
         let currentSession = null;
         let liberacaoToDeleteId = null;
         let liberacaoToEdit = null;
         let currentFilterType = 'date';
         let currentFilterDate = null;
-        let historicoCurrentFilterType = 'all'; // Nova variável para o histórico
-        let historicoCurrentFilterDate = null;  // Nova variável para o histórico
-        const HISTORY_LIMIT = 50;
+        let liberacaoOwnerFilter = 'all'; // 'all' or 'my'
         let searchTimeout;
-        let historicoSearchTimeout;
         const POLLING_INTERVAL = 1000; // 1 segundo de sondagem
+        let isChangingPassword = false;
 
         // Sondagem para atualização de dados
         setInterval(() => {
-            if (currentSession) {
-                if (liberacaoPage.style.display !== 'none') {
-                    fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
-                } else if (historicoPage.style.display !== 'none') {
-                    fetchHistorico(currentSession, historicoCurrentFilterType, historicoCurrentFilterDate, historicoSearchInput.value);
-                }
+            if (currentSession && liberacaoPage.style.display !== 'none') {
+                fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
             }
         }, POLLING_INTERVAL);
+
+        function adjustLiberacaoLayout() {
+            if (liberacaoTopBar && liberacaoContentArea) {
+                const topBarHeight = liberacaoTopBar.offsetHeight;
+                liberacaoContentArea.style.top = `${topBarHeight}px`;
+            }
+        }
+
+        window.addEventListener('resize', adjustLiberacaoLayout);
 
 
         // Função para normalizar strings, removendo acentos e convertendo para minúsculas
         function normalizeText(text) {
             return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-        }
-        
-        // Função para destacar o termo de pesquisa no texto
-        function highlightText(text, searchTerm) {
-            if (!searchTerm || !text) {
-                return text;
-            }
-            const normalizedText = normalizeText(text);
-            const normalizedSearchTerm = normalizeText(searchTerm);
-            const regex = new RegExp(`(${normalizedSearchTerm})`, 'gi');
-            
-            // Usamos uma função de substituição para preservar a capitalização do texto original
-            return text.replace(regex, (match) => `<span class="highlight">${match}</span>`);
         }
         
         // Função para adicionar um novo campo de nome
@@ -482,57 +531,37 @@
             }
         }
         
-        // Evento de delegação para os botões de remover nome
-        if(nomesContainer) {
-            nomesContainer.addEventListener('click', (e) => {
-                if (e.target.closest('.remove-name-btn')) {
-                    e.preventDefault();
-                    const parentDiv = e.target.closest('.flex');
-                    if (parentDiv) {
-                        parentDiv.remove();
-                    }
-                }
-            });
-        }
-        
-        // Listener para o botão de adicionar nome
-        if (addNomeBtn) {
-            addNomeBtn.addEventListener('click', () => {
-                addNameInput('', true);
-            });
-        }
-
-
-        // Função para alternar entre o formulário de login e cadastro
-        if (toggleAuthBtn) {
-            toggleAuthBtn.addEventListener('click', () => {
-                isSigningUp = !isSigningUp;
-                if (isSigningUp) {
-                    formTitle.textContent = 'Crie uma Conta';
-                    submitBtn.textContent = 'Cadastrar';
-                    toggleAuthBtn.textContent = 'Já tem uma conta? Faça login';
-                    forgotPasswordContainer.style.display = 'none';
-                    document.getElementById('confirm-password-container').classList.remove('hidden');
-                } else {
-                    formTitle.textContent = 'Faça Login';
-                    submitBtn.textContent = 'Entrar';
-                    toggleAuthBtn.textContent = 'Ainda não tem uma conta? Cadastre-se';
-                    forgotPasswordContainer.style.display = 'block';
-                    document.getElementById('confirm-password-container').classList.add('hidden');
-                }
-                showMessage(''); // Limpa a mensagem ao alternar
-            });
-        }
-
-        // Função para exibir mensagens na tela
+        // Função para exibir mensagens (geralmente usada para notificações 'toast')
         function showMessage(text, isError = false) {
-            if (messageElem) {
-                messageElem.textContent = text;
-                messageElem.style.display = text ? 'block' : 'none';
-                messageElem.className = `mt-4 text-center text-sm font-medium ${isError ? 'text-red-500' : 'text-green-500'}`;
+            const toast = document.createElement('div');
+            toast.textContent = text;
+            toast.className = `fixed bottom-5 right-5 p-4 rounded-lg shadow-lg text-white ${isError ? 'bg-red-600' : 'bg-green-600'}`;
+            toast.style.zIndex = '2000'; // Garante que fique por cima de outros elementos
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Função para exibir mensagens na tela de solicitação de recuperação
+        function showRecoveryMessage(text, isError = false) {
+            if (recoveryMessageElem) {
+                recoveryMessageElem.textContent = text;
+                recoveryMessageElem.style.display = text ? 'block' : 'none';
+                recoveryMessageElem.className = `mt-4 text-center text-sm font-medium ${isError ? 'text-red-500' : 'text-green-500'}`;
             }
         }
-        
+
+        // Função para exibir mensagens na tela de troca de senha
+        function showChangeMessage(text, isError = false) {
+            if (changeMessageElem) {
+                changeMessageElem.textContent = text;
+                changeMessageElem.style.display = text ? 'block' : 'none';
+                changeMessageElem.className = `mt-4 text-center text-sm font-medium ${isError ? 'text-red-500' : 'text-green-500'}`;
+            }
+        }
+
         // Função para exibir mensagens de validação
         function showValidationMessage(text) {
             if (modalMessage) {
@@ -553,48 +582,112 @@
                 const email = document.getElementById('email').value;
                 const password = passwordInput.value;
                 
-                if (isSigningUp) {
-                    const confirmPassword = confirmPasswordSignupInput.value;
-                    if (password !== confirmPassword) {
-                        showMessage('As senhas não coincidem. Tente novamente.', true);
-                        return;
-                    }
-                    
-                    // Lógica de cadastro
-                    const { data, error } = await supabase.auth.signUp({ email, password });
-                    if (error) {
-                        showMessage(error.message, true);
-                    } else {
-                        showMessage('Confirme seu email. Verifique sua caixa de entrada.');
-                        console.log('Dados do usuário:', data);
-                    }
+                // Lógica de login
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) {
+                    showMessage(error.message, true);
                 } else {
-                    // Lógica de login
-                    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-                    if (error) {
-                        showMessage(error.message, true);
-                    } else {
-                        showMessage('Login bem-sucedido!');
-                        console.log('Dados do usuário:', data);
-                    }
+                    showMessage('Login bem-sucedido!');
+                    console.log('Dados do usuário:', data);
                 }
             });
         }
         
-        // Lógica de redefinição de senha
-        if (forgotPasswordBtn) {
-            forgotPasswordBtn.addEventListener('click', async () => {
-                const email = document.getElementById('email').value;
-                if (!email) {
-                    showMessage('Por favor, insira seu email para recuperar a senha.', true);
+        // Lógica para mostrar o formulário de troca de senha
+        if (changePasswordBtn) {
+            changePasswordBtn.addEventListener('click', () => {
+                authContainer.style.display = 'none';
+                passwordChangeContainer.style.display = 'block';
+            });
+        }
+
+        // Lógica para voltar para o login
+        if (backToLoginBtn) {
+            backToLoginBtn.addEventListener('click', () => {
+                passwordChangeContainer.style.display = 'none';
+                authContainer.style.display = 'block';
+                showChangeMessage(''); // Limpa a mensagem
+            });
+        }
+
+        // Lógica para o formulário de troca de senha
+        if (passwordChangeForm) {
+            passwordChangeForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('change-email').value;
+                const oldPassword = document.getElementById('old-password').value;
+                const newPassword = document.getElementById('new-password').value;
+                const confirmNewPassword = document.getElementById('confirm-new-password').value;
+
+                if (newPassword !== confirmNewPassword) {
+                    showChangeMessage('As novas senhas não coincidem.', true);
                     return;
                 }
 
-                const { data, error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });
-                if (error) {
-                        showMessage(error.message, true);
+                isChangingPassword = true;
+
+                // 1. Autenticar com a senha antiga para verificar o usuário
+                const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+                    email,
+                    password: oldPassword,
+                });
+
+                if (signInError) {
+                    showChangeMessage('Email ou senha antiga incorretos.', true);
+                    isChangingPassword = false;
+                    return;
+                }
+
+                // 2. Se a autenticação for bem-sucedida, atualize a senha
+                const { data: updateData, error: updateError } = await supabase.auth.updateUser({
+                    password: newPassword
+                });
+
+                if (updateError) {
+                    showChangeMessage('Erro ao atualizar a senha: ' + updateError.message, true);
+                    isChangingPassword = false;
                 } else {
-                    showMessage('Verifique seu e-mail para o link de redefinição de senha.');
+                    showChangeMessage('Senha alterada com sucesso! Você será deslogado.');
+                    // 3. Deslogar o usuário para forçar o login com a nova senha
+                    setTimeout(async () => {
+                        await supabase.auth.signOut();
+                        isChangingPassword = false;
+                    }, 2000);
+                }
+            });
+        }
+
+        // Lógica de redefinição de senha
+        if (forgotPasswordBtn) {
+            forgotPasswordBtn.addEventListener('click', () => {
+                authContainer.style.display = 'none';
+                forgotPasswordPromptContainer.style.display = 'block';
+                showMessage(''); // Limpa a mensagem do formulário de login
+            });
+        }
+
+        if (backToLoginFromRecoveryBtn) {
+            backToLoginFromRecoveryBtn.addEventListener('click', () => {
+                forgotPasswordPromptContainer.style.display = 'none';
+                authContainer.style.display = 'block';
+                showRecoveryMessage('');
+            });
+        }
+
+        if (forgotPasswordPromptForm) {
+            forgotPasswordPromptForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('recovery-email').value;
+                if (!email) {
+                    showRecoveryMessage('Por favor, insira seu email.', true);
+                    return;
+                }
+
+                const { data, error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+                if (error) {
+                    showRecoveryMessage(error.message, true);
+                } else {
+                    showRecoveryMessage('Verifique seu e-mail para o link de redefinição de senha.');
                 }
             });
         }
@@ -658,31 +751,6 @@
         setupPasswordToggle(newPasswordInput, toggleNewPasswordBtn);
         setupPasswordToggle(confirmPasswordInput, toggleConfirmRecoveryBtn);
 
-
-        // Lógica para alternar para a página de Histórico
-        if (btnHistorico) {
-            btnHistorico.addEventListener('click', () => {
-                if(liberacaoPage) liberacaoPage.style.display = 'none';
-                if(historicoPage) historicoPage.style.display = 'flex';
-                // Reseta o filtro para "Todas" por padrão ao entrar no histórico
-                historicoFilterDateInput.value = '';
-                historicoCurrentFilterType = 'all';
-                historicoCurrentFilterDate = null;
-                fetchHistorico(currentSession, 'all', null, historicoSearchInput.value);
-            });
-        }
-
-
-        // Lógica para voltar da página de histórico para a de liberação
-        if (backToLiberacaoBtn) {
-            backToLiberacaoBtn.addEventListener('click', () => {
-                 if(historicoPage) historicoPage.style.display = 'none';
-                 if (liberacaoPage) {
-                    liberacaoPage.style.display = 'flex';
-                 }
-            });
-        }
-
         //Lógica para deslogar
         if (signOutLiberacaoBtn) {
             signOutLiberacaoBtn.addEventListener('click', async () => {
@@ -697,6 +765,10 @@
         // Lógica para mostrar/esconder o formulário de adicionar liberação
         if (btnAddLiberacao) {
             btnAddLiberacao.addEventListener('click', () => {
+                const today = new Date().toISOString().split('T')[0];
+                periodoInicioInput.value = today;
+                periodoFimInput.value = today;
+
                 addLiberacaoForm.style.display = 'flex';
                 formSubtitle.textContent = 'Adicionar Liberação';
                 formSubmitBtn.textContent = 'Salvar Liberação';
@@ -705,6 +777,9 @@
                 nomesContainer.innerHTML = '';
                 addNameInput('', false); // Adiciona o primeiro campo de nome
                 liberacaoToEdit = null;
+                 // Redefine a data para hoje após resetar o formulário
+                periodoInicioInput.value = today;
+                periodoFimInput.value = today;
             });
         }
 
@@ -761,8 +836,12 @@
                         return;
                     }
                     
-                    const today = new Date().toISOString().split('T')[0];
-                    if (inicioValue < today) {
+                    const today = new Date();
+                    today.setHours(0,0,0,0); // Normaliza para o início do dia
+                    const startDate = new Date(inicioValue);
+                    startDate.setMinutes(startDate.getMinutes() + startDate.getTimezoneOffset()); // Ajusta para UTC
+                    
+                    if (startDate < today) {
                         showValidationMessage('Não é possível criar uma liberação para uma data anterior à data atual.');
                         return;
                     }
@@ -821,14 +900,6 @@
                 };
 
                 if (liberacaoToEdit) {
-                    
-                    // Se a liberação está sendo reativada, atualiza o status de excluída
-                    if (formSubmitBtn.textContent === 'Reativar Liberação') {
-                        payload.excluida = false;
-                        payload.data_exclusao = null;
-                        payload.excluido_por = null;
-                    }
-
                     const { data, error } = await supabase
                         .from('liberacoes')
                         .update(payload)
@@ -842,13 +913,8 @@
                         liberacaoToEdit = null; // Limpa o estado de edição
                         addLiberacaoForm.style.display = 'none';
                         addLiberacaoForm.reset();
-                        if (historicoPage.style.display !== 'none') {
-                            fetchHistorico(currentSession, historicoCurrentFilterType, historicoCurrentFilterDate, historicoSearchInput.value);
-                        } else {
-                            fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
-                        }
+                        fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
                     }
-
                 } else {
                     const { data, error } = await supabase
                         .from('liberacoes')
@@ -929,7 +995,7 @@
         }
 
 
-        // Lógica para excluir uma liberação (soft delete)
+        // Lógica para excluir uma liberação
         function deleteLiberacao(id) {
             liberacaoToDeleteId = id;
             if (confirmationModal) {
@@ -937,7 +1003,7 @@
             }
         }
 
-        // Lógica para o botão de confirmação do modal
+        // Lógica para o botão de confirmação do modal de exclusão
         if (confirmDeleteBtn) {
             confirmDeleteBtn.addEventListener('click', async () => {
                 if (confirmationModal) confirmationModal.style.display = 'none';
@@ -945,21 +1011,15 @@
 
                 const { data, error } = await supabase
                     .from('liberacoes')
-                    .update({ 
-                        excluida: true, 
-                        excluido_por: currentSession.user.email,
-                        data_exclusao: new Date().toISOString()
-                    })
+                    .delete()
                     .eq('id', liberacaoToDeleteId);
                 
                 if (error) {
                     console.error('Erro ao excluir a liberação:', error);
                     showMessage('Erro ao excluir a liberação.', true);
                 } else {
-                    showMessage('Liberação excluída com sucesso!');
-                    fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value); // Atualiza a lista principal
-                    // Verifica e remove a liberação mais antiga se o limite for excedido
-                    checkAndPurgeHistory();
+                    showMessage('Liberação excluída permanentemente!');
+                    fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
                 }
 
                 liberacaoToDeleteId = null;
@@ -1013,50 +1073,6 @@
                 fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
             }
         }
-
-        // Função para reativar uma liberação (leva para a tela de edição)
-        async function reativarLiberacao(id) {
-            await editLiberacao(id); // Usa a mesma função de edição para carregar os dados
-            if(formSubtitle) formSubtitle.textContent = 'Reativar Liberação';
-            if(formSubmitBtn) formSubmitBtn.textContent = 'Reativar Liberação';
-            // Garante que o campo de data de início esteja vazio para ser preenchido
-            if (periodoInicioInput) periodoInicioInput.value = '';
-            // Desabilita o campo de permanente
-            if (permanenteCheckbox) {
-                permanenteCheckbox.checked = false;
-                permanenteCheckbox.disabled = true;
-                if(periodoInicioInput) periodoInicioInput.disabled = false;
-                if(periodoFimInput) periodoFimInput.disabled = false;
-            }
-        }
-        
-        // Função para verificar e remover o histórico mais antigo se o limite for excedido
-        async function checkAndPurgeHistory() {
-            const { data, error } = await supabase
-                .from('liberacoes')
-                .select('id, data_exclusao')
-                .eq('excluida', true)
-                .order('data_exclusao', { ascending: true });
-
-            if (error) {
-                console.error('Erro ao verificar o histórico:', error);
-                return;
-            }
-
-            if (data && data.length > HISTORY_LIMIT) {
-                const liberacaoParaExcluir = data[0];
-                const { error: deleteError } = await supabase
-                    .from('liberacoes')
-                    .delete()
-                    .eq('id', liberacaoParaExcluir.id);
-
-                if (deleteError) {
-                    console.error('Erro ao excluir permanentemente a liberação:', deleteError);
-                } else {
-                    console.log('Liberação mais antiga excluída permanentemente.');
-                }
-            }
-        }
         
         // Função utilitária para formatar texto com quebras de linha e links
         function formatText(text) {
@@ -1069,190 +1085,62 @@
           return formattedText;
         }
 
-        // Função para buscar e exibir as liberações excluídas (histórico)
-        async function fetchHistorico(session, filterType = 'all', date = null, searchTerm = null) {
-            historicoCurrentFilterType = filterType;
-            historicoCurrentFilterDate = date;
-
-            let query = supabase
-                .from('liberacoes')
-                .select('*')
-                .eq('excluida', true)
-                .order('data_exclusao', { ascending: false });
-
-            if (filterType === 'date' && date) {
-                 query = query.or(`permanente.eq.true,and(periodo_inicio.lte.${date},periodo_fim.gte.${date})`);
+        // Função para destacar o texto da pesquisa
+        function highlightText(text, searchTerm) {
+            if (!searchTerm || !searchTerm.trim() || !text) {
+                return text;
             }
-
-            const { data, error } = await query;
-
-            if (error) {
-                console.error('Erro ao buscar histórico:', error);
-                if (historicoList) historicoList.innerHTML = `<p class="text-center text-red-500">Erro ao carregar o histórico.</p>`;
-                return;
-            }
-            
-            let filteredData = data;
-            if (searchTerm && searchTerm.trim() !== '') {
-                const normalizedSearchTerm = normalizeText(searchTerm);
-                filteredData = data.filter(liberacao => {
-                    let nomeToSearch = liberacao.nome;
-                    if (typeof nomeToSearch === 'string' && nomeToSearch.startsWith('[') && nomeToSearch.endsWith(']')) {
-                        try {
-                            const parsed = JSON.parse(nomeToSearch);
-                            if (Array.isArray(parsed)) {
-                                nomeToSearch = parsed.join(' ');
-                            }
-                        } catch (e) {
-                            // Ignorar erro de parse
-                        }
-                    } else if (Array.isArray(nomeToSearch)) {
-                        nomeToSearch = nomeToSearch.join(' ');
-                    }
-                    // Adiciona a observação ao filtro de pesquisa
-                    return normalizeText(nomeToSearch).includes(normalizedSearchTerm) || normalizeText(liberacao.observacao || '').includes(normalizedSearchTerm);
-                });
-            }
-
-            // Adiciona o título do filtro para o histórico
-            if (historicoHeaderFixed) {
-                if (filterType === 'date' && date) {
-                    historicoHeaderFixed.textContent = new Date(date + 'T00:00:00').toLocaleDateString('pt-br');
-                } else {
-                    historicoHeaderFixed.textContent = 'Todas liberações';
+            const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const parts = text.split(new RegExp(`(<[^>]+>)`, 'g'));
+            return parts.map(part => {
+                if (part.startsWith('<') && part.endsWith('>')) {
+                    return part;
                 }
-            }
-
-
-            if (historicoList) {
-                historicoList.innerHTML = '';
-                if (filteredData && filteredData.length > 0) {
-                    filteredData.forEach(liberacao => {
-                        const cardClasses = 'bg-gray-700 p-4 rounded-lg shadow-lg transition-all duration-300';
-                        const liberacaoCard = document.createElement('div');
-                        liberacaoCard.className = cardClasses;
-                        
-                        // Lógica para destacar o texto
-                        const searchTerm = historicoSearchInput.value.trim();
-
-                        let nomesParaExibir = liberacao.nome;
-                        if (typeof nomesParaExibir === 'string' && nomesParaExibir.startsWith('[') && nomesParaExibir.endsWith(']')) {
-                            try {
-                                nomesParaExibir = JSON.parse(nomesParaExibir);
-                            } catch (e) {
-                                // Ignorar erro de parse
-                            }
-                        }
-                        const nomeParaExibirFinal = Array.isArray(nomesParaExibir) ? nomesParaExibir.join(', ') : nomesParaExibir;
-
-                        // Formata as datas para dd/mm/aaaa
-                        const dataExclusao = new Date(liberacao.data_exclusao);
-                        const periodoInicioFormatado = liberacao.periodo_inicio ? new Date(liberacao.periodo_inicio + 'T00:00:00').toLocaleDateString('pt-br') : '';
-                        const periodoFimFormatado = liberacao.periodo_fim ? new Date(liberacao.periodo_fim + 'T00:00:00').toLocaleDateString('pt-br') : '';
-                        
-                        const observacaoParaExibir = liberacao.observacao || '';
-                        
-                        // Lógica para determinar a mensagem de exclusão
-                        let excluidoPorMensagem = '';
-                        if (liberacao.excluido_por) {
-                          if (liberacao.excluido_por === liberacao.criador_nome) {
-                              excluidoPorMensagem = `Excluído em ${dataExclusao.toLocaleString('pt-br')} pelo próprio criador`;
-                          } else {
-                              excluidoPorMensagem = `Excluído em ${dataExclusao.toLocaleString('pt-br')} por ${liberacao.excluido_por}`;
-                          }
-                        } else {
-                            excluidoPorMensagem = `Excluído em ${dataExclusao.toLocaleString('pt-br')} automaticamente`;
-                        }
-
-                        const highlightedName = highlightText(nomeParaExibirFinal, searchTerm);
-                        const highlightedObservacao = highlightText(observacaoParaExibir, searchTerm);
-
-                        liberacaoCard.innerHTML = `
-                            <h3 class="font-bold text-gray-100">${highlightedName}</h3>
-                            <p class="text-sm text-gray-400">Período: ${liberacao.permanente ? 'Permanente' : `${periodoInicioFormatado} a ${periodoFimFormatado}`}</p>
-                            ${highlightedObservacao ? `<p class="text-sm text-gray-400 mt-2">Observação: <span class="text-white">${highlightedObservacao}</span></p>` : ''}
-                            <p class="text-sm text-gray-400 mt-2">Criado por: ${liberacao.criador_nome} em ${new Date(liberacao.created_at).toLocaleString('pt-br')}</p>
-                            <p class="text-sm text-red-400 mt-2">${excluidoPorMensagem}</p>
-                        `;
-                        historicoList.appendChild(liberacaoCard);
-                    });
-                } else {
-                    historicoList.innerHTML = `<p class="text-center text-gray-500">Nenhum item no histórico.</p>`;
-                }
-            }
+                const regex = new RegExp(`(${escapedSearchTerm})`, 'gi');
+                return part.replace(regex, `<mark class="bg-yellow-400 text-black rounded px-1">$1</mark>`);
+            }).join('');
         }
         
         function updateFilterButtons(selectedFilter) {
             const openCalendarBtn = document.getElementById('open-calendar-btn');
-            const historicoOpenCalendarBtn = document.getElementById('historico-open-calendar-btn');
             
             if (selectedFilter === 'date') {
-                if (liberacaoPage.style.display !== 'none') {
-                    if (openCalendarBtn) openCalendarBtn.classList.remove('bg-gray-700');
-                    if (openCalendarBtn) openCalendarBtn.classList.add('bg-blue-600');
-                } else {
-                    if (historicoOpenCalendarBtn) historicoOpenCalendarBtn.classList.remove('bg-gray-700');
-                    if (historicoOpenCalendarBtn) historicoOpenCalendarBtn.classList.add('bg-blue-600');
-                }
+                if (openCalendarBtn) openCalendarBtn.classList.remove('bg-gray-700');
+                if (openCalendarBtn) openCalendarBtn.classList.add('bg-blue-600');
             } else if (selectedFilter === 'all') {
-                if (liberacaoPage.style.display !== 'none') {
-                    if (openCalendarBtn) openCalendarBtn.classList.remove('bg-blue-600');
-                    if (openCalendarBtn) openCalendarBtn.classList.add('bg-gray-700');
-                } else {
-                    if (historicoOpenCalendarBtn) historicoOpenCalendarBtn.classList.remove('bg-blue-600');
-                    if (historicoOpenCalendarBtn) historicoOpenCalendarBtn.classList.add('bg-gray-700');
-                }
+                if (openCalendarBtn) openCalendarBtn.classList.remove('bg-blue-600');
+                if (openCalendarBtn) openCalendarBtn.classList.add('bg-gray-700');
             }
         }
 
-
-        async function moveExpiredLiberacoesToHistory(session) {
-            const today = new Date().toISOString().split('T')[0];
-            const { data, error } = await supabase
-                .from('liberacoes')
-                .select('id, periodo_fim')
-                .eq('excluida', false)
-                .eq('concluida', false)
-                .neq('permanente', true)
-                .lt('periodo_fim', today);
-            
-            if (error) {
-                console.error('Erro ao buscar liberações expiradas:', error);
-                return;
-            }
-
-            if (data && data.length > 0) {
-                const expiredIds = data.map(liberacao => liberacao.id);
-                const { error: updateError } = await supabase
-                    .from('liberacoes')
-                    .update({
-                        excluida: true,
-                        excluido_por: null, // "automaticamente"
-                        data_exclusao: new Date().toISOString()
-                    })
-                    .in('id', expiredIds);
-
-                if (updateError) {
-                    console.error('Erro ao mover liberações para o histórico:', updateError);
-                } else {
-                    console.log(`${expiredIds.length} liberações movidas automaticamente para o histórico.`);
-                }
+        function updateOwnerFilterButtons() {
+            if (liberacaoOwnerFilter === 'my') {
+                filterMyLiberacoesBtn.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+                filterMyLiberacoesBtn.classList.add('bg-blue-600');
+                filterAllLiberacoesBtn.classList.remove('bg-blue-600');
+                filterAllLiberacoesBtn.classList.add('bg-gray-700', 'hover:bg-gray-600');
+            } else { // 'all'
+                filterAllLiberacoesBtn.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+                filterAllLiberacoesBtn.classList.add('bg-blue-600');
+                filterMyLiberacoesBtn.classList.remove('bg-blue-600');
+                filterMyLiberacoesBtn.classList.add('bg-gray-700', 'hover:bg-gray-600');
             }
         }
 
         // Função para buscar e exibir as liberações com filtros
         async function fetchLiberacoes(session, filterType = 'date', date = null, searchTerm = null) {
             updateFilterButtons(filterType);
+            updateOwnerFilterButtons();
             currentFilterType = filterType;
             currentFilterDate = date;
 
-            // Move liberações expiradas antes de buscar
-            await moveExpiredLiberacoesToHistory(session);
-
             let query = supabase
                 .from('liberacoes')
-                .select('*')
-                .eq('excluida', false);
+                .select('*');
+
+            if (liberacaoOwnerFilter === 'my') {
+                query = query.eq('user_id', session.user.id);
+            }
 
             if (filterType === 'date' && date) {
                 // Lógica de filtro corrigida: verifica se a data selecionada está entre o início e o fim
@@ -1260,7 +1148,6 @@
             }
             
             query = query.order('created_at', { ascending: false });
-
 
             const { data, error } = await query;
 
@@ -1299,7 +1186,7 @@
                     if (filterType === 'date' && date) {
                         liberacaoHeaderFixed.textContent = new Date(date + 'T00:00:00').toLocaleDateString('pt-br');
                     } else {
-                        liberacaoHeaderFixed.textContent = 'Todas liberações';
+                        liberacaoHeaderFixed.textContent = 'Todas as datas';
                     }
                 }
     
@@ -1309,7 +1196,7 @@
                         const importantIcon = liberacao.importante
                             ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-400 mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
                                   <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.487 0l5.58 9.92c.754 1.346-.245 3.06-1.745 3.06H4.42c-1.5 0-2.498-1.714-1.746-3.06l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                               </svg>`
+                                </svg>`
                             : '';
                             
                         const liberacaoCard = document.createElement('div');
@@ -1318,7 +1205,7 @@
                         const actionsContainer = document.createElement('div');
                         actionsContainer.className = 'flex items-center space-x-2';
                         
-                        // Checa se o usuário atual é o criador da liberação para mostrar o botão de editar
+                        // Apenas mostra os botões de ação se o usuário for o criador
                         if (session.user.id === liberacao.user_id) {
                             const editButton = document.createElement('button');
                             editButton.className = 'text-blue-400 hover:text-blue-500 transition duration-200';
@@ -1327,38 +1214,34 @@
                                     </svg>`;
                             editButton.onclick = () => editLiberacao(liberacao.id);
                             actionsContainer.appendChild(editButton);
-                        }
 
-                        const deleteButton = document.createElement('button');
-                        deleteButton.className = 'text-red-400 hover:text-red-500 transition duration-200';
-                        deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.03 21H7.97a2 2 0 01-1.99-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>`;
-                        deleteButton.onclick = () => deleteLiberacao(liberacao.id);
-                        
-                        actionsContainer.appendChild(deleteButton);
-
-                        if (liberacao.concluida) {
-                            const desconcluirButton = document.createElement('button');
-                            desconcluirButton.className = 'text-red-400 hover:text-red-500 transition duration-200';
-                            desconcluirButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>`;
-                            desconcluirButton.onclick = () => desmarcarComoConcluida(liberacao.id);
-                            actionsContainer.appendChild(desconcluirButton);
-                        } else {
-                            const concluirButton = document.createElement('button');
-                            concluirButton.className = 'text-emerald-400 hover:text-emerald-500 transition duration-200';
-                            concluirButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            const deleteButton = document.createElement('button');
+                            deleteButton.className = 'text-red-400 hover:text-red-500 transition duration-200';
+                            deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.03 21H7.97a2 2 0 01-1.99-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>`;
-                            concluirButton.onclick = () => marcarComoConcluida(liberacao.id);
-                            actionsContainer.appendChild(concluirButton);
+                            deleteButton.onclick = () => deleteLiberacao(liberacao.id);
+                            actionsContainer.appendChild(deleteButton);
+
+                            if (liberacao.concluida) {
+                                const desconcluirButton = document.createElement('button');
+                                desconcluirButton.className = 'text-red-400 hover:text-red-500 transition duration-200';
+                                desconcluirButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>`;
+                                desconcluirButton.onclick = () => desmarcarComoConcluida(liberacao.id);
+                                actionsContainer.appendChild(desconcluirButton);
+                            } else {
+                                const concluirButton = document.createElement('button');
+                                concluirButton.className = 'text-emerald-400 hover:text-emerald-500 transition duration-200';
+                                concluirButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                        </svg>`;
+                                concluirButton.onclick = () => marcarComoConcluida(liberacao.id);
+                                actionsContainer.appendChild(concluirButton);
+                            }
                         }
 
-                        // Lógica para destacar o texto
-                        const searchTerm = searchInput.value.trim();
-                        
                         // Formata as datas para dd/mm/aaaa
                         const periodoInicioFormatado = liberacao.periodo_inicio ? new Date(liberacao.periodo_inicio + 'T00:00:00').toLocaleDateString('pt-br') : '';
                         const periodoFimFormatado = liberacao.periodo_fim ? new Date(liberacao.periodo_fim + 'T00:00:00').toLocaleDateString('pt-br') : '';
@@ -1375,15 +1258,18 @@
     
                         const observacaoParaExibir = liberacao.observacao || '';
 
-                        const highlightedName = highlightText(nomeParaExibirFinal, searchTerm);
-                        const highlightedObservacao = highlightText(formatText(observacaoParaExibir), searchTerm);
+                        // Formata e destaca o texto
+                        const formattedNome = nomeParaExibirFinal;
+                        const formattedObservacao = formatText(observacaoParaExibir);
+                        const finalNomeHTML = highlightText(formattedNome, searchTerm);
+                        const finalObservacaoHTML = highlightText(formattedObservacao, searchTerm);
     
                         const detailsContainer = document.createElement('div');
                         detailsContainer.innerHTML = `
                             <p class="text-sm text-gray-400">
                                 Período: ${liberacao.permanente ? 'Permanente' : `${periodoInicioFormatado} a ${periodoFimFormatado}`}
                             </p>
-                            ${highlightedObservacao ? `<p class="text-sm text-gray-400 mt-2">Observação: <span class="text-white">${highlightedObservacao}</span></p>` : ''}
+                            ${observacaoParaExibir ? `<p class="text-sm text-gray-400 mt-2">Observação: <span class="text-white">${finalObservacaoHTML}</span></p>` : ''}
                             <p class="text-sm text-gray-400 mt-2">Criado por: ${liberacao.criador_nome} em ${new Date(liberacao.created_at).toLocaleString('pt-br')}</p>
                             ${liberacao.concluida ? `<p class="text-sm text-gray-400 mt-2">Concluído por: ${liberacao.concluida_por} em ${new Date(liberacao.concluida_em).toLocaleString('pt-br')}</p>` : ''}
                             ${liberacao.anexo_url ? `<a href="${liberacao.anexo_url}" target="_blank" class="text-sm text-blue-400 hover:underline">Ver Anexo</a>` : ''}
@@ -1394,7 +1280,7 @@
                         headerContainer.innerHTML = `
                             <div class="flex items-center">
                                 ${importantIcon}
-                                <h3 class="font-bold text-gray-100">${highlightedName}</h3>
+                                <h3 class="font-bold text-gray-100">${finalNomeHTML}</h3>
                             </div>
                         `;
                         headerContainer.appendChild(actionsContainer);
@@ -1422,11 +1308,7 @@
             customDateInput.addEventListener('change', (event) => {
                  const selectedDate = event.target.value;
                  if (selectedDate) {
-                     if (liberacaoPage.style.display !== 'none') {
-                         fetchLiberacoes(currentSession, 'date', selectedDate, searchInput.value);
-                     } else {
-                         fetchHistorico(currentSession, 'date', selectedDate, historicoSearchInput.value);
-                     }
+                    fetchLiberacoes(currentSession, 'date', selectedDate, searchInput.value);
                  }
                  if (customCalendarModal) customCalendarModal.style.display = 'none';
             });
@@ -1435,34 +1317,18 @@
         if (selectTodayBtn) {
             selectTodayBtn.addEventListener('click', () => {
                  const today = new Date().toISOString().split('T')[0];
-                 
-                 if (liberacaoPage.style.display !== 'none') {
-                     fetchLiberacoes(currentSession, 'date', today, searchInput.value);
-                     currentFilterDate = today;
-                     customDateInput.value = today;
-                 } else {
-                     fetchHistorico(currentSession, 'date', today, historicoSearchInput.value);
-                     historicoCurrentFilterDate = today;
-                     customDateInput.value = today;
-                 }
-                 
+                 fetchLiberacoes(currentSession, 'date', today, searchInput.value);
+                 currentFilterDate = today;
+                 customDateInput.value = today;
                  if (customCalendarModal) customCalendarModal.style.display = 'none';
             });
         }
 
         if (selectAllDatesBtn) {
             selectAllDatesBtn.addEventListener('click', () => {
-                 
-                 if (liberacaoPage.style.display !== 'none') {
-                     fetchLiberacoes(currentSession, 'all', null, searchInput.value);
-                     currentFilterType = 'all';
-                     currentFilterDate = null;
-                 } else {
-                     fetchHistorico(currentSession, 'all', null, historicoSearchInput.value);
-                     historicoCurrentFilterType = 'all';
-                     historicoCurrentFilterDate = null;
-                 }
-                 
+                 fetchLiberacoes(currentSession, 'all', null, searchInput.value);
+                 currentFilterType = 'all';
+                 currentFilterDate = null;
                  customDateInput.value = '';
                  if (customCalendarModal) customCalendarModal.style.display = 'none';
             });
@@ -1493,48 +1359,16 @@
             });
         }
         
-        // Adiciona listeners para os botões e input de filtro do histórico
-        if (historicoOpenCalendarBtn) {
-            historicoOpenCalendarBtn.addEventListener('click', () => {
-                if(customCalendarModal) customCalendarModal.style.display = 'flex';
-                // Sincroniza a data do filtro atual do histórico com o input do modal
-                customDateInput.value = historicoCurrentFilterDate;
+        if (filterMyLiberacoesBtn) {
+            filterMyLiberacoesBtn.addEventListener('click', () => {
+                liberacaoOwnerFilter = 'my';
+                fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
             });
         }
-        
-        if (historicoFilterDateInput) {
-             historicoFilterDateInput.addEventListener('change', (event) => {
-                 const selectedDate = event.target.value;
-                 if (selectedDate) {
-                     fetchHistorico(currentSession, 'date', selectedDate, historicoSearchInput.value);
-                     if (customCalendarModal) customCalendarModal.style.display = 'none';
-                 }
-             });
-        }
-        
-        if (historicoClearSearchBtn) {
-            historicoClearSearchBtn.addEventListener('click', () => {
-                if (historicoSearchInput) historicoSearchInput.value = '';
-                if (currentSession) {
-                    fetchHistorico(currentSession, historicoCurrentFilterType, historicoCurrentFilterDate, '');
-                }
-            });
-        }
-
-        if (historicoSearchInput) {
-            historicoSearchInput.addEventListener('input', (event) => {
-                clearTimeout(historicoSearchTimeout);
-
-                // Mudar o filtro para 'all' e resetar a data do filtro do histórico
-                historicoCurrentFilterType = 'all';
-                historicoCurrentFilterDate = null;
-                updateFilterButtons('all'); // Atualiza a aparência do botão de filtro
-
-                historicoSearchTimeout = setTimeout(() => {
-                    if (currentSession) {
-                        fetchHistorico(currentSession, historicoCurrentFilterType, historicoCurrentFilterDate, event.target.value);
-                    }
-                }, 500); // 500ms de atraso
+        if (filterAllLiberacoesBtn) {
+            filterAllLiberacoesBtn.addEventListener('click', () => {
+                liberacaoOwnerFilter = 'all';
+                fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
             });
         }
 
@@ -1597,39 +1431,39 @@
             currentSession = session;
 
             if (event === 'SIGNED_OUT') {
-                if (backgroundBlurContainer) backgroundBlurContainer.classList.remove('blur-background');
+                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'block';
                 if (authContainer) authContainer.style.display = 'block';
                 if (liberacaoPage) liberacaoPage.style.display = 'none';
-                if (historicoPage) historicoPage.style.display = 'none';
                 if (accessControlTitle) {
                     accessControlTitle.style.opacity = '1';
                     accessControlTitle.style.pointerEvents = 'auto';
                 }
                 window.location.reload(); // Recarrega a página após o logout
             } else if (session) {
+                if (isChangingPassword) return; // Se estiver trocando a senha, não exibe a área logada
+
                 // Se a página de recuperação de senha estiver visível, não muda o display
                 if (passwordRecoveryContainer && passwordRecoveryContainer.style.display === 'flex') {
                     return;
                 }
                 
-                if (backgroundBlurContainer) backgroundBlurContainer.classList.add('blur-background');
+                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'none';
                 if (authContainer) authContainer.style.display = 'none';
                 if (liberacaoPage) liberacaoPage.style.display = 'flex'; // Exibe a página de liberações
-                if (historicoPage) historicoPage.style.display = 'none';
 
                 if (accessControlTitle) {
                     accessControlTitle.style.opacity = '0'; // Esconde o título
                     accessControlTitle.style.pointerEvents = 'none'; // Impede interação
                 }
 
+                adjustLiberacaoLayout();
                 setInitialDateAndFetch(); // Busca os dados de liberação automaticamente
                 
             } else {
                 // Usuário deslogado, mas não pelo evento SIGNED_OUT
-                if (backgroundBlurContainer) backgroundBlurContainer.classList.remove('blur-background');
+                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'block';
                 if (authContainer) authContainer.style.display = 'block';
                 if (liberacaoPage) liberacaoPage.style.display = 'none';
-                if (historicoPage) historicoPage.style.display = 'none';
                 if (accessControlTitle) {
                     accessControlTitle.style.opacity = '1'; // Mostra o título
                     accessControlTitle.style.pointerEvents = 'auto'; // Habilita interação
@@ -1638,14 +1472,6 @@
             }
         });
         
-        // Lógica para o botão de voltar na página de liberação fazer o logout
-        if (backToLiberacaoBtn) {
-            backToLiberacaoBtn.addEventListener('click', async () => {
-                 if (historicoPage) historicoPage.style.display = 'none';
-                 if (liberacaoPage) liberacaoPage.style.display = 'flex';
-            });
-        }
-
         //Lógica para deslogar
         if (signOutLiberacaoBtn) {
             signOutLiberacaoBtn.addEventListener('click', async () => {
@@ -1658,3 +1484,6 @@
     </script>
 </body>
 </html>
+
+
+
