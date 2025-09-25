@@ -258,7 +258,7 @@
     </div>
 
     <!-- Página de Liberação -->
-    <div id="liberacao-page" class="hidden w-full h-screen flex flex-col">
+    <div id="liberacao-page" class="hidden w-full flex flex-col">
         <!-- Barra de navegação -->
         <div id="liberacao-top-bar" class="flex-shrink-0 bg-gray-800 p-4 shadow-lg flex flex-col items-center space-y-2">
             
@@ -492,6 +492,15 @@
         let searchTimeout;
         const POLLING_INTERVAL = 1000; // 1 segundo de sondagem
         let isChangingPassword = false;
+
+        function adjustPageHeight() {
+            const liberacaoPage = document.getElementById('liberacao-page');
+            if (liberacaoPage) {
+                 liberacaoPage.style.height = `${window.innerHeight}px`;
+            }
+        }
+        
+        window.addEventListener('resize', adjustPageHeight);
 
         function setBodyForLiberacaoPage(isLiberacao) {
             if (isLiberacao) {
@@ -1082,6 +1091,7 @@
                 liberacaoOwnerFilter = 'my';
                 selectionPage.style.display = 'none';
                 liberacaoPage.style.display = 'flex';
+                adjustPageHeight(); // Adjust height when showing the page
                 if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'none';
                 setInitialDateAndFetch();
             });
@@ -1092,6 +1102,7 @@
                 liberacaoOwnerFilter = 'all';
                 selectionPage.style.display = 'none';
                 liberacaoPage.style.display = 'flex';
+                adjustPageHeight(); // Adjust height when showing the page
                 if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'none';
                 setInitialDateAndFetch();
             });
