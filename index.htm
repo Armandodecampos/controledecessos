@@ -62,7 +62,7 @@
 
         /* Estilo específico para a barra de rolagem da área de liberações */
         #liberacao-content-area::-webkit-scrollbar {
-            width: 60px;
+            width: 40px;
         }
 
         /* Estilos para o contêiner de fundo embaçado */
@@ -1176,7 +1176,7 @@
                     if (filterType === 'date' && date) {
                         const dateObj = new Date(date + 'T00:00:00');
                         const dateText = dateObj.toLocaleDateString('pt-br');
-                        headerText = `Liberações para ${dateText}`;
+                        headerText = `${dateText}`;
                     } else if (filterType === 'all') {
                         headerText = 'Todas as Datas';
                     }
