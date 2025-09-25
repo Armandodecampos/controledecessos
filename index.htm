@@ -88,6 +88,11 @@
             text-decoration: line-through;
         }
         
+        .selectable-text {
+            user-select: text;
+            -webkit-user-select: text;
+        }
+        
     </style>
 </head>
 <body class="bg-gray-900 text-gray-300 min-h-screen flex items-center justify-center p-4">
@@ -491,7 +496,7 @@
         let currentFilterDate = null;
         let liberacaoOwnerFilter = 'all'; // 'all' or 'my'
         let searchTimeout;
-        const POLLING_INTERVAL = 1000; // 1 segundo de sondagem
+        const POLLING_INTERVAL = 10000; // 10 segundos de sondagem
         let isChangingPassword = false;
 
         function adjustPageHeight() {
@@ -1256,7 +1261,7 @@
                             <p class="text-sm text-gray-400">
                                 Período: ${liberacao.permanente ? 'Permanente' : `${periodoInicioFormatado} a ${periodoFimFormatado}`}
                             </p>
-                            ${observacaoParaExibir ? `<p class="text-sm text-gray-400 mt-2">Observação: <span class="text-white">${finalObservacaoHTML}</span></p>` : ''}
+                            ${observacaoParaExibir ? `<p class="text-sm text-gray-400 mt-2">Observação: <span class="text-white selectable-text">${finalObservacaoHTML}</span></p>` : ''}
                             <p class="text-sm text-gray-400 mt-2">Criado por: ${liberacao.criador_nome} em ${new Date(liberacao.created_at).toLocaleString('pt-br')}</p>
                             ${liberacao.concluida ? `<p class="text-sm text-gray-400 mt-2">Concluído por: ${liberacao.concluida_por} em ${new Date(liberacao.concluida_em).toLocaleString('pt-br')}</p>` : ''}
                             ${liberacao.anexo_url ? `<a href="${liberacao.anexo_url}" target="_blank" class="text-sm text-blue-400 hover:underline">Ver Anexo</a>` : ''}
@@ -1266,7 +1271,7 @@
                         headerContainer.className = 'flex items-center justify-between';
                         headerContainer.innerHTML = `
                             <div class="flex items-center">
-                                <h3 class="font-bold text-gray-100">${finalNomeHTML}</h3>
+                                <h3 class="font-bold text-gray-100 selectable-text">${finalNomeHTML}</h3>
                             </div>
                         `;
                         headerContainer.appendChild(actionsContainer);
@@ -1471,5 +1476,7 @@
     </script>
 </body>
 </html>
+
+
 
 
