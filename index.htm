@@ -49,12 +49,10 @@
 
         ::-webkit-scrollbar-track {
             background: #374151;
-            border-radius: 10px;
         }
 
         ::-webkit-scrollbar-thumb {
             background-color: #4b5563;
-            border-radius: 10px;
             border: 2px solid #374151;
         }
 
@@ -246,43 +244,55 @@
             </div>
         </form>
     </div>
+    
+    <!-- Tela de seleção de visualização pós-login -->
+    <div id="selection-page" class="hidden w-full max-w-sm bg-gray-800 p-8 rounded-xl shadow-lg transition-all duration-300">
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-100">Menu Principal</h1>
+        </div>
+        <div class="space-y-4">
+            <button id="btn-my-liberacoes" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">Minhas liberações</button>
+            <button id="btn-all-liberacoes" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">Todas liberações</button>
+            <button id="sign-out-liberacao" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200">Sair</button>
+        </div>
+    </div>
 
     <!-- Página de Liberação -->
-    <div id="liberacao-page" class="hidden w-full h-screen">
-        <!-- Barra de navegação fixa no topo -->
-        <div id="liberacao-top-bar" class="fixed top-0 left-0 w-full bg-gray-800 p-4 shadow-lg z-50 flex flex-wrap justify-start items-center space-x-4 space-y-2 sm:space-y-0">
+    <div id="liberacao-page" class="hidden w-full h-screen flex flex-col">
+        <!-- Barra de navegação -->
+        <div id="liberacao-top-bar" class="flex-shrink-0 bg-gray-800 p-4 shadow-lg flex flex-col items-center space-y-2">
             
-            <!-- Botões de Filtro -->
-            <button id="filter-my-liberacoes" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 transition duration-200">Minhas liberações</button>
-            <button id="filter-all-liberacoes" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 transition duration-200">Todas liberações</button>
+            <!-- Linha de Controles -->
+            <div class="w-full flex flex-wrap justify-start items-center space-x-4">
+                <!-- Barra de pesquisa -->
+                <div class="flex-grow flex items-center relative">
+                    <input type="text" id="search-input" placeholder="Pesquisar..." class="w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                    <button id="clear-search" class="absolute right-2 text-gray-400 hover:text-gray-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
             
-             <!-- Barra de pesquisa -->
-            <div class="mt-2 sm:mt-0 flex-grow flex items-center relative">
-                <input type="text" id="search-input" placeholder="Pesquisar..." class="w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-                <button id="clear-search" class="absolute right-2 text-gray-400 hover:text-gray-200">
-                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                   </svg>
+                <!-- Botão Voltar -->
+                <button id="back-to-selection-btn" class="px-4 py-2 rounded-lg shadow-sm text-white bg-red-600 hover:bg-red-700 transition duration-200">
+                    Voltar
                 </button>
             </div>
 
-            <!-- Campo de data visível para o calendário -->
-            <button id="open-calendar-btn" class="p-2 rounded-lg shadow-sm text-white bg-gray-700 hover:bg-gray-600 transition duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-            </button>
-            <input type="date" id="filter-date" class="hidden">
-
-            <!-- Cabeçalho de data/filtro fixo -->
-            <div id="liberacao-header-fixed" class="text-white text-lg font-bold"></div>
-
-            <!-- Botão "Nova liberação" -->
-            <button id="btn-add-liberacao" class="py-2 px-4 rounded-lg shadow-sm text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200">Nova liberação</button>
+            <!-- Linha do Filtro com Calendário -->
+            <div class="flex items-center space-x-2" style="display: none;">
+                <!-- Botão Calendário -->
+                <button id="open-calendar-btn" class="p-2 rounded-lg shadow-sm text-white bg-gray-600 hover:bg-gray-700 transition duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </button>
+                <input type="date" id="filter-date" class="hidden">
             
-            <!-- Botão Sair -->
-             <button id="sign-out-liberacao" class="py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200">Sair</button>
-            
+                <!-- Cabeçalho do Filtro -->
+                <div id="liberacao-header-fixed" class="text-white text-lg font-bold bg-gray-700 px-4 py-2 rounded-lg"></div>
+            </div>
         </div>
         
         <!-- Formulário de Adicionar/Editar Liberação -->
@@ -292,18 +302,8 @@
                 
                 <!-- Título para todos os campos de nome -->
                 <div>
-                    <label for="nomes-container" class="block text-sm font-medium text-gray-300">Nome</label>
-                    <div id="nomes-container" class="space-y-2">
-                        <!-- O primeiro campo de nome será adicionado aqui pelo JS -->
-                    </div>
-                </div>
-
-                <div class="flex justify-end">
-                    <button type="button" id="add-nome-btn" class="p-2 rounded-full text-white bg-blue-600 hover:bg-blue-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
+                    <label for="nome" class="block text-sm font-medium text-gray-300">Nome</label>
+                    <input type="text" id="nome" name="nome" required class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
                 </div>
                 <div>
                     <label for="periodo_inicio" class="block text-sm font-medium text-gray-300">Período de Início</label>
@@ -316,10 +316,6 @@
                 <div class="flex items-center">
                     <input type="checkbox" id="permanente" name="permanente" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
                     <label for="permanente" class="ml-2 block text-sm text-gray-300">Liberação Permanente</label>
-                </div>
-                 <div class="flex items-center">
-                    <input type="checkbox" id="importante" name="importante" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
-                    <label for="importante" class="ml-2 block text-sm text-gray-300">Marcar como Importante</label>
                 </div>
                 <div id="concluida-container" class="hidden flex items-center">
                     <input type="checkbox" id="concluida-edit" name="concluida-edit" class="h-4 w-4 text-emerald-600 border-gray-300 rounded">
@@ -340,11 +336,15 @@
             </div>
         </form>
         
-        <div id="liberacao-content-area" class="fixed left-0 right-0 bottom-0 bg-gray-800 p-8 overflow-y-auto">
+        <div id="liberacao-content-area" class="flex-grow overflow-y-auto p-8">
             <div id="liberacoes-list" class="space-y-4">
                 <!-- Lista de liberações será renderizada aqui -->
             </div>
         </div>
+
+        <!-- Botão "Nova liberação" -->
+        <button id="btn-add-liberacao" class="flex-shrink-0 w-full p-4 text-center text-lg font-bold text-white bg-emerald-700 hover:bg-emerald-800 transition duration-200 rounded-none">Nova liberação</button>
+
     </div>
 
     <!-- Modal de Confirmação -->
@@ -418,7 +418,7 @@
         const liberacoesList = document.getElementById('liberacoes-list');
         const liberacaoHeaderFixed = document.getElementById('liberacao-header-fixed');
         const permanenteCheckbox = document.getElementById('permanente');
-        const importanteCheckbox = document.getElementById('importante');
+        
         const concluidaEditCheckbox = document.getElementById('concluida-edit');
         const concluidaContainer = document.getElementById('concluida-container');
         const periodoInicioInput = document.getElementById('periodo_inicio');
@@ -426,8 +426,7 @@
         const formSubtitle = document.getElementById('form-subtitle');
         const formSubmitBtn = document.getElementById('form-submit-btn');
         const formCancelBtn = document.getElementById('form-cancel-btn');
-        const nomesContainer = document.getElementById('nomes-container');
-        const addNomeBtn = document.getElementById('add-nome-btn');
+        const nomeInput = document.getElementById('nome'); // Adicionado
         const backgroundBlurContainer = document.getElementById('background-blur-container');
         
         // Elementos da troca de senha
@@ -469,8 +468,12 @@
         const openCalendarBtn = document.getElementById('open-calendar-btn');
         const searchInput = document.getElementById('search-input');
         const clearSearchBtn = document.getElementById('clear-search');
-        const filterMyLiberacoesBtn = document.getElementById('filter-my-liberacoes');
-        const filterAllLiberacoesBtn = document.getElementById('filter-all-liberacoes');
+        
+        // Novas variáveis e botões para a tela de seleção
+        const selectionPage = document.getElementById('selection-page');
+        const btnMyLiberacoes = document.getElementById('btn-my-liberacoes');
+        const btnAllLiberacoes = document.getElementById('btn-all-liberacoes');
+        const backToSelectionBtn = document.getElementById('back-to-selection-btn');
         
         // Botão de sair da barra de navegação
         const signOutLiberacaoBtn = document.getElementById('sign-out-liberacao');
@@ -490,6 +493,14 @@
         const POLLING_INTERVAL = 1000; // 1 segundo de sondagem
         let isChangingPassword = false;
 
+        function setBodyForLiberacaoPage(isLiberacao) {
+            if (isLiberacao) {
+                document.body.className = 'bg-gray-900 text-gray-300';
+            } else {
+                document.body.className = 'bg-gray-900 text-gray-300 min-h-screen flex items-center justify-center p-4';
+            }
+        }
+
         // Sondagem para atualização de dados
         setInterval(() => {
             if (currentSession && liberacaoPage.style.display !== 'none') {
@@ -497,45 +508,20 @@
             }
         }, POLLING_INTERVAL);
 
-        function adjustLiberacaoLayout() {
-            if (liberacaoTopBar && liberacaoContentArea) {
-                const topBarHeight = liberacaoTopBar.offsetHeight;
-                liberacaoContentArea.style.top = `${topBarHeight}px`;
-            }
-        }
-
-        window.addEventListener('resize', adjustLiberacaoLayout);
-
-
         // Função para normalizar strings, removendo acentos e convertendo para minúsculas
         function normalizeText(text) {
+            if (!text) return '';
             return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
         }
         
-        // Função para adicionar um novo campo de nome
-        function addNameInput(value = '', isRemovable = true) {
-            const newNameDiv = document.createElement('div');
-            newNameDiv.className = 'flex items-center space-x-2';
-            newNameDiv.innerHTML = `
-                <input type="text" name="nome" required value="${value}" class="mt-1 block w-full px-4 py-2 bg-gray-600 text-gray-100 border border-gray-500 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-                ${isRemovable ? `
-                <button type="button" class="p-2 rounded-full text-red-400 hover:text-red-500 remove-name-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 11-2 0v6a1 1 0 112 0V8z" clip-rule="evenodd" />
-                    </svg>
-                </button>
-                ` : ''}
-            `;
-            if(nomesContainer) {
-                nomesContainer.appendChild(newNameDiv);
-            }
-        }
+        // Funções de adicionar/remover nome foram removidas
         
         // Função para exibir mensagens (geralmente usada para notificações 'toast')
         function showMessage(text, isError = false) {
+            if (!text || !text.trim()) return; // Não mostrar toast para texto vazio
             const toast = document.createElement('div');
             toast.textContent = text;
-            toast.className = `fixed bottom-5 right-5 p-4 rounded-lg shadow-lg text-white ${isError ? 'bg-red-600' : 'bg-green-600'}`;
+            toast.className = `fixed bottom-5 left-1/2 -translate-x-1/2 p-4 rounded-lg shadow-lg text-white ${isError ? 'bg-red-600' : 'bg-green-600'}`;
             toast.style.zIndex = '2000'; // Garante que fique por cima de outros elementos
             document.body.appendChild(toast);
 
@@ -774,8 +760,6 @@
                 formSubmitBtn.textContent = 'Salvar Liberação';
                 concluidaContainer.style.display = 'none';
                 addLiberacaoForm.reset();
-                nomesContainer.innerHTML = '';
-                addNameInput('', false); // Adiciona o primeiro campo de nome
                 liberacaoToEdit = null;
                  // Redefine a data para hoje após resetar o formulário
                 periodoInicioInput.value = today;
@@ -810,17 +794,15 @@
             addLiberacaoForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
-                // Coleta todos os nomes do formulário
-                const nomesInputs = nomesContainer.querySelectorAll('input[name="nome"]');
-                const nomes = Array.from(nomesInputs).map(input => input.value).filter(nome => nome.trim() !== '');
+                // Coleta apenas um nome do formulário
+                const nome = nomeInput.value.trim();
                 
-                if (nomes.length === 0) {
+                if (nome.length === 0) {
                      showValidationMessage('Por favor, insira pelo menos um nome.');
                      return;
                 }
 
                 const permanente = document.getElementById('permanente').checked;
-                const importante = document.getElementById('importante').checked;
                 const observacao = document.getElementById('observacao').value;
                 const file = arquivoInput.files[0];
                 
@@ -885,9 +867,9 @@
                 }
 
                 const payload = { 
-                    nome: nomes, 
+                    nome: [nome], 
                     permanente, 
-                    importante, 
+                    importante: false, // O campo 'importante' é agora fixo como falso
                     periodo_inicio, 
                     periodo_fim, 
                     observacao, 
@@ -948,34 +930,9 @@
 
             liberacaoToEdit = data;
             
-            // Preenche o formulário com os dados da liberação
-            nomesContainer.innerHTML = ''; // Limpa os campos de nome existentes
-            
-            // Corrige o tipo de dado para garantir que seja um array
-            let nomesDoBanco = liberacaoToEdit.nome;
-            if (typeof nomesDoBanco === 'string' && nomesDoBanco.startsWith('[') && nomesDoBanco.endsWith(']')) {
-                try {
-                    nomesDoBanco = JSON.parse(nomesDoBanco);
-                } catch (e) {
-                    console.error('Erro ao converter nome para array:', e);
-                    nomesDoBanco = [nomesDoBanco]; // Fallback para um array de um único item
-                }
-            }
-            
-            if (nomesDoBanco && nomesDoBanco.length > 0) {
-                // Adiciona o primeiro nome sem o botão de remover
-                addNameInput(nomesDoBanco[0], false);
-                // Adiciona os nomes restantes com o botão de remover
-                for (let i = 1; i < nomesDoBanco.length; i++) {
-                    addNameInput(nomesDoBanco[i]);
-                }
-            } else {
-                // Caso a lista de nomes esteja vazia
-                addNameInput('', false);
-            }
+            nomeInput.value = Array.isArray(liberacaoToEdit.nome) ? liberacaoToEdit.nome[0] : liberacaoToEdit.nome;
 
             document.getElementById('permanente').checked = liberacaoToEdit.permanente;
-            document.getElementById('importante').checked = liberacaoToEdit.importante;
             concluidaEditCheckbox.checked = liberacaoToEdit.concluida;
             document.getElementById('observacao').value = liberacaoToEdit.observacao;
             concluidaContainer.style.display = 'flex';
@@ -1102,35 +1059,57 @@
         }
         
         function updateFilterButtons(selectedFilter) {
-            const openCalendarBtn = document.getElementById('open-calendar-btn');
+            // const openCalendarBtn = document.getElementById('open-calendar-btn');
             
-            if (selectedFilter === 'date') {
-                if (openCalendarBtn) openCalendarBtn.classList.remove('bg-gray-700');
-                if (openCalendarBtn) openCalendarBtn.classList.add('bg-blue-600');
-            } else if (selectedFilter === 'all') {
-                if (openCalendarBtn) openCalendarBtn.classList.remove('bg-blue-600');
-                if (openCalendarBtn) openCalendarBtn.classList.add('bg-gray-700');
-            }
+            // if (selectedFilter === 'date') {
+            //     if (openCalendarBtn) openCalendarBtn.classList.remove('bg-gray-700');
+            //     if (openCalendarBtn) openCalendarBtn.classList.add('bg-blue-600');
+            // } else if (selectedFilter === 'all') {
+            //     if (openCalendarBtn) openCalendarBtn.classList.remove('bg-blue-600');
+            //     if (openCalendarBtn) openCalendarBtn.classList.add('bg-gray-700');
+            // }
         }
 
+        // Função removida, pois os botões de filtro na barra superior foram removidos
         function updateOwnerFilterButtons() {
-            if (liberacaoOwnerFilter === 'my') {
-                filterMyLiberacoesBtn.classList.remove('bg-gray-700', 'hover:bg-gray-600');
-                filterMyLiberacoesBtn.classList.add('bg-blue-600');
-                filterAllLiberacoesBtn.classList.remove('bg-blue-600');
-                filterAllLiberacoesBtn.classList.add('bg-gray-700', 'hover:bg-gray-600');
-            } else { // 'all'
-                filterAllLiberacoesBtn.classList.remove('bg-gray-700', 'hover:bg-gray-600');
-                filterAllLiberacoesBtn.classList.add('bg-blue-600');
-                filterMyLiberacoesBtn.classList.remove('bg-blue-600');
-                filterMyLiberacoesBtn.classList.add('bg-gray-700', 'hover:bg-gray-600');
-            }
+            // Lógica removida
+        }
+
+        // Lógica para os novos botões da tela de seleção
+        if (btnMyLiberacoes) {
+            btnMyLiberacoes.addEventListener('click', () => {
+                setBodyForLiberacaoPage(true);
+                liberacaoOwnerFilter = 'my';
+                selectionPage.style.display = 'none';
+                liberacaoPage.style.display = 'flex';
+                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'none';
+                setInitialDateAndFetch();
+            });
+        }
+        if (btnAllLiberacoes) {
+            btnAllLiberacoes.addEventListener('click', () => {
+                setBodyForLiberacaoPage(true);
+                liberacaoOwnerFilter = 'all';
+                selectionPage.style.display = 'none';
+                liberacaoPage.style.display = 'flex';
+                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'none';
+                setInitialDateAndFetch();
+            });
+        }
+        
+        if (backToSelectionBtn) {
+            backToSelectionBtn.addEventListener('click', () => {
+                setBodyForLiberacaoPage(false);
+                liberacaoPage.style.display = 'none';
+                selectionPage.style.display = 'block';
+                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'block';
+            });
         }
 
         // Função para buscar e exibir as liberações com filtros
         async function fetchLiberacoes(session, filterType = 'date', date = null, searchTerm = null) {
             updateFilterButtons(filterType);
-            updateOwnerFilterButtons();
+            // updateOwnerFilterButtons(); // Chamada removida
             currentFilterType = filterType;
             currentFilterDate = date;
 
@@ -1184,21 +1163,26 @@
                 // Adiciona o título do filtro
                 if (liberacaoHeaderFixed) {
                     if (filterType === 'date' && date) {
-                        liberacaoHeaderFixed.textContent = new Date(date + 'T00:00:00').toLocaleDateString('pt-br');
+                        const dateText = new Date(date + 'T00:00:00').toLocaleDateString('pt-br');
+                        liberacaoHeaderFixed.textContent = `Liberações para ${dateText}`;
+                    } else if (filterType === 'all') {
+                        liberacaoHeaderFixed.textContent = 'Todas as Datas';
+                    } else if (liberacaoOwnerFilter === 'my') {
+                        liberacaoHeaderFixed.textContent = 'Minhas liberações';
                     } else {
-                        liberacaoHeaderFixed.textContent = 'Todas as datas';
+                        liberacaoHeaderFixed.textContent = 'Todas as liberações';
+                    }
+
+                    if (liberacaoHeaderFixed.textContent) {
+                        liberacaoHeaderFixed.parentElement.style.display = 'flex';
+                    } else {
+                        liberacaoHeaderFixed.parentElement.style.display = 'none';
                     }
                 }
     
                 if (filteredData && filteredData.length > 0) {
                     filteredData.forEach(liberacao => {
                         const cardClasses = `p-4 rounded-lg shadow-lg transition-all duration-300 ${liberacao.concluida ? 'bg-emerald-800' : 'bg-gray-700'}`;
-                        const importantIcon = liberacao.importante
-                            ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-400 mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.487 0l5.58 9.92c.754 1.346-.245 3.06-1.745 3.06H4.42c-1.5 0-2.498-1.714-1.746-3.06l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                </svg>`
-                            : '';
-                            
                         const liberacaoCard = document.createElement('div');
                         liberacaoCard.className = cardClasses;
                         
@@ -1246,15 +1230,7 @@
                         const periodoInicioFormatado = liberacao.periodo_inicio ? new Date(liberacao.periodo_inicio + 'T00:00:00').toLocaleDateString('pt-br') : '';
                         const periodoFimFormatado = liberacao.periodo_fim ? new Date(liberacao.periodo_fim + 'T00:00:00').toLocaleDateString('pt-br') : '';
     
-                        let nomesParaExibir = liberacao.nome;
-                        if (typeof nomesParaExibir === 'string' && nomesParaExibir.startsWith('[') && nomesParaExibir.endsWith(']')) {
-                            try {
-                                nomesParaExibir = JSON.parse(nomesParaExibir);
-                            } catch (e) {
-                                // Ignorar erro de parse
-                            }
-                        }
-                        const nomeParaExibirFinal = Array.isArray(nomesParaExibir) ? nomesParaExibir.join(', ') : nomesParaExibir;
+                        const nomeParaExibirFinal = Array.isArray(liberacao.nome) ? liberacao.nome.join(', ') : liberacao.nome;
     
                         const observacaoParaExibir = liberacao.observacao || '';
 
@@ -1279,7 +1255,6 @@
                         headerContainer.className = 'flex items-center justify-between';
                         headerContainer.innerHTML = `
                             <div class="flex items-center">
-                                ${importantIcon}
                                 <h3 class="font-bold text-gray-100">${finalNomeHTML}</h3>
                             </div>
                         `;
@@ -1349,7 +1324,6 @@
                 // Define o filtro para "todas" quando o usuário começar a pesquisar
                 currentFilterType = 'all';
                 currentFilterDate = null;
-                updateFilterButtons('all');
 
                 searchTimeout = setTimeout(() => {
                     if (currentSession) {
@@ -1359,18 +1333,19 @@
             });
         }
         
-        if (filterMyLiberacoesBtn) {
-            filterMyLiberacoesBtn.addEventListener('click', () => {
-                liberacaoOwnerFilter = 'my';
-                fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
-            });
-        }
-        if (filterAllLiberacoesBtn) {
-            filterAllLiberacoesBtn.addEventListener('click', () => {
-                liberacaoOwnerFilter = 'all';
-                fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
-            });
-        }
+        // Lógica de filtro movida para os novos botões
+        // if (filterMyLiberacoesBtn) {
+        //     filterMyLiberacoesBtn.addEventListener('click', () => {
+        //         liberacaoOwnerFilter = 'my';
+        //         fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
+        //     });
+        // }
+        // if (filterAllLiberacoesBtn) {
+        //     filterAllLiberacoesBtn.addEventListener('click', () => {
+        //         liberacaoOwnerFilter = 'all';
+        //         fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
+        //     });
+        // }
 
         // Função para definir a data inicial e buscar as liberações
         function setInitialDateAndFetch() {
@@ -1431,9 +1406,11 @@
             currentSession = session;
 
             if (event === 'SIGNED_OUT') {
+                setBodyForLiberacaoPage(false);
                 if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'block';
                 if (authContainer) authContainer.style.display = 'block';
                 if (liberacaoPage) liberacaoPage.style.display = 'none';
+                if (selectionPage) selectionPage.style.display = 'none';
                 if (accessControlTitle) {
                     accessControlTitle.style.opacity = '1';
                     accessControlTitle.style.pointerEvents = 'auto';
@@ -1447,43 +1424,35 @@
                     return;
                 }
                 
-                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'none';
+                setBodyForLiberacaoPage(false);
+                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'block';
                 if (authContainer) authContainer.style.display = 'none';
-                if (liberacaoPage) liberacaoPage.style.display = 'flex'; // Exibe a página de liberações
+                if (liberacaoPage) liberacaoPage.style.display = 'none'; // Esconde a página de liberações inicialmente
+                if (selectionPage) selectionPage.style.display = 'block'; // Exibe a nova tela de seleção
 
                 if (accessControlTitle) {
                     accessControlTitle.style.opacity = '0'; // Esconde o título
                     accessControlTitle.style.pointerEvents = 'none'; // Impede interação
                 }
 
-                adjustLiberacaoLayout();
-                setInitialDateAndFetch(); // Busca os dados de liberação automaticamente
+                // setInitialDateAndFetch(); // Não busca os dados automaticamente mais
                 
             } else {
+                setBodyForLiberacaoPage(false);
                 // Usuário deslogado, mas não pelo evento SIGNED_OUT
                 if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'block';
                 if (authContainer) authContainer.style.display = 'block';
                 if (liberacaoPage) liberacaoPage.style.display = 'none';
+                if (selectionPage) selectionPage.style.display = 'none';
                 if (accessControlTitle) {
                     accessControlTitle.style.opacity = '1'; // Mostra o título
                     accessControlTitle.style.pointerEvents = 'auto'; // Habilita interação
                 }
-                showMessage(''); // Limpa a mensagem ao mudar de estado
+                // showMessage(''); // Removido para evitar o toast em branco
             }
         });
         
-        //Lógica para deslogar
-        if (signOutLiberacaoBtn) {
-            signOutLiberacaoBtn.addEventListener('click', async () => {
-                const { error } = await supabase.auth.signOut();
-                if (error) {
-                    showMessage('Erro ao sair.', true);
-                }
-            });
-        }
     </script>
 </body>
 </html>
-
-
 
