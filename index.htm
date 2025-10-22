@@ -41,7 +41,7 @@
             gap: 1rem;
             margin-top: 1.5rem;
         }
-        
+
         /* Estilos da barra de rolagem para navegadores baseados em WebKit */
         ::-webkit-scrollbar {
             width: 8px;
@@ -79,20 +79,20 @@
             background-attachment: fixed;
             transition: filter 0.5s ease-in-out;
         }
-        
+
         .liberacao-card-concluida {
             background-color: #1a2e24; /* Um verde escuro para indicar concluído */
         }
-        
+
         .line-through-text {
             text-decoration: line-through;
         }
-        
+
         .selectable-text {
             user-select: text;
             -webkit-user-select: text;
         }
-        
+
     </style>
 </head>
 <body class="bg-gray-900 text-gray-300 min-h-screen flex items-center justify-center p-4">
@@ -149,7 +149,7 @@
 
         <!-- Mensagens de Erro ou Sucesso -->
         <div id="message" class="mt-4 text-center text-sm font-medium" style="display: none;"></div>
-        
+
         <!-- Alternador entre login e cadastro, e botão de recuperação de senha -->
         <div class="mt-6 text-center text-sm space-y-2">
             <div id="forgot-password-container">
@@ -249,7 +249,7 @@
             </div>
         </form>
     </div>
-    
+
     <!-- Tela de seleção de visualização pós-login -->
     <div id="selection-page" class="hidden w-full max-w-sm bg-gray-800 p-8 rounded-xl shadow-lg transition-all duration-300">
         <div class="text-center mb-6">
@@ -266,7 +266,7 @@
     <div id="liberacao-page" class="hidden w-full flex flex-col">
         <!-- Barra de navegação -->
         <div id="liberacao-top-bar" class="flex-shrink-0 bg-gray-800 p-4 shadow-lg flex flex-col gap-4">
-            
+
             <!-- Linha de cima: Calendário, Filtro, Voltar -->
             <div class="flex justify-between items-center w-full">
                 <div class="flex items-center space-x-4">
@@ -277,7 +277,7 @@
                         </svg>
                     </button>
                     <input type="date" id="filter-date" class="hidden">
-                
+
                     <!-- Cabeçalho do Filtro -->
                     <div id="liberacao-header-fixed" class="text-white text-lg font-bold bg-gray-700 px-4 py-2 rounded-lg" style="display: none;"></div>
                 </div>
@@ -298,13 +298,13 @@
                 </button>
             </div>
         </div>
-        
+
         <!-- Formulário de Adicionar/Editar Liberação -->
         <form id="add-liberacao-form" class="fixed inset-0 hidden z-[50] bg-gray-800">
             <div class="w-full h-full p-6 space-y-4 overflow-y-auto">
                 <div class="w-full max-w-lg mx-auto space-y-4">
                     <h3 id="form-subtitle" class="text-lg font-bold text-gray-100">Adicionar Liberação</h3>
-                    
+
                     <!-- Título para todos os campos de nome -->
                     <div>
                         <label for="nome" class="block text-sm font-medium text-gray-300">Nome</label>
@@ -341,7 +341,7 @@
                 </div>
             </div>
         </form>
-        
+
         <div id="liberacao-content-area" class="flex-grow overflow-y-auto p-8">
             <div id="liberacoes-list" class="space-y-4">
                 <!-- Lista de liberações será renderizada aqui -->
@@ -399,7 +399,7 @@
         // **IMPORTANTE**: Substitua 'VOTSUF_URL' e 'VOTSUF_ANON_KEY' pelas suas credenciais do projeto Supabase.
         const supabaseUrl = 'https://rztrygjczjqeqqldiqxa.supabase.co'
         const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6dHJ5Z2pjempxZXFxbGRpcXhhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgwNDgyMzIsImV4cCI6MjA3MzYyNDIzMn0.s7QiJWo6SPZRmN1bW1vPyhEis0xO1voNh0GFWPrTLtU'
-        
+
         // Inicializa o cliente Supabase
         const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
@@ -424,7 +424,7 @@
         const liberacoesList = document.getElementById('liberacoes-list');
         const liberacaoHeaderFixed = document.getElementById('liberacao-header-fixed');
         const permanenteCheckbox = document.getElementById('permanente');
-        
+
         const concluidaEditCheckbox = document.getElementById('concluida-edit');
         const concluidaContainer = document.getElementById('concluida-container');
         const periodoInicioInput = document.getElementById('periodo_inicio');
@@ -434,7 +434,7 @@
         const formCancelBtn = document.getElementById('form-cancel-btn');
         const nomeInput = document.getElementById('nome'); // Adicionado
         const backgroundBlurContainer = document.getElementById('background-blur-container');
-        
+
         // Elementos da troca de senha
         const changePasswordBtn = document.getElementById('change-password-btn');
         const passwordChangeContainer = document.getElementById('password-change-container');
@@ -451,7 +451,7 @@
         const toggleConfirmPasswordBtn = document.getElementById('toggle-confirm-password');
         const toggleNewPasswordBtn = document.getElementById('toggle-new-password');
         const toggleConfirmRecoveryBtn = document.getElementById('toggle-confirm-recovery');
-        
+
         // Campos de senha
         const passwordInput = document.getElementById('password');
         const confirmPasswordSignupInput = document.getElementById('confirm-password-signup');
@@ -468,22 +468,22 @@
         const customDateInput = document.getElementById('custom-date-input');
         const selectTodayBtn = document.getElementById('select-today-btn');
         const selectAllDatesBtn = document.getElementById('select-all-dates-btn');
-        
+
         // Novos elementos de filtro
         const filterDateInput = document.getElementById('filter-date');
         const openCalendarBtn = document.getElementById('open-calendar-btn');
         const searchInput = document.getElementById('search-input');
         const clearSearchBtn = document.getElementById('clear-search');
-        
+
         // Novas variáveis e botões para a tela de seleção
         const selectionPage = document.getElementById('selection-page');
         const btnMyLiberacoes = document.getElementById('btn-my-liberacoes');
         const btnAllLiberacoes = document.getElementById('btn-all-liberacoes');
         const backToSelectionBtn = document.getElementById('back-to-selection-btn');
-        
+
         // Botão de sair da barra de navegação
         const signOutLiberacaoBtn = document.getElementById('sign-out-liberacao');
-        
+
         const liberacaoTopBar = document.getElementById('liberacao-top-bar');
         const liberacaoContentArea = document.getElementById('liberacao-content-area');
         // Novo elemento para o anexo
@@ -505,7 +505,7 @@
                  liberacaoPage.style.height = `${window.innerHeight}px`;
             }
         }
-        
+
         window.addEventListener('resize', adjustPageHeight);
 
         function setBodyForLiberacaoPage(isLiberacao) {
@@ -528,9 +528,9 @@
             if (!text) return '';
             return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
         }
-        
+
         // Funções de adicionar/remover nome foram removidas
-        
+
         // Função para exibir mensagens (geralmente usada para notificações 'toast')
         function showMessage(text, isError = false) {
             if (!text || !text.trim()) return; // Não mostrar toast para texto vazio
@@ -582,7 +582,7 @@
                 e.preventDefault();
                 const email = document.getElementById('email').value;
                 const password = passwordInput.value;
-                
+
                 // Lógica de login
                 const { data, error } = await supabase.auth.signInWithPassword({ email, password });
                 if (error) {
@@ -593,7 +593,7 @@
                 }
             });
         }
-        
+
         // Lógica para mostrar o formulário de troca de senha
         if (changePasswordBtn) {
             changePasswordBtn.addEventListener('click', () => {
@@ -692,7 +692,7 @@
                 }
             });
         }
-        
+
         // Lógica para lidar com o formulário de recuperação de senha
         if (passwordRecoveryForm) {
             passwordRecoveryForm.addEventListener('submit', async (e) => {
@@ -723,7 +723,7 @@
                 }
             });
         }
-        
+
 
         // Lógica para alternar a visibilidade da senha
         function setupPasswordToggle(inputElem, buttonElem) {
@@ -731,7 +731,7 @@
                 buttonElem.addEventListener('click', () => {
                     const type = inputElem.type === 'password' ? 'text' : 'password';
                     inputElem.type = type;
-                    
+
                     // Altera o ícone do olho
                     if (type === 'password') {
                         buttonElem.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -808,10 +808,10 @@
         if (addLiberacaoForm) {
             addLiberacaoForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                
+
                 // Coleta apenas um nome do formulário
                 const nome = nomeInput.value.trim();
-                
+
                 if (nome.length === 0) {
                      showValidationMessage('Por favor, insira pelo menos um nome.');
                      return;
@@ -820,7 +820,7 @@
                 const permanente = document.getElementById('permanente').checked;
                 const observacao = document.getElementById('observacao').value;
                 const file = arquivoInput.files[0];
-                
+
                 let periodo_inicio = null;
                 let periodo_fim = null;
 
@@ -832,26 +832,26 @@
                         showValidationMessage('Por favor, preencha o período de início e fim ou marque a opção "Liberação Permanente".');
                         return;
                     }
-                    
+
                     const today = new Date();
                     today.setHours(0,0,0,0); // Normaliza para o início do dia
                     const startDate = new Date(inicioValue);
                     startDate.setMinutes(startDate.getMinutes() + startDate.getTimezoneOffset()); // Ajusta para UTC
-                    
+
                     if (startDate < today) {
                         showValidationMessage('Não é possível criar uma liberação para uma data anterior à data atual.');
                         return;
                     }
-                    
+
                     if (fimValue < inicioValue) {
                         showValidationMessage('O "Período de Fim" não pode ser anterior ao "Período de Início".');
                         return;
                     }
-                    
+
                     periodo_inicio = inicioValue;
                     periodo_fim = fimValue;
                 }
-                
+
                 let filePath = null;
 
                 if (file) {
@@ -869,7 +869,7 @@
                          return;
                      }
                 }
-                
+
                 let concluida = concluidaEditCheckbox.checked;
                 let concluidaPor = concluidaEditCheckbox.checked ? currentSession.user.email : null;
                 let concluidaEm = concluidaEditCheckbox.checked ? new Date().toISOString() : null;
@@ -881,13 +881,13 @@
                     concluidaEm = null;
                 }
 
-                const payload = { 
-                    nome: [nome], 
-                    permanente, 
+                const payload = {
+                    nome: [nome],
+                    permanente,
                     importante: false, // O campo 'importante' é agora fixo como falso
-                    periodo_inicio, 
-                    periodo_fim, 
-                    observacao, 
+                    periodo_inicio,
+                    periodo_fim,
+                    observacao,
                     criador_nome: currentSession.user.email,
                     user_id: currentSession.user.id,
                     concluida: concluida,
@@ -929,7 +929,7 @@
                 }
             });
         }
-        
+
         // Função para editar uma liberação
         async function editLiberacao(id) {
             const { data, error } = await supabase
@@ -944,7 +944,7 @@
             }
 
             liberacaoToEdit = data;
-            
+
             nomeInput.value = Array.isArray(liberacaoToEdit.nome) ? liberacaoToEdit.nome[0] : liberacaoToEdit.nome;
 
             document.getElementById('permanente').checked = liberacaoToEdit.permanente;
@@ -985,7 +985,7 @@
                     .from('liberacoes')
                     .delete()
                     .eq('id', liberacaoToDeleteId);
-                
+
                 if (error) {
                     console.error('Erro ao excluir a liberação:', error);
                     showMessage('Erro ao excluir a liberação.', true);
@@ -1005,12 +1005,12 @@
                 liberacaoToDeleteId = null;
             });
         }
-        
+
         // Função para marcar uma liberação como concluída
         async function marcarComoConcluida(id) {
             const { data, error } = await supabase
                 .from('liberacoes')
-                .update({ 
+                .update({
                     concluida: true,
                     concluida_por: currentSession.user.email,
                     concluida_em: new Date().toISOString()
@@ -1025,7 +1025,7 @@
                 fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
             }
         }
-        
+
         // Função para desmarcar uma liberação como concluída
         async function desmarcarComoConcluida(id) {
             const { data, error } = await supabase
@@ -1045,7 +1045,7 @@
                 fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
             }
         }
-        
+
         // Função utilitária para formatar texto com quebras de linha e links
         function formatText(text) {
           if (!text) return '';
@@ -1072,10 +1072,10 @@
                 return part.replace(regex, `<mark class="bg-yellow-400 text-black rounded px-1">$1</mark>`);
             }).join('');
         }
-        
+
         function updateFilterButtons(selectedFilter) {
             // const openCalendarBtn = document.getElementById('open-calendar-btn');
-            
+
             // if (selectedFilter === 'date') {
             //     if (openCalendarBtn) openCalendarBtn.classList.remove('bg-gray-700');
             //     if (openCalendarBtn) openCalendarBtn.classList.add('bg-blue-600');
@@ -1113,7 +1113,7 @@
                 setInitialDateAndFetch();
             });
         }
-        
+
         if (backToSelectionBtn) {
             backToSelectionBtn.addEventListener('click', () => {
                 setBodyForLiberacaoPage(false);
@@ -1142,7 +1142,7 @@
                 // Lógica de filtro corrigida: verifica se a data selecionada está entre o início e o fim
                 query = query.or(`permanente.eq.true,and(periodo_inicio.lte.${date},periodo_fim.gte.${date})`);
             }
-            
+
             query = query.order('created_at', { ascending: false });
 
             const { data, error } = await query;
@@ -1151,7 +1151,7 @@
                 console.error('Erro ao buscar liberações:', error);
                 return;
             }
-            
+
             let filteredData = data;
             if (searchTerm && searchTerm.trim() !== '') {
                 const normalizedSearchTerm = normalizeText(searchTerm);
@@ -1176,7 +1176,7 @@
 
             if (liberacoesList) {
                 liberacoesList.innerHTML = ''; // Limpa a lista antes de renderizar
-                
+
                 // Adiciona o título do filtro
                 if (liberacaoHeaderFixed) {
                     let headerText = '';
@@ -1195,16 +1195,16 @@
                         liberacaoHeaderFixed.style.display = 'none';
                     }
                 }
-    
+
                 if (filteredData && filteredData.length > 0) {
                     filteredData.forEach(liberacao => {
                         const cardClasses = `p-4 rounded-lg shadow-lg transition-all duration-300 ${liberacao.concluida ? 'bg-emerald-800' : 'bg-gray-700'}`;
                         const liberacaoCard = document.createElement('div');
                         liberacaoCard.className = cardClasses;
-                        
+
                         const actionsContainer = document.createElement('div');
                         actionsContainer.className = 'flex items-center space-x-2';
-                        
+
                         // Apenas mostra os botões de ação se o usuário for o criador
                         if (session.user.id === liberacao.user_id) {
                             const editButton = document.createElement('button');
@@ -1222,32 +1222,32 @@
                                     </svg>`;
                             deleteButton.onclick = () => deleteLiberacao(liberacao.id);
                             actionsContainer.appendChild(deleteButton);
+                        }
 
-                            if (liberacao.concluida) {
-                                const desconcluirButton = document.createElement('button');
-                                desconcluirButton.className = 'text-red-400 hover:text-red-500 transition duration-200';
-                                desconcluirButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>`;
-                                desconcluirButton.onclick = () => desmarcarComoConcluida(liberacao.id);
-                                actionsContainer.appendChild(desconcluirButton);
-                            } else {
-                                const concluirButton = document.createElement('button');
-                                concluirButton.className = 'text-emerald-400 hover:text-emerald-500 transition duration-200';
-                                concluirButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                        </svg>`;
-                                concluirButton.onclick = () => marcarComoConcluida(liberacao.id);
-                                actionsContainer.appendChild(concluirButton);
-                            }
+                        if (liberacao.concluida) {
+                            const desconcluirButton = document.createElement('button');
+                            desconcluirButton.className = 'text-red-400 hover:text-red-500 transition duration-200';
+                            desconcluirButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>`;
+                            desconcluirButton.onclick = () => desmarcarComoConcluida(liberacao.id);
+                            actionsContainer.appendChild(desconcluirButton);
+                        } else {
+                            const concluirButton = document.createElement('button');
+                            concluirButton.className = 'text-emerald-400 hover:text-emerald-500 transition duration-200';
+                            concluirButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>`;
+                            concluirButton.onclick = () => marcarComoConcluida(liberacao.id);
+                            actionsContainer.appendChild(concluirButton);
                         }
 
                         // Formata as datas para dd/mm/aaaa
                         const periodoInicioFormatado = liberacao.periodo_inicio ? new Date(liberacao.periodo_inicio + 'T00:00:00').toLocaleDateString('pt-br') : '';
                         const periodoFimFormatado = liberacao.periodo_fim ? new Date(liberacao.periodo_fim + 'T00:00:00').toLocaleDateString('pt-br') : '';
-    
+
                         const nomeParaExibirFinal = Array.isArray(liberacao.nome) ? liberacao.nome.join(', ') : liberacao.nome;
-    
+
                         const observacaoParaExibir = liberacao.observacao || '';
 
                         // Formata e destaca o texto
@@ -1255,7 +1255,7 @@
                         const formattedObservacao = formatText(observacaoParaExibir);
                         const finalNomeHTML = highlightText(formattedNome, searchTerm);
                         const finalObservacaoHTML = highlightText(formattedObservacao, searchTerm);
-    
+
                         const detailsContainer = document.createElement('div');
                         detailsContainer.innerHTML = `
                             <p class="text-sm text-gray-400">
@@ -1266,7 +1266,7 @@
                             ${liberacao.concluida ? `<p class="text-sm text-gray-400 mt-2">Concluído por: ${liberacao.concluida_por} em ${new Date(liberacao.concluida_em).toLocaleString('pt-br')}</p>` : ''}
                             ${liberacao.anexo_url ? `<a href="${liberacao.anexo_url}" target="_blank" class="text-sm text-blue-400 hover:underline">Ver Anexo</a>` : ''}
                         `;
-                        
+
                         const headerContainer = document.createElement('div');
                         headerContainer.className = 'flex items-center justify-between';
                         headerContainer.innerHTML = `
@@ -1275,7 +1275,7 @@
                             </div>
                         `;
                         headerContainer.appendChild(actionsContainer);
-    
+
                         liberacaoCard.appendChild(headerContainer);
                         liberacaoCard.appendChild(detailsContainer);
                         liberacoesList.appendChild(liberacaoCard);
@@ -1304,7 +1304,7 @@
                  if (customCalendarModal) customCalendarModal.style.display = 'none';
             });
         }
-        
+
         if (selectTodayBtn) {
             selectTodayBtn.addEventListener('click', () => {
                  const today = new Date().toISOString().split('T')[0];
@@ -1324,7 +1324,7 @@
                  if (customCalendarModal) customCalendarModal.style.display = 'none';
             });
         }
-        
+
         if (clearSearchBtn) {
             clearSearchBtn.addEventListener('click', () => {
                 if (searchInput) searchInput.value = '';
@@ -1333,7 +1333,7 @@
                 }
             });
         }
-        
+
         if (searchInput) {
             searchInput.addEventListener('input', (event) => {
                 clearTimeout(searchTimeout);
@@ -1348,7 +1348,7 @@
                 }, 500); // 500ms de atraso
             });
         }
-        
+
         // Lógica de filtro movida para os novos botões
         // if (filterMyLiberacoesBtn) {
         //     filterMyLiberacoesBtn.addEventListener('click', () => {
@@ -1439,7 +1439,7 @@
                 if (passwordRecoveryContainer && passwordRecoveryContainer.style.display === 'flex') {
                     return;
                 }
-                
+
                 // Se o usuário já estiver na página de liberações, evita o redirecionamento
                 if (liberacaoPage && liberacaoPage.style.display === 'flex') {
                     return;
@@ -1457,7 +1457,7 @@
                 }
 
                 // setInitialDateAndFetch(); // Não busca os dados automaticamente mais
-                
+
             } else {
                 setBodyForLiberacaoPage(false);
                 // Usuário deslogado, mas não pelo evento SIGNED_OUT
@@ -1472,11 +1472,7 @@
                 // showMessage(''); // Removido para evitar o toast em branco
             }
         });
-        
+
     </script>
 </body>
 </html>
-
-
-
-
