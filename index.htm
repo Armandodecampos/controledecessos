@@ -1259,7 +1259,7 @@
                         const detailsContainer = document.createElement('div');
                         detailsContainer.innerHTML = `
                             <p class="text-sm text-gray-400">
-                                Período: ${liberacao.permanente ? 'Permanente' : `${periodoInicioFormatado} a ${periodoFimFormatado}`}
+                                Período: ${liberacao.permanente ? '<span class="text-red-600 text-lg font-bold">Permanente</span>' : `${periodoInicioFormatado} a ${periodoFimFormatado}`}
                             </p>
                             ${observacaoParaExibir ? `<p class="text-sm text-gray-400 mt-2">Observação: <span class="text-white selectable-text">${finalObservacaoHTML}</span></p>` : ''}
                             <p class="text-sm text-gray-400 mt-2">Criado por: ${liberacao.criador_nome} em ${new Date(liberacao.created_at).toLocaleString('pt-br')}</p>
