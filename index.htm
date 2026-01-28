@@ -250,41 +250,34 @@
         </form>
     </div>
     
-    <!-- Tela de seleção de visualização pós-login -->
-    <div id="selection-page" class="hidden w-full max-w-sm bg-gray-800 p-8 rounded-xl shadow-lg transition-all duration-300">
-        <div class="text-center mb-6">
-            <h1 class="text-3xl font-bold text-gray-100">Menu Principal</h1>
-        </div>
-        <div class="space-y-4">
-            <button id="btn-my-liberacoes" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">Minhas liberações</button>
-            <button id="btn-all-liberacoes" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">Todas liberações</button>
-            <button id="sign-out-liberacao" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200">Sair</button>
-        </div>
-    </div>
-
     <!-- Página de Liberação -->
     <div id="liberacao-page" class="hidden w-full flex flex-col">
         <!-- Barra de navegação -->
         <div id="liberacao-top-bar" class="flex-shrink-0 bg-gray-800 p-4 shadow-lg flex flex-col gap-4">
             
-            <!-- Linha de cima: Calendário, Filtro, Voltar -->
-            <div class="flex justify-between items-center w-full">
-                <div class="flex items-center space-x-4">
-                    <!-- Botão Calendário -->
-                    <button id="open-calendar-btn" class="p-2 rounded-lg shadow-sm text-white bg-gray-600 hover:bg-gray-700 transition duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                    </button>
-                    <input type="date" id="filter-date" class="hidden">
-                
-                    <!-- Cabeçalho do Filtro -->
-                    <div id="liberacao-header-fixed" class="text-white text-lg font-bold bg-gray-700 px-4 py-2 rounded-lg" style="display: none;"></div>
+            <!-- Linha de cima: Filtros, Calendário, Sair -->
+            <div class="flex justify-between items-center w-full overflow-x-auto">
+                <div class="flex items-center space-x-2">
+                    <button id="top-btn-all" class="flex-shrink-0 px-4 py-2 rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition duration-200">Todas liberações</button>
+                    <button id="top-btn-my" class="flex-shrink-0 px-4 py-2 rounded-lg shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 transition duration-200">Minhas liberações</button>
+
+                    <div class="flex items-center space-x-2 ml-2">
+                        <!-- Botão Calendário -->
+                        <button id="open-calendar-btn" class="flex-shrink-0 p-2 rounded-lg shadow-sm text-white bg-gray-600 hover:bg-gray-700 transition duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </button>
+                        <input type="date" id="filter-date" class="hidden">
+
+                        <!-- Cabeçalho do Filtro -->
+                        <div id="liberacao-header-fixed" class="flex-shrink-0 text-white text-sm font-bold bg-gray-700 px-3 py-2 rounded-lg whitespace-nowrap" style="display: none;"></div>
+                    </div>
                 </div>
 
-                <!-- Botão Voltar -->
-                <button id="back-to-selection-btn" class="px-4 py-2 rounded-lg shadow-sm text-white bg-red-600 hover:bg-red-700 transition duration-200">
-                    Voltar
+                <!-- Botão Sair -->
+                <button id="sign-out-top" class="flex-shrink-0 ml-4 px-4 py-2 rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition duration-200">
+                    Sair
                 </button>
             </div>
 
@@ -475,14 +468,10 @@
         const searchInput = document.getElementById('search-input');
         const clearSearchBtn = document.getElementById('clear-search');
         
-        // Novas variáveis e botões para a tela de seleção
-        const selectionPage = document.getElementById('selection-page');
-        const btnMyLiberacoes = document.getElementById('btn-my-liberacoes');
-        const btnAllLiberacoes = document.getElementById('btn-all-liberacoes');
-        const backToSelectionBtn = document.getElementById('back-to-selection-btn');
-        
-        // Botão de sair da barra de navegação
-        const signOutLiberacaoBtn = document.getElementById('sign-out-liberacao');
+        // Novos botões da barra superior
+        const topBtnAll = document.getElementById('top-btn-all');
+        const topBtnMy = document.getElementById('top-btn-my');
+        const signOutTopBtn = document.getElementById('sign-out-top');
         
         const liberacaoTopBar = document.getElementById('liberacao-top-bar');
         const liberacaoContentArea = document.getElementById('liberacao-content-area');
@@ -753,8 +742,8 @@
         setupPasswordToggle(confirmPasswordInput, toggleConfirmRecoveryBtn);
 
         //Lógica para deslogar
-        if (signOutLiberacaoBtn) {
-            signOutLiberacaoBtn.addEventListener('click', async () => {
+        if (signOutTopBtn) {
+            signOutTopBtn.addEventListener('click', async () => {
                 const { error } = await supabase.auth.signOut();
                 if (error) {
                     showMessage('Erro ao sair.', true);
@@ -1074,52 +1063,36 @@
         }
         
         function updateFilterButtons(selectedFilter) {
-            // const openCalendarBtn = document.getElementById('open-calendar-btn');
-            
-            // if (selectedFilter === 'date') {
-            //     if (openCalendarBtn) openCalendarBtn.classList.remove('bg-gray-700');
-            //     if (openCalendarBtn) openCalendarBtn.classList.add('bg-blue-600');
-            // } else if (selectedFilter === 'all') {
-            //     if (openCalendarBtn) openCalendarBtn.classList.remove('bg-blue-600');
-            //     if (openCalendarBtn) openCalendarBtn.classList.add('bg-gray-700');
-            // }
+            // Lógica para destacar botão de calendário se necessário
         }
 
-        // Função removida, pois os botões de filtro na barra superior foram removidos
-        function updateOwnerFilterButtons() {
-            // Lógica removida
+        function updateOwnerFilterUI() {
+            if (liberacaoOwnerFilter === 'all') {
+                topBtnAll.classList.remove('bg-gray-600', 'hover:bg-gray-700');
+                topBtnAll.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                topBtnMy.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                topBtnMy.classList.add('bg-gray-600', 'hover:bg-gray-700');
+            } else {
+                topBtnMy.classList.remove('bg-gray-600', 'hover:bg-gray-700');
+                topBtnMy.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                topBtnAll.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                topBtnAll.classList.add('bg-gray-600', 'hover:bg-gray-700');
+            }
         }
 
-        // Lógica para os novos botões da tela de seleção
-        if (btnMyLiberacoes) {
-            btnMyLiberacoes.addEventListener('click', () => {
-                setBodyForLiberacaoPage(true);
-                liberacaoOwnerFilter = 'my';
-                selectionPage.style.display = 'none';
-                liberacaoPage.style.display = 'flex';
-                adjustPageHeight(); // Adjust height when showing the page
-                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'none';
-                setInitialDateAndFetch();
-            });
-        }
-        if (btnAllLiberacoes) {
-            btnAllLiberacoes.addEventListener('click', () => {
-                setBodyForLiberacaoPage(true);
+        // Lógica para os novos botões de filtro na barra superior
+        if (topBtnAll) {
+            topBtnAll.addEventListener('click', () => {
                 liberacaoOwnerFilter = 'all';
-                selectionPage.style.display = 'none';
-                liberacaoPage.style.display = 'flex';
-                adjustPageHeight(); // Adjust height when showing the page
-                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'none';
-                setInitialDateAndFetch();
+                updateOwnerFilterUI();
+                fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
             });
         }
-        
-        if (backToSelectionBtn) {
-            backToSelectionBtn.addEventListener('click', () => {
-                setBodyForLiberacaoPage(false);
-                liberacaoPage.style.display = 'none';
-                selectionPage.style.display = 'block';
-                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'block';
+        if (topBtnMy) {
+            topBtnMy.addEventListener('click', () => {
+                liberacaoOwnerFilter = 'my';
+                updateOwnerFilterUI();
+                fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
             });
         }
 
@@ -1426,7 +1399,6 @@
                 if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'block';
                 if (authContainer) authContainer.style.display = 'block';
                 if (liberacaoPage) liberacaoPage.style.display = 'none';
-                if (selectionPage) selectionPage.style.display = 'none';
                 if (accessControlTitle) {
                     accessControlTitle.style.opacity = '1';
                     accessControlTitle.style.pointerEvents = 'auto';
@@ -1445,18 +1417,20 @@
                     return;
                 }
 
-                setBodyForLiberacaoPage(false);
-                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'block';
+                setBodyForLiberacaoPage(true);
+                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'none';
                 if (authContainer) authContainer.style.display = 'none';
-                if (liberacaoPage) liberacaoPage.style.display = 'none'; // Esconde a página de liberações inicialmente
-                if (selectionPage) selectionPage.style.display = 'block'; // Exibe a nova tela de seleção
+                if (liberacaoPage) liberacaoPage.style.display = 'flex';
 
                 if (accessControlTitle) {
                     accessControlTitle.style.opacity = '0'; // Esconde o título
                     accessControlTitle.style.pointerEvents = 'none'; // Impede interação
                 }
 
-                // setInitialDateAndFetch(); // Não busca os dados automaticamente mais
+                liberacaoOwnerFilter = 'all';
+                updateOwnerFilterUI();
+                setInitialDateAndFetch();
+                adjustPageHeight();
                 
             } else {
                 setBodyForLiberacaoPage(false);
@@ -1464,7 +1438,6 @@
                 if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'block';
                 if (authContainer) authContainer.style.display = 'block';
                 if (liberacaoPage) liberacaoPage.style.display = 'none';
-                if (selectionPage) selectionPage.style.display = 'none';
                 if (accessControlTitle) {
                     accessControlTitle.style.opacity = '1'; // Mostra o título
                     accessControlTitle.style.pointerEvents = 'auto'; // Habilita interação
