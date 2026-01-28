@@ -1098,6 +1098,9 @@
 
         // Função para buscar e exibir as liberações com filtros
         async function fetchLiberacoes(session, filterType = 'date', date = null, searchTerm = null) {
+            if (!session && !currentSession) return;
+            const activeSession = session || currentSession;
+
             updateFilterButtons(filterType);
             // updateOwnerFilterButtons(); // Chamada removida
             currentFilterType = filterType;
@@ -1108,7 +1111,7 @@
                 .select('*');
 
             if (liberacaoOwnerFilter === 'my') {
-                query = query.eq('user_id', session.user.id);
+                query = query.eq('user_id', activeSession.user.id);
             }
 
             if (filterType === 'date' && date) {
