@@ -284,11 +284,26 @@
             <!-- Linha de baixo: Barra de pesquisa -->
             <div class="w-full flex items-center relative">
                 <input type="text" id="search-input" placeholder="Pesquisar..." class="w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-                <button id="clear-search" class="absolute right-2 text-gray-400 hover:text-gray-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
-                </button>
+                <div class="absolute right-2 flex items-center space-x-2">
+                    <span id="search-results-count" class="text-xs text-gray-400 hidden font-medium">0 de 0</span>
+                    <div id="search-nav-container" class="hidden items-center space-x-1">
+                        <button id="prev-search" title="Anterior" class="p-1 text-gray-400 hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <button id="next-search" title="Próxima" class="p-1 text-gray-400 hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                    <button id="clear-search" title="Limpar" class="text-gray-400 hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
         
@@ -478,6 +493,12 @@
         // Novo elemento para o anexo
         const arquivoInput = document.getElementById('arquivo');
 
+        // Novos elementos de navegação de pesquisa
+        const searchResultsCount = document.getElementById('search-results-count');
+        const searchNavContainer = document.getElementById('search-nav-container');
+        const prevSearchBtn = document.getElementById('prev-search');
+        const nextSearchBtn = document.getElementById('next-search');
+
         let currentSession = null;
         let liberacaoToDeleteId = null;
         let liberacaoToEdit = null;
@@ -487,6 +508,8 @@
         let searchTimeout;
         const POLLING_INTERVAL = 10000; // 10 segundos de sondagem
         let isChangingPassword = false;
+        let currentMatchIndex = -1;
+        let matches = [];
 
         function adjustPageHeight() {
             const liberacaoPage = document.getElementById('liberacao-page');
@@ -1058,10 +1081,47 @@
                     return part;
                 }
                 const regex = new RegExp(`(${escapedSearchTerm})`, 'gi');
-                return part.replace(regex, `<mark class="bg-yellow-400 text-black rounded px-1">$1</mark>`);
+                return part.replace(regex, `<mark class="search-match bg-yellow-400 text-black rounded px-1 transition-colors duration-200">$1</mark>`);
             }).join('');
         }
         
+        function updateSearchNavigation(shouldScroll = true) {
+            matches = document.querySelectorAll('.search-match');
+            const totalMatches = matches.length;
+
+            if (totalMatches > 0) {
+                if (currentMatchIndex >= totalMatches) currentMatchIndex = 0;
+                if (currentMatchIndex < 0) currentMatchIndex = 0;
+
+                searchResultsCount.textContent = `${currentMatchIndex + 1} de ${totalMatches}`;
+                searchResultsCount.classList.remove('hidden');
+                searchNavContainer.classList.remove('hidden');
+                searchNavContainer.classList.add('flex');
+
+                prevSearchBtn.disabled = totalMatches <= 1;
+                nextSearchBtn.disabled = totalMatches <= 1;
+
+                // Highlight active match
+                matches.forEach((m, i) => {
+                    if (i === currentMatchIndex) {
+                        m.classList.add('bg-orange-500', 'ring-2', 'ring-white');
+                        m.classList.remove('bg-yellow-400');
+                        if (shouldScroll) {
+                            m.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    } else {
+                        m.classList.remove('bg-orange-500', 'ring-2', 'ring-white');
+                        m.classList.add('bg-yellow-400');
+                    }
+                });
+            } else {
+                searchResultsCount.classList.add('hidden');
+                searchNavContainer.classList.add('hidden');
+                searchNavContainer.classList.remove('flex');
+                currentMatchIndex = -1;
+            }
+        }
+
         function updateFilterButtons(selectedFilter) {
             // Lógica para destacar botão de calendário se necessário
         }
@@ -1097,7 +1157,7 @@
         }
 
         // Função para buscar e exibir as liberações com filtros
-        async function fetchLiberacoes(session, filterType = 'date', date = null, searchTerm = null) {
+        async function fetchLiberacoes(session, filterType = 'date', date = null, searchTerm = null, shouldScroll = false) {
             if (!session && !currentSession) return;
             const activeSession = session || currentSession;
 
@@ -1259,6 +1319,15 @@
                 } else {
                     liberacoesList.innerHTML = `<p class="text-center text-gray-500">Nenhuma liberação encontrada.</p>`;
                 }
+
+                // Atualiza a navegação de pesquisa se houver um termo de pesquisa
+                if (searchTerm && searchTerm.trim() !== '') {
+                    updateSearchNavigation(shouldScroll);
+                } else {
+                    // Esconde a navegação se não houver termo
+                    if (searchResultsCount) searchResultsCount.classList.add('hidden');
+                    if (searchNavContainer) searchNavContainer.classList.add('hidden');
+                }
             }
         }
 
@@ -1304,6 +1373,7 @@
         if (clearSearchBtn) {
             clearSearchBtn.addEventListener('click', () => {
                 if (searchInput) searchInput.value = '';
+                currentMatchIndex = -1; // Reset navigation
                 if (currentSession) {
                     fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, '');
                 }
@@ -1319,9 +1389,28 @@
 
                 searchTimeout = setTimeout(() => {
                     if (currentSession) {
-                        fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, event.target.value);
+                        currentMatchIndex = 0; // Reset index on new search
+                        fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, event.target.value, true);
                     }
                 }, 500); // 500ms de atraso
+            });
+        }
+
+        if (nextSearchBtn) {
+            nextSearchBtn.addEventListener('click', () => {
+                if (matches.length > 0) {
+                    currentMatchIndex = (currentMatchIndex + 1) % matches.length;
+                    updateSearchNavigation();
+                }
+            });
+        }
+
+        if (prevSearchBtn) {
+            prevSearchBtn.addEventListener('click', () => {
+                if (matches.length > 0) {
+                    currentMatchIndex = (currentMatchIndex - 1 + matches.length) % matches.length;
+                    updateSearchNavigation();
+                }
             });
         }
         
