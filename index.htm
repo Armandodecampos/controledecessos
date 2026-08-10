@@ -664,7 +664,7 @@
         if (authForm) {
             authForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const email = document.getElementById('email').value;
+                const email = document.getElementById('email').value.trim();
                 const password = passwordInput.value;
                 
                 // Lógica de login
@@ -699,7 +699,7 @@
         if (passwordChangeForm) {
             passwordChangeForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const email = document.getElementById('change-email').value;
+                const email = document.getElementById('change-email').value.trim();
                 const oldPassword = document.getElementById('old-password').value;
                 const newPassword = document.getElementById('new-password').value;
                 const confirmNewPassword = document.getElementById('confirm-new-password').value;
@@ -762,7 +762,7 @@
         if (forgotPasswordPromptForm) {
             forgotPasswordPromptForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const email = document.getElementById('recovery-email').value;
+                const email = document.getElementById('recovery-email').value.trim();
                 if (!email) {
                     showRecoveryMessage('Por favor, insira seu email.', true);
                     return;
