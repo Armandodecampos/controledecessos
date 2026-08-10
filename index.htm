@@ -82,38 +82,18 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: #374151;
+            background: #202426;
         }
 
         ::-webkit-scrollbar-thumb {
-            background-color: #4b5563;
-            border: 2px solid #374151;
+            background-color: #4d4d4d;
+            border: 2px solid #202426;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background-color: #5d6776;
+            background-color: #666666;
         }
 
-        /* Estilo específico para a barra de rolagem da área de liberações */
-        #liberacao-content-area::-webkit-scrollbar {
-            width: 40px;
-        }
-
-        /* Estilos para o contêiner de fundo embaçado */
-        #background-blur-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background-image: url('https://cloudfront-us-east-1.images.arcpublishing.com/estadao/S7Q5XLVIGNE2PJHZJWX55QGCOE.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            transition: filter 0.5s ease-in-out;
-        }
-        
         .liberacao-card-concluida {
             background-color: #1a2e24; /* Um verde escuro para indicar concluído */
         }
@@ -130,9 +110,6 @@
     </style>
 </head>
 <body class="bg-gray-900 text-gray-300 min-h-screen flex items-center justify-center p-4">
-
-    <!-- Contêiner para o fundo embaçado -->
-    <div id="background-blur-container"></div>
 
     <!-- Container do Título "Controle de Acessos" -->
     <div id="access-control-title" class="fixed top-0 left-0 w-full p-4 text-center bg-gray-900 z-50 transition-opacity duration-300">
@@ -186,7 +163,7 @@
                 </div>
             </div>
             <div>
-                <button type="submit" id="submit-btn" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">Entrar</button>
+                <button type="submit" id="submit-btn" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200">Entrar</button>
             </div>
         </form>
 
@@ -345,7 +322,7 @@
                 </div>
 
                 <!-- Botão Login -->
-                <button id="sign-in-top" class="flex-shrink-0 ml-4 px-4 py-2 rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition duration-200">
+                <button id="sign-in-top" class="flex-shrink-0 ml-4 px-4 py-2 rounded-lg shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200">
                     Fazer Login
                 </button>
                 <!-- Botão Sair -->
@@ -416,8 +393,8 @@
                          <input type="file" id="arquivo" name="arquivo" class="mt-1 block w-full text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                     </div>
                     <div class="flex space-x-4">
-                        <button type="submit" id="form-submit-btn" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">Salvar Liberação</button>
-                        <button type="button" id="form-cancel-btn" class="w-full flex justify-center py-2 px-4 border border-gray-500 rounded-lg shadow-sm text-sm font-medium text-gray-200 bg-gray-600 hover:bg-gray-500 transition duration-200">Cancelar</button>
+                        <button type="submit" id="form-submit-btn" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition duration-200">Salvar Liberação</button>
+                        <button type="button" id="form-cancel-btn" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200">Cancelar</button>
                     </div>
                 </div>
             </div>
@@ -514,7 +491,6 @@
         const formSubmitBtn = document.getElementById('form-submit-btn');
         const formCancelBtn = document.getElementById('form-cancel-btn');
         const nomeInput = document.getElementById('nome'); // Adicionado
-        const backgroundBlurContainer = document.getElementById('background-blur-container');
         
         // Elementos da troca de senha
         const changePasswordBtn = document.getElementById('change-password-btn');
@@ -1603,7 +1579,6 @@
                 if (signInTopBtn) signInTopBtn.style.display = 'none';
 
                 setBodyForLiberacaoPage(true);
-                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'none';
                 if (liberacaoPage) {
                     liberacaoPage.style.setProperty('display', 'flex', 'important');
                     liberacaoPage.classList.remove('hidden');
@@ -1630,7 +1605,6 @@
                 if (signInTopBtn) signInTopBtn.style.display = 'inline-block';
 
                 setBodyForLiberacaoPage(true);
-                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'none';
                 if (liberacaoPage) {
                     liberacaoPage.style.setProperty('display', 'flex', 'important');
                     liberacaoPage.classList.remove('hidden');
