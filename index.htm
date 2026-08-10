@@ -106,14 +106,23 @@
     </div>
 
     <!-- Container principal que alterna entre o formulário de login e a página de conteúdo -->
-    <div id="auth-container" class="w-full max-w-sm bg-gray-800 p-8 rounded-xl shadow-lg transition-all duration-300">
-        <!-- Título do formulário -->
-        <div class="text-center mb-6">
-            <h1 class="text-3xl font-bold text-gray-100" id="form-title">Faça Login</h1>
-        </div>
+    <div id="auth-container" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-50 p-4">
+      <div id="auth-inner-modal" class="relative w-full max-w-sm bg-gray-800 p-8 rounded-xl shadow-lg transition-all duration-300">
+        <!-- Botão para fechar o modal -->
+        <button id="close-auth-btn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-100 transition duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
 
-        <!-- Formulário de Autenticação -->
-        <form id="auth-form" class="space-y-4">
+        <div id="login-form-wrapper" class="space-y-4">
+            <!-- Título do formulário -->
+            <div class="text-center mb-6">
+                <h1 class="text-3xl font-bold text-gray-100" id="form-title">Faça Login</h1>
+            </div>
+
+            <!-- Formulário de Autenticação -->
+            <form id="auth-form" class="space-y-4">
             <div>
                 <label for="email" class="block text-sm font-medium text-gray-300">Email</label>
                 <input type="email" id="email" name="email" required autocomplete="email" class="mt-1 block w-full px-4 py-2 bg-gray-700 text-gray-100 border border-gray-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-200">
@@ -150,19 +159,28 @@
         <!-- Mensagens de Erro ou Sucesso -->
         <div id="message" class="mt-4 text-center text-sm font-medium" style="display: none;"></div>
         
-        <!-- Alternador entre login e cadastro, e botão de recuperação de senha -->
-        <div class="mt-6 text-center text-sm space-y-2">
-            <div id="forgot-password-container">
-                <button id="forgot-password-btn" class="text-blue-400 hover:text-blue-300 transition duration-200 focus:outline-none block w-full">Esqueci minha senha</button>
-            </div>
-            <div>
-                <button id="change-password-btn" class="text-blue-400 hover:text-blue-300 transition duration-200 focus:outline-none block w-full">Trocar senha</button>
+            <!-- Alternador entre login e cadastro, e botão de recuperação de senha -->
+            <div class="mt-6 text-center text-sm space-y-2">
+                <div id="forgot-password-container">
+                    <button id="forgot-password-btn" class="text-blue-400 hover:text-blue-300 transition duration-200 focus:outline-none block w-full">Esqueci minha senha</button>
+                </div>
+                <div>
+                    <button id="change-password-btn" class="text-blue-400 hover:text-blue-300 transition duration-200 focus:outline-none block w-full">Trocar senha</button>
+                </div>
             </div>
         </div>
+      </div>
     </div>
 
     <!-- Container para Troca de Senha -->
-    <div id="password-change-container" class="hidden w-full max-w-sm bg-gray-800 p-8 rounded-xl shadow-lg transition-all duration-300">
+    <div id="password-change-container" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div class="relative w-full max-w-sm bg-gray-800 p-8 rounded-xl shadow-lg transition-all duration-300">
+        <!-- Botão para fechar o modal -->
+        <button id="close-change-btn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-100 transition duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
         <div class="text-center mb-6">
             <h1 class="text-3xl font-bold text-gray-100">Trocar Senha</h1>
         </div>
@@ -191,10 +209,18 @@
         <div class="mt-6 text-center text-sm">
             <button id="back-to-login-btn" class="text-blue-400 hover:text-blue-300 transition duration-200 focus:outline-none">Voltar para o Login</button>
         </div>
+      </div>
     </div>
 
     <!-- Container para Solicitar Recuperação de Senha -->
-    <div id="forgot-password-prompt-container" class="hidden w-full max-w-sm bg-gray-800 p-8 rounded-xl shadow-lg transition-all duration-300">
+    <div id="forgot-password-prompt-container" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div class="relative w-full max-w-sm bg-gray-800 p-8 rounded-xl shadow-lg transition-all duration-300">
+        <!-- Botão para fechar o modal -->
+        <button id="close-recovery-prompt-btn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-100 transition duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
         <div class="text-center mb-6">
             <h1 class="text-3xl font-bold text-gray-100">Recuperar Senha</h1>
             <p class="text-sm text-gray-400 mt-2">Digite seu e-mail para receber um link de recuperação.</p>
@@ -212,10 +238,18 @@
         <div class="mt-6 text-center text-sm">
             <button id="back-to-login-from-recovery-btn" class="text-blue-400 hover:text-blue-300 transition duration-200 focus:outline-none">Voltar para o Login</button>
         </div>
+      </div>
     </div>
 
     <!-- Container para Recuperação de Senha -->
-    <div id="password-recovery-container" class="hidden w-full max-w-sm bg-gray-800 p-8 rounded-xl shadow-lg transition-all duration-300">
+    <div id="password-recovery-container" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div class="relative w-full max-w-sm bg-gray-800 p-8 rounded-xl shadow-lg transition-all duration-300">
+        <!-- Botão para fechar o modal -->
+        <button id="close-recovery-btn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-100 transition duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
         <div class="text-center mb-6">
             <h1 class="text-3xl font-bold text-gray-100">Redefinir Senha</h1>
         </div>
@@ -248,6 +282,7 @@
                 <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">Salvar Nova Senha</button>
             </div>
         </form>
+      </div>
     </div>
     
     <!-- Página de Liberação -->
@@ -275,8 +310,12 @@
                     </div>
                 </div>
 
+                <!-- Botão Login -->
+                <button id="sign-in-top" class="flex-shrink-0 ml-4 px-4 py-2 rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition duration-200">
+                    Fazer Login
+                </button>
                 <!-- Botão Sair -->
-                <button id="sign-out-top" class="flex-shrink-0 ml-4 px-4 py-2 rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition duration-200">
+                <button id="sign-out-top" class="flex-shrink-0 ml-4 px-4 py-2 rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition duration-200 hidden">
                     Sair
                 </button>
             </div>
@@ -487,6 +526,19 @@
         const topBtnAll = document.getElementById('top-btn-all');
         const topBtnMy = document.getElementById('top-btn-my');
         const signOutTopBtn = document.getElementById('sign-out-top');
+
+        const signInTopBtn = document.getElementById('sign-in-top');
+        const closeAuthBtn = document.getElementById('close-auth-btn');
+        const closeChangeBtn = document.getElementById('close-change-btn');
+        const closeRecoveryPromptBtn = document.getElementById('close-recovery-prompt-btn');
+        const closeRecoveryBtn = document.getElementById('close-recovery-btn');
+
+        function hideAllModals() {
+            if (authContainer) authContainer.style.display = 'none';
+            if (passwordChangeContainer) passwordChangeContainer.style.display = 'none';
+            if (forgotPasswordPromptContainer) forgotPasswordPromptContainer.style.display = 'none';
+            if (passwordRecoveryContainer) passwordRecoveryContainer.style.display = 'none';
+        }
         
         const liberacaoTopBar = document.getElementById('liberacao-top-bar');
         const liberacaoContentArea = document.getElementById('liberacao-content-area');
@@ -588,6 +640,26 @@
             });
         }
 
+        if (closeAuthBtn) {
+            closeAuthBtn.addEventListener('click', hideAllModals);
+        }
+        if (closeChangeBtn) {
+            closeChangeBtn.addEventListener('click', hideAllModals);
+        }
+        if (closeRecoveryPromptBtn) {
+            closeRecoveryPromptBtn.addEventListener('click', hideAllModals);
+        }
+        if (closeRecoveryBtn) {
+            closeRecoveryBtn.addEventListener('click', hideAllModals);
+        }
+
+        if (signInTopBtn) {
+            signInTopBtn.addEventListener('click', () => {
+                hideAllModals();
+                if (authContainer) authContainer.style.display = 'flex';
+            });
+        }
+
         // Lógica para lidar com o envio do formulário de autenticação
         if (authForm) {
             authForm.addEventListener('submit', async (e) => {
@@ -609,16 +681,16 @@
         // Lógica para mostrar o formulário de troca de senha
         if (changePasswordBtn) {
             changePasswordBtn.addEventListener('click', () => {
-                authContainer.style.display = 'none';
-                passwordChangeContainer.style.display = 'block';
+                hideAllModals();
+                passwordChangeContainer.style.display = 'flex';
             });
         }
 
         // Lógica para voltar para o login
         if (backToLoginBtn) {
             backToLoginBtn.addEventListener('click', () => {
-                passwordChangeContainer.style.display = 'none';
-                authContainer.style.display = 'block';
+                hideAllModals();
+                authContainer.style.display = 'flex';
                 showChangeMessage(''); // Limpa a mensagem
             });
         }
@@ -673,16 +745,16 @@
         // Lógica de redefinição de senha
         if (forgotPasswordBtn) {
             forgotPasswordBtn.addEventListener('click', () => {
-                authContainer.style.display = 'none';
-                forgotPasswordPromptContainer.style.display = 'block';
+                hideAllModals();
+                forgotPasswordPromptContainer.style.display = 'flex';
                 showMessage(''); // Limpa a mensagem do formulário de login
             });
         }
 
         if (backToLoginFromRecoveryBtn) {
             backToLoginFromRecoveryBtn.addEventListener('click', () => {
-                forgotPasswordPromptContainer.style.display = 'none';
-                authContainer.style.display = 'block';
+                hideAllModals();
+                authContainer.style.display = 'flex';
                 showRecoveryMessage('');
             });
         }
@@ -1157,8 +1229,7 @@
         }
 
         // Função para buscar e exibir as liberações com filtros
-        async function fetchLiberacoes(session, filterType = 'date', date = null, searchTerm = null, shouldScroll = false) {
-            if (!session && !currentSession) return;
+        async function fetchLiberacoes(session = null, filterType = 'date', date = null, searchTerm = null, shouldScroll = false) {
             const activeSession = session || currentSession;
 
             updateFilterButtons(filterType);
@@ -1170,7 +1241,7 @@
                 .from('liberacoes')
                 .select('*');
 
-            if (liberacaoOwnerFilter === 'my') {
+            if (liberacaoOwnerFilter === 'my' && activeSession) {
                 query = query.eq('user_id', activeSession.user.id);
             }
 
@@ -1241,8 +1312,8 @@
                         const actionsContainer = document.createElement('div');
                         actionsContainer.className = 'flex items-center space-x-2';
                         
-                        // Apenas mostra os botões de ação se o usuário for o criador
-                        if (session.user.id === liberacao.user_id) {
+                        // Apenas mostra os botões de ação se o usuário for o criador e estiver logado
+                        if (activeSession && activeSession.user && activeSession.user.id === liberacao.user_id) {
                             const editButton = document.createElement('button');
                             editButton.className = 'text-blue-400 hover:text-blue-500 transition duration-200';
                             editButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -1374,9 +1445,7 @@
             clearSearchBtn.addEventListener('click', () => {
                 if (searchInput) searchInput.value = '';
                 currentMatchIndex = -1; // Reset navigation
-                if (currentSession) {
-                    fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, '');
-                }
+                fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, '');
             });
         }
         
@@ -1388,10 +1457,8 @@
                 currentFilterDate = null;
 
                 searchTimeout = setTimeout(() => {
-                    if (currentSession) {
-                        currentMatchIndex = 0; // Reset index on new search
-                        fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, event.target.value, true);
-                    }
+                    currentMatchIndex = 0; // Reset index on new search
+                    fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, event.target.value, true);
                 }, 500); // 500ms de atraso
             });
         }
@@ -1433,9 +1500,7 @@
             const today = new Date().toISOString().split('T')[0];
             if(filterDateInput) filterDateInput.value = today;
             updateFilterButtons('date');
-            if (currentSession) {
-                fetchLiberacoes(currentSession, 'date', today);
-            }
+            fetchLiberacoes(currentSession, 'date', today);
         }
 
         // Lógica para verificar a URL imediatamente e definir a sessão
@@ -1486,33 +1551,29 @@
             console.log('Evento de autenticação:', event);
             currentSession = session;
 
-            if (event === 'SIGNED_OUT') {
-                setBodyForLiberacaoPage(false);
-                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'block';
-                if (authContainer) authContainer.style.display = 'block';
-                if (liberacaoPage) liberacaoPage.style.display = 'none';
-                if (accessControlTitle) {
-                    accessControlTitle.style.opacity = '1';
-                    accessControlTitle.style.pointerEvents = 'auto';
-                }
-                window.location.reload(); // Recarrega a página após o logout
-            } else if (session) {
+            if (session) {
                 if (isChangingPassword) return; // Se estiver trocando a senha, não exibe a área logada
 
                 // Se a página de recuperação de senha estiver visível, não muda o display
                 if (passwordRecoveryContainer && passwordRecoveryContainer.style.display === 'flex') {
                     return;
                 }
-                
-                // Se o usuário já estiver na página de liberações, evita o redirecionamento
-                if (liberacaoPage && liberacaoPage.style.display === 'flex') {
-                    return;
-                }
+
+                // Oculta modal de login
+                hideAllModals();
+
+                // Mostra/esconde botões administrativos e login
+                if (topBtnMy) topBtnMy.style.display = 'inline-block';
+                if (btnAddLiberacao) btnAddLiberacao.style.display = 'block';
+                if (signOutTopBtn) signOutTopBtn.style.display = 'inline-block';
+                if (signInTopBtn) signInTopBtn.style.display = 'none';
 
                 setBodyForLiberacaoPage(true);
                 if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'none';
-                if (authContainer) authContainer.style.display = 'none';
-                if (liberacaoPage) liberacaoPage.style.display = 'flex';
+                if (liberacaoPage) {
+                    liberacaoPage.style.setProperty('display', 'flex', 'important');
+                    liberacaoPage.classList.remove('hidden');
+                }
 
                 if (accessControlTitle) {
                     accessControlTitle.style.opacity = '0'; // Esconde o título
@@ -1525,16 +1586,31 @@
                 adjustPageHeight();
                 
             } else {
-                setBodyForLiberacaoPage(false);
-                // Usuário deslogado, mas não pelo evento SIGNED_OUT
-                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'block';
-                if (authContainer) authContainer.style.display = 'block';
-                if (liberacaoPage) liberacaoPage.style.display = 'none';
-                if (accessControlTitle) {
-                    accessControlTitle.style.opacity = '1'; // Mostra o título
-                    accessControlTitle.style.pointerEvents = 'auto'; // Habilita interação
+                // Usuário deslogado / visitante anônimo (Guest)
+                hideAllModals();
+
+                // Mostra/esconde botões administrativos e login
+                if (topBtnMy) topBtnMy.style.display = 'none';
+                if (btnAddLiberacao) btnAddLiberacao.style.display = 'none';
+                if (signOutTopBtn) signOutTopBtn.style.display = 'none';
+                if (signInTopBtn) signInTopBtn.style.display = 'inline-block';
+
+                setBodyForLiberacaoPage(true);
+                if (backgroundBlurContainer) backgroundBlurContainer.style.display = 'none';
+                if (liberacaoPage) {
+                    liberacaoPage.style.setProperty('display', 'flex', 'important');
+                    liberacaoPage.classList.remove('hidden');
                 }
-                // showMessage(''); // Removido para evitar o toast em branco
+
+                if (accessControlTitle) {
+                    accessControlTitle.style.opacity = '0'; // Esconde o título
+                    accessControlTitle.style.pointerEvents = 'none'; // Impede interação
+                }
+
+                liberacaoOwnerFilter = 'all';
+                updateOwnerFilterUI();
+                setInitialDateAndFetch();
+                adjustPageHeight();
             }
         });
         
