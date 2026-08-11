@@ -597,7 +597,7 @@
 
         // Sondagem para atualização de dados
         setInterval(() => {
-            if (currentSession && liberacaoPage.style.display !== 'none') {
+            if (liberacaoPage && liberacaoPage.style.display !== 'none') {
                 fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
             }
         }, POLLING_INTERVAL);
@@ -1231,6 +1231,7 @@
         if (topBtnAll) {
             topBtnAll.addEventListener('click', () => {
                 liberacaoOwnerFilter = 'all';
+                localStorage.setItem('liberacoes_ownerFilter', 'all');
                 updateOwnerFilterUI();
                 fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
             });
@@ -1238,6 +1239,7 @@
         if (topBtnMy) {
             topBtnMy.addEventListener('click', () => {
                 liberacaoOwnerFilter = 'my';
+                localStorage.setItem('liberacoes_ownerFilter', 'my');
                 updateOwnerFilterUI();
                 fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, searchInput.value);
             });
@@ -1430,6 +1432,10 @@
             customDateInput.addEventListener('change', (event) => {
                  const selectedDate = event.target.value;
                  if (selectedDate) {
+                    currentFilterType = 'date';
+                    currentFilterDate = selectedDate;
+                    localStorage.setItem('liberacoes_filterType', 'date');
+                    localStorage.setItem('liberacoes_filterDate', selectedDate);
                     fetchLiberacoes(currentSession, 'date', selectedDate, searchInput.value);
                  }
                  if (customCalendarModal) customCalendarModal.style.display = 'none';
@@ -1439,8 +1445,11 @@
         if (selectTodayBtn) {
             selectTodayBtn.addEventListener('click', () => {
                  const today = new Date().toISOString().split('T')[0];
-                 fetchLiberacoes(currentSession, 'date', today, searchInput.value);
+                 currentFilterType = 'date';
                  currentFilterDate = today;
+                 localStorage.setItem('liberacoes_filterType', 'date');
+                 localStorage.setItem('liberacoes_filterDate', today);
+                 fetchLiberacoes(currentSession, 'date', today, searchInput.value);
                  customDateInput.value = today;
                  if (customCalendarModal) customCalendarModal.style.display = 'none';
             });
@@ -1448,9 +1457,11 @@
 
         if (selectAllDatesBtn) {
             selectAllDatesBtn.addEventListener('click', () => {
-                 fetchLiberacoes(currentSession, 'all', null, searchInput.value);
                  currentFilterType = 'all';
                  currentFilterDate = null;
+                 localStorage.setItem('liberacoes_filterType', 'all');
+                 localStorage.removeItem('liberacoes_filterDate');
+                 fetchLiberacoes(currentSession, 'all', null, searchInput.value);
                  customDateInput.value = '';
                  if (customCalendarModal) customCalendarModal.style.display = 'none';
             });
@@ -1460,6 +1471,7 @@
             clearSearchBtn.addEventListener('click', () => {
                 if (searchInput) searchInput.value = '';
                 currentMatchIndex = -1; // Reset navigation
+                localStorage.setItem('liberacoes_searchTerm', '');
                 fetchLiberacoes(currentSession, currentFilterType, currentFilterDate, '');
             });
         }
@@ -1470,6 +1482,9 @@
                 // Define o filtro para "todas" quando o usuário começar a pesquisar
                 currentFilterType = 'all';
                 currentFilterDate = null;
+                localStorage.setItem('liberacoes_filterType', 'all');
+                localStorage.removeItem('liberacoes_filterDate');
+                localStorage.setItem('liberacoes_searchTerm', event.target.value);
 
                 searchTimeout = setTimeout(() => {
                     currentMatchIndex = 0; // Reset index on new search
@@ -1513,9 +1528,30 @@
         // Função para definir a data inicial e buscar as liberações
         function setInitialDateAndFetch() {
             const today = new Date().toISOString().split('T')[0];
-            if(filterDateInput) filterDateInput.value = today;
-            updateFilterButtons('date');
-            fetchLiberacoes(currentSession, 'date', today);
+
+            // Recupera o estado salvo no localStorage
+            const savedSearchTerm = localStorage.getItem('liberacoes_searchTerm') || '';
+            const savedFilterType = localStorage.getItem('liberacoes_filterType') || 'date';
+            const savedFilterDate = localStorage.getItem('liberacoes_filterDate') || today;
+            const savedOwnerFilter = localStorage.getItem('liberacoes_ownerFilter') || 'all';
+
+            // Atualiza as variáveis de estado globais
+            currentFilterType = savedFilterType;
+            currentFilterDate = savedFilterDate;
+            liberacaoOwnerFilter = savedOwnerFilter;
+
+            if (searchInput) {
+                searchInput.value = savedSearchTerm;
+            }
+
+            if (filterDateInput) {
+                filterDateInput.value = savedFilterDate;
+            }
+
+            updateFilterButtons(savedFilterType);
+            updateOwnerFilterUI();
+
+            fetchLiberacoes(currentSession, savedFilterType, savedFilterDate, savedSearchTerm);
         }
 
         // Lógica para verificar a URL imediatamente e definir a sessão
@@ -1594,7 +1630,7 @@
                     accessControlTitle.style.pointerEvents = 'none'; // Impede interação
                 }
 
-                liberacaoOwnerFilter = 'all';
+                liberacaoOwnerFilter = localStorage.getItem('liberacoes_ownerFilter') || 'all';
                 updateOwnerFilterUI();
                 setInitialDateAndFetch();
                 adjustPageHeight();
@@ -1620,7 +1656,7 @@
                     accessControlTitle.style.pointerEvents = 'none'; // Impede interação
                 }
 
-                liberacaoOwnerFilter = 'all';
+                liberacaoOwnerFilter = localStorage.getItem('liberacoes_ownerFilter') || 'all';
                 updateOwnerFilterUI();
                 setInitialDateAndFetch();
                 adjustPageHeight();
