@@ -1145,15 +1145,67 @@
             }
         }
         
-        // Função utilitária para formatar texto com quebras de linha e links
+        // Função para escapar caracteres especiais de HTML
+        function escapeHtml(text) {
+          if (!text) return '';
+          return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+        }
+
+        // Função utilitária para formatar texto com quebras de linha, links e tabelas
         function formatText(text) {
           if (!text) return '';
-          let formattedText = text.replace(/\n/g, '<br>');
-          const urlRegex = /(https?:\/\/[^\s]+)/g;
-          formattedText = formattedText.replace(urlRegex, (url) => {
-            return `<a href="${url}" target="_blank" class="text-blue-400 hover:underline">${url}</a>`;
-          });
-          return formattedText;
+          const escapedText = escapeHtml(text);
+          const lines = escapedText.split('\n');
+          const resultBlocks = [];
+          let inTable = false;
+          let tableRows = [];
+
+          function closeTable() {
+            if (inTable) {
+              const tableHtml = `<div class="overflow-x-auto my-2"><table class="w-full text-left border-collapse border border-gray-600 rounded-lg overflow-hidden bg-gray-800/40">${tableRows.join('')}</table></div>`;
+              resultBlocks.push(tableHtml);
+              inTable = false;
+              tableRows = [];
+            }
+          }
+
+          for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            const isTabbed = line.includes('\t');
+            const isPipeTable = line.trim().startsWith('|') && line.trim().endsWith('|') && line.split('|').length >= 3;
+
+            if (isTabbed || isPipeTable) {
+              if (!inTable) {
+                inTable = true;
+                tableRows = [];
+              }
+              let cells = [];
+              if (isTabbed) {
+                cells = line.split('\t');
+              } else {
+                const rawCells = line.trim().split('|').slice(1, -1);
+                cells = rawCells.map(c => c.trim());
+              }
+              const rowHtml = cells.map(c => `<td class="border border-gray-600 px-3 py-1.5 text-sm">${c}</td>`).join('');
+              tableRows.push(`<tr class="hover:bg-gray-700/50">${rowHtml}</tr>`);
+            } else {
+              closeTable();
+              let processedLine = line;
+              const urlRegex = /(https?:\/\/[^\s]+)/g;
+              processedLine = processedLine.replace(urlRegex, (url) => {
+                return `<a href="${url}" target="_blank" class="text-blue-400 hover:underline">${url}</a>`;
+              });
+              resultBlocks.push(processedLine);
+            }
+          }
+          closeTable();
+
+          return resultBlocks.join('<br>');
         }
 
         // Função para destacar o texto da pesquisa
@@ -1161,7 +1213,7 @@
             if (!searchTerm || !searchTerm.trim() || !text) {
                 return text;
             }
-            const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const escapedSearchTerm = escapeHtml(searchTerm).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             const parts = text.split(new RegExp(`(<[^>]+>)`, 'g'));
             return parts.map(part => {
                 if (part.startsWith('<') && part.endsWith('>')) {
@@ -1375,7 +1427,7 @@
                         const observacaoParaExibir = liberacao.observacao || '';
 
                         // Formata e destaca o texto
-                        const formattedNome = nomeParaExibirFinal;
+                        const formattedNome = escapeHtml(nomeParaExibirFinal);
                         const formattedObservacao = formatText(observacaoParaExibir);
                         const finalNomeHTML = highlightText(formattedNome, searchTerm);
                         const finalObservacaoHTML = highlightText(formattedObservacao, searchTerm);
